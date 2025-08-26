@@ -2,7 +2,7 @@
 
 namespace EduReg.Models.Dto
 {
-    public class StudentLogin
+    public class StudentLogin 
     {
         [Required]
         public  string Username { get; set; }

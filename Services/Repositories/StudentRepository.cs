@@ -76,7 +76,7 @@ namespace EduReg.Services.Repositories
                     CurrentAcademicSessionId = stud.CurrentAcademicSessionId,
                     CurrentAcademicSession = _context.AcademicSessions
                         .Where(s => s.Id == stud.CurrentAcademicSessionId)
-                        .Select(s => s.Name)
+                        .Select(s => s.SessionName)
                         .FirstOrDefault(),
                     CurrentLevelId = stud.AcademicLevelId,
                     CurrentLevel = _context.AcademicLevels

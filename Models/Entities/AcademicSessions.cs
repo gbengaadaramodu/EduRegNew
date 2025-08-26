@@ -1,10 +1,15 @@
-﻿namespace EduReg.Models.Entities
+﻿using System.Runtime.CompilerServices;
+
+namespace EduReg.Models.Entities
 {
     public class AcademicSession : CommonBase
     {
-        //Id, Name(2023/2024), isActive
-        public string Name { get; set; }
+        public string? BatchShortName { get; set; } //FK from Admission Batches
+        public int SessionId { get; set; } // PK -> Semester
+        public string? SessionName { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public bool IsDeleted { get; set; }
-
     }
+         
 }
