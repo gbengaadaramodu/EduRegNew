@@ -12,9 +12,14 @@ namespace EduReg.Services.Repositories
         {
             _context = context;
         }
-        public Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
+        public async Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
         {
-            throw new NotImplementedException();
+            
+
+            return new GeneralResponse { StatusCore = 200, Message = "Academic session created successfully" , Data = model};
+            
+           // return new GeneralResponse { StatusCore = 404, Message = "Not Found"};
+
         }
 
         public Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
