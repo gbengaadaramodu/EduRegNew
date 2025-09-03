@@ -5,15 +5,14 @@ namespace EduReg.Models.Entities
 {
     public class AdmissionBatches: CommonBase
     {
-         
-        
 
-        //[ForeignKey("ShortName")]
-        //public Institutions? Institutions { get; set; }
-        // The FK from Institution  
+
+ 
+        [Key]
+        public string? BatchShortName { get; set; } //PK
         public string? InstitutionShortName { get; set; }
         public  string? BatchName { get; set; }
-        public string? BatchShortName { get; set; } //PK
+       
         public  string?  Description { get; set; }
         
 

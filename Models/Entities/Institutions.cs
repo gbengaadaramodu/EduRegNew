@@ -7,7 +7,7 @@ namespace EduReg.Models.Entities
        
 
         [Key]
-        public string? InstitutionShortName { get; set; }
+        public string? InstitutionShortName { get; set; } //FK
         public string? InstitutionName { get; set; }
         public string?  Address { get; set; }
         public string? ContactPerson { get; set; }
