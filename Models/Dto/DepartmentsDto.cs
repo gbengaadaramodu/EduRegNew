@@ -1,0 +1,20 @@
+﻿using EduReg.Models.Entities;
+using System.ComponentModel.DataAnnotations;
+
+namespace EduReg.Models.Dto
+{
+    public class DepartmentsDto : CommonBaseDto
+    {
+
+        public string? FacultyCode { get; set; } //FK
+        public string? DepartmentName { get; set; }
+        [Key]
+        public string? DepartmentCode { get; set; } //FK 201
+        public string? Description { get; set; }
+        public string? Programme { get; set; }
+        public int Duration { get; set; }
+        public int NumberofSemesters { get; set; }
+        public int MaximumNumberofSemesters { get; set; }
+
+    }
+}

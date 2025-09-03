@@ -44,9 +44,17 @@ namespace EduReg
 
 
 
-
+            //IOC for Repositories
             builder.Services.AddScoped<IStudent, StudentRepository>();
+                       
+            builder.Services.AddScoped<IInstitutions, InstitutionsRepository>();
+            builder.Services.AddScoped<IAdmissionBatches, AdmissionBatchesRepository>();
+            builder.Services.AddScoped<IAcademicSessions, AcademicSessionsRepository>();
+            builder.Services.AddScoped<ISemesters, SemestersRepository>();
 
+            // Managers
+            builder.Services.AddScoped<InstitutionsManager>();
+            builder.Services.AddScoped<AcademicsManager>();
 
             builder.Services.AddCors(options =>
             {
