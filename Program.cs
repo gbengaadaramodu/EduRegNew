@@ -51,10 +51,13 @@ namespace EduReg
             builder.Services.AddScoped<IAdmissionBatches, AdmissionBatchesRepository>();
             builder.Services.AddScoped<IAcademicSessions, AcademicSessionsRepository>();
             builder.Services.AddScoped<ISemesters, SemestersRepository>();
+            builder.Services.AddScoped<IFaculties, FacultiesRepository>();
+            builder.Services.AddScoped<IDepartments, DepartmentsRepository>();
 
             // Managers
             builder.Services.AddScoped<InstitutionsManager>();
             builder.Services.AddScoped<AcademicsManager>();
+            builder.Services.AddScoped<SchoolManager>();
 
             builder.Services.AddCors(options =>
             {

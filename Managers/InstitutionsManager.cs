@@ -4,7 +4,7 @@ using EduReg.Services.Interfaces;
 
 namespace EduReg.Managers
 {
-    public class InstitutionsManager
+    public class InstitutionsManager: IInstitutions
     {
         private readonly IInstitutions _manager;
         public InstitutionsManager(IInstitutions manager) 
