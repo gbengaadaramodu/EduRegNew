@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
 using EduReg.Services.Interfaces;
+using EduReg.Services.Repositories;
 
 namespace EduReg.Managers
 {
@@ -30,7 +31,7 @@ namespace EduReg.Managers
 
         public Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
         {
-            throw new NotImplementedException();
+            return await _semesterRepository.CreateSemesterAsync(model);
         }
 
         public Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
@@ -45,7 +46,7 @@ namespace EduReg.Managers
 
         public Task<GeneralResponse> DeleteSemesterAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _semesterRepository.DeleteSemesterAsync(Id);
         }
 
         public Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id)
@@ -70,12 +71,12 @@ namespace EduReg.Managers
 
         public Task<GeneralResponse> GetAllSemestersAsync()
         {
-            throw new NotImplementedException();
+            return await _semesterRepository.GetAllSemestersAsync();
         }
 
         public Task<GeneralResponse> GetSemesterByIdAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _semesterRepository.GetSemesterByIdAsync(Id);
         }
 
         public Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model)
@@ -90,7 +91,7 @@ namespace EduReg.Managers
 
         public Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model)
         {
-            throw new NotImplementedException();
+            return await _semesterRepository.UpdateSemesterAsync(Id, model);
         }
     }
 }
