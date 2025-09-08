@@ -30,8 +30,11 @@ namespace EduReg.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("ActiveStatus")
-                        .HasColumnType("bit");
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BatchShortName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -39,12 +42,20 @@ namespace EduReg.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
+                    b.Property<int>("SessionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SessionName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -155,8 +166,8 @@ namespace EduReg.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("ActiveStatus")
-                        .HasColumnType("bit");
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -190,8 +201,8 @@ namespace EduReg.Migrations
                     b.Property<int>("AcademicLevelId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("ActiveStatus")
-                        .HasColumnType("bit");
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
 
                     b.Property<int>("AdmittedLevelId")
                         .HasColumnType("int");
