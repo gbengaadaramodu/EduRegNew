@@ -20,7 +20,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-                var existingSession = _context.AcademicSessions.FirstOrDefault(x => x.Id == model.SessionId);
+                var existingSession = _context.AcademicSessions.FirstOrDefault(x => x.SessionId == model.SessionId);
                 if (existingSession == null)
                 {
                     response.Data = null;
@@ -29,7 +29,7 @@ namespace EduReg.Services.Repositories
                     return response;
                 }
 
-                var foundSemester = _context.Semesters.FirstOrDefault(x => x.Id == model.SemesterId);
+                var foundSemester = _context.Semesters.FirstOrDefault(x => x.SessionId == model.SessionId && x.SemesterName == model.SemesterName);
                 if (foundSemester != null)
                 {
                     response.Data = null;
@@ -49,6 +49,10 @@ namespace EduReg.Services.Repositories
 
                 await _context.Semesters.AddAsync(semester);
                 await _context.SaveChangesAsync();
+                
+                response.StatusCore = 200;
+                response.Message = "Semester created successfully";
+                response.Data = semester;
                 return response;
             }
             catch (Exception ex)
@@ -130,6 +134,14 @@ namespace EduReg.Services.Repositories
             {
                 var semester = await _context.Semesters.FirstOrDefaultAsync(x => x.Id == Id);
 
+                if (semester == null)
+                {
+                    response.Data = null;
+                    response.StatusCore = 404;
+                    response.Message = "Semester not found";
+                    return response;
+                }
+
                 response.Data = semester;
                 response.StatusCore = 200;
                 response.Message = "Successful";
@@ -147,33 +159,59 @@ namespace EduReg.Services.Repositories
             return response;
         }
 
-        public async Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model)
+        public async Task<GeneralResponse> UpdateSemesterAsync(int id, SemestersDto model)
         {
-            var response = new GeneralResponse();
             try
             {
-                var existingSession = await _context.AcademicSessions.FirstOrDefaultAsync(x => x.Id == model.SessionId);
+                var existingSession = await _context.AcademicSessions
+                    .FirstOrDefaultAsync(x => x.SessionId == model.SessionId);
                 if (existingSession == null)
                 {
-                    response.Data = null;
-                    response.StatusCore = 404;
-                    response.Message = "Session does not exist";
+                    return new GeneralResponse
+                    {
+                        Data = null,
+                        StatusCore = 404,
+                        Message = "Session does not exist"
+                    };
                 }
 
-                var foundSemester = _context.Semesters.FirstOrDefault(x => x.Id == Id);
+                var foundSemester = await _context.Semesters
+                    .FirstOrDefaultAsync(x => x.Id == id);
                 if (foundSemester == null)
                 {
-                    response.Data = null;
-                    response.StatusCore = 404;
-                    response.Message = "Semester not found";
+                    return new GeneralResponse
+                    {
+                        Data = null,
+                        StatusCore = 404,
+                        Message = "Semester not found"
+                    };
+                }
+                var duplicateSemester = await _context.Semesters.AnyAsync(x => x.SessionId == model.SessionId
+                           && x.SemesterName == model.SemesterName
+                           && x.SemesterId != id);
+                if (duplicateSemester)
+                {
+                    return new GeneralResponse
+                    {
+                        Data = null,
+                        StatusCore = 400,
+                        Message = "Another semester with the same name already exists in this session"
+                    };
                 }
 
                 foundSemester.SemesterName = model.SemesterName;
                 foundSemester.StartDate = model.StartDate;
                 foundSemester.EndDate = model.EndDate;
+                //foundSemester.SessionId = model.SessionId; // in case of reassigning semester to a new session
 
-                _context.Semesters.Update(foundSemester);
                 await _context.SaveChangesAsync();
+
+                return new GeneralResponse
+                {
+                    Data = foundSemester,
+                    StatusCore = 200,
+                    Message = "Semester updated successfully"
+                };
             }
             catch (Exception ex)
             {
@@ -184,7 +222,6 @@ namespace EduReg.Services.Repositories
                     Message = ex.Message
                 };
             }
-            return response;
         }
     }
 }
