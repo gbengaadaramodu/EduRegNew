@@ -12,7 +12,7 @@ namespace EduReg
 {
     public class Program
     {
-        //
+        
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +41,7 @@ namespace EduReg
 
             //  builder.Services.AddAutoMapper(typeof(MappingProfile));
             builder.Services.AddScoped<StudentManager>();
+         
 
 
 
@@ -54,10 +55,14 @@ namespace EduReg
             builder.Services.AddScoped<IFaculties, FacultiesRepository>();
             builder.Services.AddScoped<IDepartments, DepartmentsRepository>();
 
+            builder.Services.AddScoped<IAcademicLevels, AcademicLevelsRepository>();
+            builder.Services.AddScoped<IProgrammes, ProgrammesRepository>();
+
             // Managers
             builder.Services.AddScoped<InstitutionsManager>();
             builder.Services.AddScoped<AcademicsManager>();
             builder.Services.AddScoped<SchoolManager>();
+            builder.Services.AddScoped<ProgrammesManager>();
 
             builder.Services.AddCors(options =>
             {

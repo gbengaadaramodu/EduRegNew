@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
 using EduReg.Services.Interfaces;
+using EduReg.Services.Repositories;
 
 namespace EduReg.Managers
 {
@@ -15,10 +16,10 @@ namespace EduReg.Managers
             _departments = departments;
         }
 
-        public Task<GeneralResponse> CreateDepartmentAsync(DepartmentsDto model)
+        public async Task<GeneralResponse> CreateDepartmentAsync(DepartmentsDto model)
         {
-            
-            throw new NotImplementedException();
+
+            return await _departments.CreateDepartmentAsync(model);
         }
 
         public async Task<GeneralResponse> CreateFacultyAsync(FacultiesDto model)
@@ -26,9 +27,9 @@ namespace EduReg.Managers
             return await _faculties.CreateFacultyAsync(model);
         }
 
-        public Task<GeneralResponse> DeleteDepartmentAsync(int Id)
+        public async Task<GeneralResponse> DeleteDepartmentAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _departments.DeleteDepartmentAsync(Id);
         }
 
         public async Task<GeneralResponse> DeleteFacultyAsync(int Id)
@@ -36,9 +37,9 @@ namespace EduReg.Managers
             return await _faculties.DeleteFacultyAsync(Id);
         }
 
-        public Task<GeneralResponse> GetAllDepartmentsAsync()
+        public async Task<GeneralResponse> GetAllDepartmentsAsync()
         {
-            throw new NotImplementedException();
+            return await _departments.GetAllDepartmentsAsync();
         }
 
         public async Task<GeneralResponse> GetAllFacultiesAsync()
@@ -46,14 +47,14 @@ namespace EduReg.Managers
             return await _faculties.GetAllFacultiesAsync();
         }
 
-        public Task<GeneralResponse> GetDepartmentByIdAsync(int Id)
+        public async Task<GeneralResponse> GetDepartmentByIdAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _departments.GetDepartmentByIdAsync(Id);
         }
 
-        public Task<GeneralResponse> GetDepartmentByNameAsync(string DepartmentName)
+        public async Task<GeneralResponse> GetDepartmentByNameAsync(string DepartmentName)
         {
-            throw new NotImplementedException();
+            return await _departments.GetDepartmentByNameAsync(DepartmentName);
         }
 
         public async Task<GeneralResponse> GetFacultyByIdAsync(int Id)
@@ -61,9 +62,9 @@ namespace EduReg.Managers
             return await _faculties.GetFacultyByIdAsync(Id);
         }
 
-        public Task<GeneralResponse> UpdateDepartmentAsync(int Id, DepartmentsDto model)
+        public async Task<GeneralResponse> UpdateDepartmentAsync(int Id, DepartmentsDto model)
         {
-            throw new NotImplementedException();
+            return await _departments.UpdateDepartmentAsync(Id, model);
         }
 
         public async Task<GeneralResponse> UpdateFacultyAsync(int Id, FacultiesDto model)

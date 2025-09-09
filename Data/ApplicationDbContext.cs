@@ -12,8 +12,11 @@ namespace EduReg.Data
         }
 
         public DbSet<StudentSignUp> StudentSignUps { get; set; }
-        public DbSet<Level> AcademicLevels { get; set; }
+        public DbSet<AcademicLevel> AcademicLevels { get; set; }
         public DbSet<AcademicSession> AcademicSessions { get; set; }
+
+        public DbSet<Departments> Departments { get; set; }
+        public DbSet<Programmes> Programmes { get; set; }
         public DbSet<Faculties> Faculties { get; set; }
     }
 }
