@@ -6,7 +6,6 @@ namespace EduReg.Models.Entities
     {
         public string? FacultyCode { get; set; } //FK
         public string? DepartmentName { get; set; }
-           [Key]
         public string? DepartmentCode { get; set; } //FK 201
         public string? Description { get; set; }          
         public string? Programme { get; set; }
