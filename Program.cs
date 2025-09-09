@@ -12,7 +12,7 @@ namespace EduReg
 {
     public class Program
     {
-        //
+        
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -53,6 +53,7 @@ namespace EduReg
             builder.Services.AddScoped<ISemesters, SemestersRepository>();
             builder.Services.AddScoped<IFaculties, FacultiesRepository>();
             builder.Services.AddScoped<IDepartments, DepartmentsRepository>();
+            builder.Services.AddScoped<IAcademicLevels, AcademicLevelsRepository>();
 
             // Managers
             builder.Services.AddScoped<InstitutionsManager>();
