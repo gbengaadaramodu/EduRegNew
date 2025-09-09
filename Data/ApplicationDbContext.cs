@@ -11,9 +11,20 @@ namespace EduReg.Data
 
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<AcademicSession>().HasKey(x => x.SessionId);
+            builder.Entity<Semester>().HasKey(x => x.SemesterId);
+            builder.Entity<Semester>().HasOne(s => s.Session)
+                .WithMany(a => a.Semesters)
+                .HasForeignKey(s => s.SessionId);
+        }
+
         public DbSet<StudentSignUp> StudentSignUps { get; set; }
         public DbSet<Level> AcademicLevels { get; set; }
         public DbSet<AcademicSession> AcademicSessions { get; set; }
-        public DbSet<Semesters> Semesters { get; set; }
+        public DbSet<Semester> Semesters { get; set; }
     }
 }

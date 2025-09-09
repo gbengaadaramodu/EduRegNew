@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EduReg.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,21 +33,21 @@ namespace EduReg.Migrations
                 name: "AcademicSessions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    SessionId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BatchShortName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SessionId = table.Column<int>(type: "int", nullable: false),
                     SessionName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ActiveStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AcademicSessions", x => x.Id);
+                    table.PrimaryKey("PK_AcademicSessions", x => x.SessionId);
                 });
 
             migrationBuilder.CreateTable(
@@ -129,6 +129,32 @@ namespace EduReg.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StudentSignUps", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Semesters",
+                columns: table => new
+                {
+                    SemesterId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SessionId = table.Column<int>(type: "int", nullable: false),
+                    SemesterName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ActiveStatus = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Semesters", x => x.SemesterId);
+                    table.ForeignKey(
+                        name: "FK_Semesters_AcademicSessions_SessionId",
+                        column: x => x.SessionId,
+                        principalTable: "AcademicSessions",
+                        principalColumn: "SessionId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -275,6 +301,11 @@ namespace EduReg.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Semesters_SessionId",
+                table: "Semesters",
+                column: "SessionId");
         }
 
         /// <inheritdoc />
@@ -282,9 +313,6 @@ namespace EduReg.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AcademicLevels");
-
-            migrationBuilder.DropTable(
-                name: "AcademicSessions");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -302,6 +330,9 @@ namespace EduReg.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Semesters");
+
+            migrationBuilder.DropTable(
                 name: "StudentSignUps");
 
             migrationBuilder.DropTable(
@@ -309,6 +340,9 @@ namespace EduReg.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "AcademicSessions");
         }
     }
 }

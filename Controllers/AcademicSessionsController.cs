@@ -1,31 +1,27 @@
 ﻿using EduReg.Managers;
-using EduReg.Common;
-using EduReg.Models.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using EduReg.Services.Interfaces;
 
 namespace EduReg.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SemestersController : ControllerBase
+    public class AcademicSessionsController : ControllerBase
     {
-        private readonly ISemesters _semester;
-
-        public SemestersController(ISemesters semester)
+        private readonly AcademicsManager _manager;
+        public AcademicSessionsController(AcademicsManager manager)
         {
-            _semester = semester;
+            _manager = manager;
         }
 
         [HttpGet]
-        [Route("GetAllSemesters")]
-        public async Task<IActionResult> GetAllSemesters()
+        [Route("GetAllAcademicSessions")]
+        public async Task<IActionResult> GetAllAcademicSessions()
         {
             try
             {
-                var res = await _semester.GetAllSemestersAsync();
-                return Ok(new GeneralResponse()
+                var res = await _manager.GetAllAcademicSessionsAsync();
+                return Ok(new Common.GeneralResponse()
                 {
                     Data = res.Data,
                     Message = res.Message,
@@ -34,7 +30,7 @@ namespace EduReg.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new GeneralResponse
+                return BadRequest(new Common.GeneralResponse
                 {
                     Data = null,
                     Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
@@ -44,22 +40,13 @@ namespace EduReg.Controllers
         }
 
         [HttpGet]
-        [Route("GetSemesterById/{id}")]
-        public async Task<IActionResult> GetSemesterById([FromRoute] int id)
+        [Route("GetAcademicSessionById/{id}")]
+        public async Task<IActionResult> GetAcademicSessionById([FromRoute] int id)
         {
             try
             {
-                var res = await _semester.GetSemesterByIdAsync(id);
-                if (res.Data == null)
-                {
-                    return NotFound(new GeneralResponse()
-                    {
-                        Data = null,
-                        Message = res.Message,
-                        StatusCore = 404
-                    });
-                }
-                return Ok(new GeneralResponse()
+                var res = await _manager.GetAcademicSessionByIdAsync(id);
+                return Ok(new Common.GeneralResponse()
                 {
                     Data = res.Data,
                     Message = res.Message,
@@ -68,7 +55,7 @@ namespace EduReg.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new GeneralResponse
+                return BadRequest(new Common.GeneralResponse
                 {
                     Data = null,
                     Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
@@ -78,22 +65,13 @@ namespace EduReg.Controllers
         }
 
         [HttpPost]
-        [Route("CreateSemester")]
-        public async Task<IActionResult> CreateSemester([FromBody] SemestersDto model)
+        [Route("CreateAcademicSession")]
+        public async Task<IActionResult> CreateAcademicSession([FromBody] Models.Dto.AcademicSessionsDto model)
         {
             try
             {
-                var res = await _semester.CreateSemesterAsync(model);
-                if (res.StatusCore == 404)
-                {
-                    return NotFound(new GeneralResponse()
-                    {
-                        Data = null,
-                        Message = res.Message,
-                        StatusCore = 404
-                    });
-                }
-                return Ok(new GeneralResponse()
+                var res = await _manager.CreateAcademicSessionAsync(model);
+                return Ok(new Common.GeneralResponse()
                 {
                     Data = res.Data,
                     Message = res.Message,
@@ -102,32 +80,7 @@ namespace EduReg.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new GeneralResponse
-                {
-                    Data = null,
-                    Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
-                    StatusCore = 400
-                });
-            }
-        }
-
-        [HttpPut]
-        [Route("UpdateSemester/{id}")]
-        public async Task<IActionResult> UpdateSemester([FromRoute]int Id, [FromBody] SemestersDto model)
-        {
-            try
-            {
-                var res = await _semester.UpdateSemesterAsync(Id, model);
-                return Ok(new GeneralResponse()
-                {
-                    Data = res.Data,
-                    Message = res.Message,
-                    StatusCore = 200
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new GeneralResponse
+                return BadRequest(new Common.GeneralResponse
                 {
                     Data = null,
                     Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
@@ -137,22 +90,13 @@ namespace EduReg.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteSemester/{id}")]
-        public async Task<IActionResult> DeleteSemester([FromRoute] int id)
+        [Route("DeleteAcademicSession/{id}")]
+        public async Task<IActionResult> DeleteAcademicSession([FromRoute] int id)
         {
             try
             {
-                var res = await _semester.DeleteSemesterAsync(id);
-                if (res.StatusCore == 404)
-                {
-                    return NotFound(new GeneralResponse()
-                    {
-                        Data = null,
-                        Message = res.Message,
-                        StatusCore = 404
-                    });
-                }
-                return Ok(new GeneralResponse()
+                var res = await _manager.DeleteAcademicSessionAsync(id);
+                return Ok(new Common.GeneralResponse()
                 {
                     Data = res.Data,
                     Message = res.Message,
@@ -161,7 +105,32 @@ namespace EduReg.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new GeneralResponse
+                return BadRequest(new Common.GeneralResponse
+                {
+                    Data = null,
+                    Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
+                    StatusCore = 400
+                });
+            }
+        }
+
+        [HttpPut]
+        [Route("UpdateAcademicSession/{id}")]
+        public async Task<IActionResult> UpdateAcademicSession([FromRoute] int id, [FromBody] Models.Dto.AcademicSessionsDto model)
+        {
+            try
+            {
+                var res = await _manager.UpdateAcademicSessionAsync(id, model);
+                return Ok(new Common.GeneralResponse()
+                {
+                    Data = res.Data,
+                    Message = res.Message,
+                    StatusCore = 200
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Common.GeneralResponse
                 {
                     Data = null,
                     Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",

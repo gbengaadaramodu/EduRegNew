@@ -15,17 +15,16 @@ namespace EduReg.Services.Repositories
         }
         public async Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
         {
+            var response = new GeneralResponse();
             try
             {
-                var foundSession = _context.AcademicSessions.FirstOrDefault(x => x.Id == model.Id);
+                var foundSession = _context.AcademicSessions.FirstOrDefault(x => x.Id == model.SessionId);
                 if (foundSession != null)
                 {
-                    return new GeneralResponse
-                    {
-                        Data = null,
-                        StatusCore = 400,
-                        Message = "Session already exists"
-                    };
+                    response.Data = null;
+                    response.StatusCore = 400;
+                    response.Message = "Session already exists";
+                    return response;
                 }
 
                 var session = new AcademicSession
@@ -33,7 +32,7 @@ namespace EduReg.Services.Repositories
                     SessionName = model.SessionName,
                 };
 
-                await _context.AcademicSessions.AddAsync(model);
+                await _context.AcademicSessions.AddAsync(session);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -45,24 +44,23 @@ namespace EduReg.Services.Repositories
                     Message = ex.Message
                 };
             }
+            return response;
         }
 
-        public Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
+        public async Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
         {
+            var response = new GeneralResponse();
             try
             {
                 var foundSession = _context.AcademicSessions.FirstOrDefault(x => x.Id == Id);
                 if (foundSession == null)
                 {
-                    return new GeneralResponse
-                    {
-                        Data = null,
-                        StatusCore = 404,
-                        Message = "Session not found"
-                    };
+                    response.Data = null;
+                    response.StatusCore = 404;
+                    response.Message = "Session not found";
                 }
 
-                await _context.AcademicSessions.RemoveAsync(foundSession);
+                _context.AcademicSessions.Remove(foundSession);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -74,9 +72,10 @@ namespace EduReg.Services.Repositories
                     Message = ex.Message
                 };
             }
+            return response;
         }
 
-        public Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id)
+        public async Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id)
         {
             var response = new GeneralResponse();
             try
@@ -100,7 +99,7 @@ namespace EduReg.Services.Repositories
             return response;
         }
 
-        public Task<GeneralResponse> GetAllAcademicSessionsAsync()
+        public async Task<GeneralResponse> GetAllAcademicSessionsAsync()
         {
             var response = new GeneralResponse();
             try
@@ -124,24 +123,22 @@ namespace EduReg.Services.Repositories
             return response;
         }
 
-        public Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model)
+        public async Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model)
         {
+            var response = new GeneralResponse();
             try
             {
-                var existingSession = _context.AcademicSessions.FirstOrDefault(x => x.Id == model.SessionId);
+                var existingSession = _context.AcademicSessions.FirstOrDefault(x => x.Id == Id);
                 if (existingSession == null)
                 {
-                    return new GeneralResponse
-                    {
-                        Data = null,
-                        StatusCore = 404,
-                        Message = "Session does not exist"
-                    };
+                    response.Data = null;
+                    response.StatusCore = 404;
+                    response.Message = "Session does not exist";
                 }
 
                 existingSession.SessionName = model.SessionName;
 
-                await _context.AcademicSessions.UpdateAsync(existingSession);
+                _context.AcademicSessions.Update(existingSession);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -153,6 +150,7 @@ namespace EduReg.Services.Repositories
                     Message = ex.Message
                 };
             }
+            return response;
         }
     }
 }

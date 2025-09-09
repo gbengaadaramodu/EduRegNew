@@ -29,9 +29,9 @@ namespace EduReg.Managers
             throw new NotImplementedException();
         }
 
-        public Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
+        public async Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
         {
-            return await _semesterRepository.CreateSemesterAsync(model);
+            return await _semesters.CreateSemesterAsync(model);
         }
 
         public Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
@@ -44,9 +44,9 @@ namespace EduReg.Managers
             throw new NotImplementedException();
         }
 
-        public Task<GeneralResponse> DeleteSemesterAsync(int Id)
+        public async Task<GeneralResponse> DeleteSemesterAsync(int Id)
         {
-            return await _semesterRepository.DeleteSemesterAsync(Id);
+            return await _semesters.DeleteSemesterAsync(Id);
         }
 
         public Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id)
@@ -69,14 +69,14 @@ namespace EduReg.Managers
             throw new NotImplementedException();
         }
 
-        public Task<GeneralResponse> GetAllSemestersAsync()
+        public async Task<GeneralResponse> GetAllSemestersAsync()
         {
-            return await _semesterRepository.GetAllSemestersAsync();
+            return await _semesters.GetAllSemestersAsync();
         }
 
-        public Task<GeneralResponse> GetSemesterByIdAsync(int Id)
+        public async Task<GeneralResponse> GetSemesterByIdAsync(int Id)
         {
-            return await _semesterRepository.GetSemesterByIdAsync(Id);
+            return await _semesters.GetSemesterByIdAsync(Id);
         }
 
         public Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model)
@@ -89,9 +89,9 @@ namespace EduReg.Managers
             throw new NotImplementedException();
         }
 
-        public Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model)
+        public async Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model)
         {
-            return await _semesterRepository.UpdateSemesterAsync(Id, model);
+            return await _semesters.UpdateSemesterAsync(Id, model);
         }
     }
 }

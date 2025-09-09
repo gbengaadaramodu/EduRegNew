@@ -6,7 +6,7 @@ namespace EduReg.Models.Dto
     {
         public string? BatchShortName { get; set; } //FK from Admission Batches
         
-        public string? SessionId { get; set; } // Unoque
+        public int SessionId { get; set; } // Unoque
         public string? SessionName { get; set; }
         public bool IsDeleted { get; set; }
     }
