@@ -41,6 +41,7 @@ namespace EduReg
 
             //  builder.Services.AddAutoMapper(typeof(MappingProfile));
             builder.Services.AddScoped<StudentManager>();
+         
 
 
 
