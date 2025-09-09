@@ -16,5 +16,6 @@ namespace EduReg.Data
         public DbSet<AcademicSession> AcademicSessions { get; set; }
 
         public DbSet<Departments> Departments { get; set; }
+        public DbSet<Programmes> Programmes { get; set; }
     }
 }
