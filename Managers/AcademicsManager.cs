@@ -2,6 +2,7 @@
 using EduReg.Models.Dto;
 using EduReg.Services.Interfaces;
 
+
 namespace EduReg.Managers
 {
     
@@ -10,15 +11,17 @@ namespace EduReg.Managers
     {
         private readonly IAdmissionBatches _batches;
         private readonly IAcademicSessions _sessions;
+        private readonly IAcademicLevels _levels;
         private readonly ISemesters _semesters;
-        public AcademicsManager(IAdmissionBatches batches, IAcademicSessions sessions, ISemesters semesters)
+        public AcademicsManager(IAdmissionBatches batches, IAcademicSessions sessions, IAcademicLevels levels, ISemesters semesters)
         {
             _batches = batches;
             _sessions = sessions;
+            _levels = levels;
             _semesters = semesters;
         }
 
-        public Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
+        public  Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
         {
             throw new NotImplementedException();
         }
@@ -26,6 +29,11 @@ namespace EduReg.Managers
         public Task<GeneralResponse> CreateAdmissionBatchAsync(AdmissionBatchesDto model)
         {
             throw new NotImplementedException();
+        }
+
+        public  async Task<GeneralResponse> CreateAcademicLevelAsync(AcademicLevelsDto model)
+        {
+           return await _levels.CreateAcademicLevel(model);
         }
 
         public Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
@@ -43,6 +51,11 @@ namespace EduReg.Managers
             throw new NotImplementedException();
         }
 
+        public async Task<GeneralResponse> DeleteAcademicLevelAsync(int Id)
+        {
+            return await _levels.DeleteAcademicLevelAsync(Id);
+        }
+
         public Task<GeneralResponse> DeleteSemesterAsync(int Id)
         {
             throw new NotImplementedException();
@@ -58,6 +71,12 @@ namespace EduReg.Managers
             throw new NotImplementedException();
         }
 
+        public async Task<GeneralResponse> GetAcademicLevelByIdAsync(int Id)
+        {
+          return  await _levels.GetAcademicLevelByIdAsync(Id);
+        }
+
+
         public Task<GeneralResponse> GetAllAcademicSessionsAsync()
         {
             throw new NotImplementedException();
@@ -66,6 +85,11 @@ namespace EduReg.Managers
         public Task<GeneralResponse> GetAllAdmissionBatchAsync()
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<GeneralResponse> GetAllAcademicLevelsAsync()
+        {
+            return await _levels.GetAllAcademicLevelAsync();
         }
 
         public Task<GeneralResponse> GetAllSemestersAsync()
@@ -88,9 +112,16 @@ namespace EduReg.Managers
             throw new NotImplementedException();
         }
 
+        public async Task<GeneralResponse> UpdateAcademicLevelAsync(int Id, AcademicLevelsDto model)
+        {
+        return await _levels.UpdateAcademicLevelAsync(Id, model);
+        }
+
         public Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model)
         {
             throw new NotImplementedException();
         }
+
+        
     }
 }
