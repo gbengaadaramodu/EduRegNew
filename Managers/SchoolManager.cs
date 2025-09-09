@@ -21,9 +21,9 @@ namespace EduReg.Managers
             throw new NotImplementedException();
         }
 
-        public Task<GeneralResponse> CreateFacultyAsync(FacultiesDto model)
+        public async Task<GeneralResponse> CreateFacultyAsync(FacultiesDto model)
         {
-            throw new NotImplementedException();
+            return await _faculties.CreateFacultyAsync(model);
         }
 
         public Task<GeneralResponse> DeleteDepartmentAsync(int Id)
@@ -31,9 +31,9 @@ namespace EduReg.Managers
             throw new NotImplementedException();
         }
 
-        public Task<GeneralResponse> DeleteFacultyAsync(int Id)
+        public async Task<GeneralResponse> DeleteFacultyAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _faculties.DeleteFacultyAsync(Id);
         }
 
         public Task<GeneralResponse> GetAllDepartmentsAsync()
@@ -41,9 +41,9 @@ namespace EduReg.Managers
             throw new NotImplementedException();
         }
 
-        public Task<GeneralResponse> GetAllFacultiesAsync()
+        public async Task<GeneralResponse> GetAllFacultiesAsync()
         {
-            throw new NotImplementedException();
+            return await _faculties.GetAllFacultiesAsync();
         }
 
         public Task<GeneralResponse> GetDepartmentByIdAsync(int Id)
@@ -56,9 +56,9 @@ namespace EduReg.Managers
             throw new NotImplementedException();
         }
 
-        public Task<GeneralResponse> GetFacultyByIdAsync(int Id)
+        public async Task<GeneralResponse> GetFacultyByIdAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _faculties.GetFacultyByIdAsync(Id);
         }
 
         public Task<GeneralResponse> UpdateDepartmentAsync(int Id, DepartmentsDto model)
@@ -66,9 +66,9 @@ namespace EduReg.Managers
             throw new NotImplementedException();
         }
 
-        public Task<GeneralResponse> UpdateFacultyAsync(int Id, FacultiesDto model)
+        public async Task<GeneralResponse> UpdateFacultyAsync(int Id, FacultiesDto model)
         {
-            throw new NotImplementedException();
+            return await _faculties.UpdateFacultyAsync(Id, model);
         }
     }
 }
