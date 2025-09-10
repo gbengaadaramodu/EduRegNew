@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
 using EduReg.Services.Interfaces;
+using EduReg.Services.Repositories;
 
 
 namespace EduReg.Managers
@@ -36,9 +37,9 @@ namespace EduReg.Managers
            return await _levels.CreateAcademicLevel(model);
         }
 
-        public Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
+        public async Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
         {
-            throw new NotImplementedException();
+            return await _semesters.CreateSemesterAsync(model);
         }
 
         public Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
@@ -56,9 +57,9 @@ namespace EduReg.Managers
             return await _levels.DeleteAcademicLevelAsync(Id);
         }
 
-        public Task<GeneralResponse> DeleteSemesterAsync(int Id)
+        public async Task<GeneralResponse> DeleteSemesterAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _semesters.DeleteSemesterAsync(Id);
         }
 
         public Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id)
@@ -92,14 +93,14 @@ namespace EduReg.Managers
             return await _levels.GetAllAcademicLevelAsync();
         }
 
-        public Task<GeneralResponse> GetAllSemestersAsync()
+        public async Task<GeneralResponse> GetAllSemestersAsync()
         {
-            throw new NotImplementedException();
+            return await _semesters.GetAllSemestersAsync();
         }
 
-        public Task<GeneralResponse> GetSemesterByIdAsync(int Id)
+        public async Task<GeneralResponse> GetSemesterByIdAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _semesters.GetSemesterByIdAsync(Id);
         }
 
         public Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model)
@@ -117,9 +118,9 @@ namespace EduReg.Managers
         return await _levels.UpdateAcademicLevelAsync(Id, model);
         }
 
-        public Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model)
+        public async Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model)
         {
-            throw new NotImplementedException();
+            return await _semesters.UpdateSemesterAsync(Id, model);
         }
 
         

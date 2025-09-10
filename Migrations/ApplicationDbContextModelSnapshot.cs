@@ -61,11 +61,11 @@ namespace EduReg.Migrations
 
             modelBuilder.Entity("EduReg.Models.Entities.AcademicSession", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("SessionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SessionId"));
 
                     b.Property<int>("ActiveStatus")
                         .HasColumnType("int");
@@ -82,11 +82,11 @@ namespace EduReg.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<int>("SessionId")
-                        .HasColumnType("int");
 
                     b.Property<string>("SessionName")
                         .HasColumnType("nvarchar(max)");
@@ -94,7 +94,7 @@ namespace EduReg.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.HasKey("SessionId");
 
                     b.ToTable("AcademicSessions");
                 });
@@ -351,6 +351,45 @@ namespace EduReg.Migrations
                 });
 
 
+            modelBuilder.Entity("EduReg.Models.Entities.Semester", b =>
+                {
+                    b.Property<int>("SemesterId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SemesterId"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SemesterName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SessionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("SemesterId");
+
+                    b.HasIndex("SessionId");
+
+                    b.ToTable("Semesters");
+                });
+
             modelBuilder.Entity("EduReg.Models.Entities.StudentSignUp", b =>
                 {
                     b.Property<int>("Id")
@@ -563,6 +602,17 @@ namespace EduReg.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("EduReg.Models.Entities.Semester", b =>
+                {
+                    b.HasOne("EduReg.Models.Entities.AcademicSession", "Session")
+                        .WithMany("Semesters")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Session");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -612,6 +662,11 @@ namespace EduReg.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.AcademicSession", b =>
+                {
+                    b.Navigation("Semesters");
                 });
 #pragma warning restore 612, 618
         }
