@@ -37,7 +37,6 @@ namespace EduReg.Managers
            return await _levels.CreateAcademicLevel(model);
         }
 
-        public Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
         public async Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
         {
             return await _semesters.CreateSemesterAsync(model);
@@ -58,7 +57,6 @@ namespace EduReg.Managers
             return await _levels.DeleteAcademicLevelAsync(Id);
         }
 
-        public Task<GeneralResponse> DeleteSemesterAsync(int Id)
         public async Task<GeneralResponse> DeleteSemesterAsync(int Id)
         {
             return await _semesters.DeleteSemesterAsync(Id);
@@ -95,7 +93,6 @@ namespace EduReg.Managers
             return await _levels.GetAllAcademicLevelAsync();
         }
 
-        public Task<GeneralResponse> GetAllSemestersAsync()
         public async Task<GeneralResponse> GetAllSemestersAsync()
         {
             return await _semesters.GetAllSemestersAsync();
@@ -121,7 +118,6 @@ namespace EduReg.Managers
         return await _levels.UpdateAcademicLevelAsync(Id, model);
         }
 
-        public Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model)
         public async Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model)
         {
             return await _semesters.UpdateSemesterAsync(Id, model);

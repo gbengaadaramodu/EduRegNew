@@ -14,7 +14,7 @@ namespace EduReg.Services.Repositories
         {
             _context = context;
         }
-        public Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
+        public async Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
         {
             var response = new GeneralResponse();
             try
