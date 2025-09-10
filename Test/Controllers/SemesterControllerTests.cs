@@ -1,15 +1,19 @@
 ﻿using EduReg.Common;
 using EduReg.Controllers;
+using EduReg.Data;
 using EduReg.Managers;
 using EduReg.Models.Dto;
+using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace Test.Controllers
 {
     public class SemesterControllerTests
     {
+
         [Fact]
         public async Task GetSemesters_ReturnsOkResult()
         {
@@ -157,7 +161,7 @@ namespace Test.Controllers
             var mockSemester = new Mock<ISemesters>();
             var mockSession = new Mock<IAcademicSessions>();
 
-            mockSession.Setup(m => m.GetAcademicSessionByIdAsync(It.IsAny<int>()))
+            mockSemester.Setup(m => m.CreateSemesterAsync(It.IsAny<SemestersDto>()))
                        .ReturnsAsync(new GeneralResponse { Data = null, Message = "Session does not exist", StatusCore = 404 });
             
             var controller = new SemestersController(mockSemester.Object);

@@ -35,7 +35,7 @@ namespace EduReg.Controllers
                 return BadRequest(new GeneralResponse
                 {
                     Data = null,
-                    Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
+                    Message = "An Error occurred, please try again after some time.",
                     StatusCore = 400
                 });
             }
@@ -48,6 +48,15 @@ namespace EduReg.Controllers
             try
             {
                 var res = await _service.GetAcademicSessionByIdAsync(id);
+                if (res.Data == null)
+                {
+                    return NotFound(new GeneralResponse()
+                    {
+                        Data = null,
+                        Message = res.Message,
+                        StatusCore = 404
+                    });
+                }
                 return Ok(new GeneralResponse()
                 {
                     Data = res.Data,
@@ -60,7 +69,7 @@ namespace EduReg.Controllers
                 return BadRequest(new GeneralResponse
                 {
                     Data = null,
-                    Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
+                    Message = "An Error occurred, please try again after some time.",
                     StatusCore = 400
                 });
             }
@@ -85,7 +94,7 @@ namespace EduReg.Controllers
                 return BadRequest(new GeneralResponse
                 {
                     Data = null,
-                    Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
+                    Message = "An Error occurred, please try again after some time.",
                     StatusCore = 400
                 });
             }
@@ -98,6 +107,15 @@ namespace EduReg.Controllers
             try
             {
                 var res = await _service.DeleteAcademicSessionAsync(id);
+                if (res.Data == null)
+                {
+                    return NotFound(new GeneralResponse()
+                    {
+                        Data = null,
+                        Message = res.Message,
+                        StatusCore = 404
+                    });
+                }
                 return Ok(new GeneralResponse()
                 {
                     Data = res.Data,
@@ -110,7 +128,7 @@ namespace EduReg.Controllers
                 return BadRequest(new GeneralResponse
                 {
                     Data = null,
-                    Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
+                    Message = "An Error occurred, please try again after some time.",
                     StatusCore = 400
                 });
             }
@@ -135,7 +153,7 @@ namespace EduReg.Controllers
                 return BadRequest(new GeneralResponse
                 {
                     Data = null,
-                    Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
+                    Message = "An Error occurred, please try again after some time.",
                     StatusCore = 400
                 });
             }

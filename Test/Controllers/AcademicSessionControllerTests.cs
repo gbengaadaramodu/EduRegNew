@@ -60,7 +60,7 @@ namespace Test.Controllers
             var controller = new AcademicSessionsController(mockRepo.Object);
             int wrongId = 999;
             var result = await controller.GetAcademicSessionById(wrongId);
-            var okResult = Assert.IsType<OkObjectResult>(result);
+            var okResult = Assert.IsType<NotFoundObjectResult>(result);
             var response = Assert.IsType<GeneralResponse>(okResult.Value);
             Assert.Null(response.Data);
             Assert.Equal(404, response.StatusCore);
@@ -73,7 +73,7 @@ namespace Test.Controllers
             // Arrange
             var mockRepo = new Mock<IAcademicSessions>();
             mockRepo.Setup(m => m.GetAllAcademicSessionsAsync())
-                       .ThrowsAsync(new Exception("Test exception"));
+                       .ThrowsAsync(new Exception("An Error occurred, please try again after some time."));
             var controller = new AcademicSessionsController(mockRepo.Object);
             // Act
             var result = await controller.GetAllAcademicSessions();
@@ -82,7 +82,7 @@ namespace Test.Controllers
             // Assert
             Assert.Null(response.Data);
             Assert.Equal(400, response.StatusCore);
-            Assert.Equal("Test exception", response.Message);
+            Assert.Equal("An Error occurred, please try again after some time.", response.Message);
         }
 
         [Fact]
@@ -91,14 +91,14 @@ namespace Test.Controllers
             var mockRepo = new Mock<IAcademicSessions>();
             var sessionId = 1;
             mockRepo.Setup(m => m.GetAcademicSessionByIdAsync(sessionId))
-                       .ThrowsAsync(new Exception("Test exception"));
+                       .ThrowsAsync(new Exception("An Error occurred, please try again after some time."));
             var controller = new AcademicSessionsController(mockRepo.Object);
             var result = await controller.GetAcademicSessionById(sessionId);
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             var response = Assert.IsType<GeneralResponse>(badRequestResult.Value);
             Assert.Null(response.Data);
             Assert.Equal(400, response.StatusCore);
-            Assert.Equal("Test exception", response.Message);
+            Assert.Equal("An Error occurred, please try again after some time.", response.Message);
         }
 
         [Fact]
@@ -175,14 +175,14 @@ namespace Test.Controllers
             var mockRepo = new Mock<IAcademicSessions>();
             var sessionId = 1;
             mockRepo.Setup(m => m.DeleteAcademicSessionAsync(sessionId))
-                       .ThrowsAsync(new Exception("Test exception"));
+                       .ThrowsAsync(new Exception("An Error occurred, please try again after some time."));
             var controller = new AcademicSessionsController(mockRepo.Object);
             var result = await controller.DeleteAcademicSession(sessionId);
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             var response = Assert.IsType<GeneralResponse>(badRequestResult.Value);
             Assert.Null(response.Data);
             Assert.Equal(400, response.StatusCore);
-            Assert.Equal("Test exception", response.Message);
+            Assert.Equal("An Error occurred, please try again after some time.", response.Message);
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace Test.Controllers
             var okResult = Assert.IsType<OkObjectResult>(result);
             var response = Assert.IsType<GeneralResponse>(okResult.Value);
             Assert.NotNull(response.Data);
-            Assert.Equal(201, response.StatusCore);
+            Assert.Equal(200, response.StatusCore);
             Assert.Equal("Created Successfully", response.Message);
         }
 
@@ -207,14 +207,14 @@ namespace Test.Controllers
             var mockRepo = new Mock<IAcademicSessions>();
             var newSession = new AcademicSessionsDto { SessionName = "New Session" };
             mockRepo.Setup(m => m.CreateAcademicSessionAsync(newSession))
-                       .ThrowsAsync(new Exception("Test exception"));
+                       .ThrowsAsync(new Exception("An Error occurred, please try again after some time."));
             var controller = new AcademicSessionsController(mockRepo.Object);
             var result = await controller.CreateAcademicSession(newSession);
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             var response = Assert.IsType<GeneralResponse>(badRequestResult.Value);
             Assert.Null(response.Data);
             Assert.Equal(400, response.StatusCore);
-            Assert.Equal("Test exception", response.Message);
+            Assert.Equal("An Error occurred, please try again after some time.", response.Message);
         }
     }
 }

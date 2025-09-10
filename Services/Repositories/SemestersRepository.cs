@@ -71,7 +71,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-                var foundSemester = _context.Semesters.FirstOrDefault(x => x.Id == Id);
+                var foundSemester = _context.Semesters.FirstOrDefault(x => x.SemesterId == Id);
                 if (foundSemester != null)
                 {
                     _context.Semesters.Remove(foundSemester);
@@ -132,7 +132,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-                var semester = await _context.Semesters.FirstOrDefaultAsync(x => x.Id == Id);
+                var semester = await _context.Semesters.FirstOrDefaultAsync(x => x.SemesterId == Id);
 
                 if (semester == null)
                 {
@@ -176,7 +176,7 @@ namespace EduReg.Services.Repositories
                 }
 
                 var foundSemester = await _context.Semesters
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                    .FirstOrDefaultAsync(x => x.SemesterId == id);
                 if (foundSemester == null)
                 {
                     return new GeneralResponse

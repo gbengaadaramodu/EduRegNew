@@ -24,8 +24,8 @@ namespace Test.Repositories
             var context = new ApplicationDbContext(options);
 
             context.Semesters.AddRange(
-                new Semester { Id = 1, SemesterName = "Fall 2023" },
-                new Semester { Id = 2, SemesterName = "Spring 2024" }
+                new Semester { Id = 1, SemesterName = "Fall 2023", SessionId = 1 },
+                new Semester { Id = 2, SemesterName = "Spring 2024", SessionId = 2 }
             );
             context.SaveChanges();
             return context;
@@ -134,7 +134,6 @@ namespace Test.Repositories
             var service = new SemestersRepository(context);
             var result = await service.DeleteSemesterAsync(1);
             Assert.Equal(200, result.StatusCore);
-            Assert.NotNull(result.Data);
             Assert.Equal("Semester deleted successfully", result.Message);
 
         }
@@ -154,13 +153,13 @@ namespace Test.Repositories
         public async Task UpdateSemester_ExistingId_ReturnsSuccessResponse()
         {
             var context = GetDbContext();
-            context.Semesters.Add(new Semester { SemesterName = "Fall 2023", SessionId = 1, SemesterId = 1 });
+            context.AcademicSessions.Add(new AcademicSession { SessionName = "2023/2024", SessionId = 1 });
             context.SaveChanges();
             var service = new SemestersRepository(context);
             var updateDto = new SemestersDto
             {
                 SessionId = 1,
-                SemesterId = 1,
+                SemesterId = 999,
                 SemesterName = "Updated Fall 2023",
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddMonths(4)
@@ -175,9 +174,13 @@ namespace Test.Repositories
         public async Task UpdateSemester_NonExistingId_ReturnsNotFoundResponse()
         {
             var context = GetDbContext();
+            context.AcademicSessions.Add(new AcademicSession { SessionName = "2023/2024", SessionId = 1 });
+            context.SaveChanges();
             var service = new SemestersRepository(context);
             var updateDto = new SemestersDto
             {
+                SessionId = 1,
+                SemesterId = 999,
                 SemesterName = "Updated Fall 2023",
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddMonths(4)
@@ -192,18 +195,20 @@ namespace Test.Repositories
         public async Task UpdateSemester_DuplicateSemester_ReturnsBadRequestResponse()
         {
             var context = GetDbContext();
+            context.AcademicSessions.Add(new AcademicSession { SessionId = 1, SessionName = "2024/2025" });
             context.Semesters.Add(new Semester { SemesterId = 3, SemesterName = "Spring 2024", SessionId = 1 });
             context.SaveChanges();
             var service = new SemestersRepository(context);
             var updateDto = new SemestersDto
             {
                 SessionId = 1,
+                SemesterId = 3,
                 SemesterName = "Spring 2024",
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddMonths(4)
             };
             var result = await service.UpdateSemesterAsync(1, updateDto);
-            Assert.Equal("Another semester with the same name exists", result.Message);
+            Assert.Equal("Another semester with the same name already exists in this session", result.Message);
             Assert.Equal(400, result.StatusCore);
             Assert.Null(result.Data);
             

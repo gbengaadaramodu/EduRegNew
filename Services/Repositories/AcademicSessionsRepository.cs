@@ -19,7 +19,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-                var foundSession = _context.AcademicSessions.FirstOrDefault(x => x.Id == model.SessionId);
+                var foundSession = _context.AcademicSessions.FirstOrDefault(x => x.SessionId == model.SessionId || x.SessionName == model.SessionName);
                 if (foundSession != null)
                 {
                     response.Data = null;
@@ -35,6 +35,10 @@ namespace EduReg.Services.Repositories
 
                 await _context.AcademicSessions.AddAsync(session);
                 await _context.SaveChangesAsync();
+
+                response.StatusCore = 200;
+                response.Message = "Session created successfully";
+                response.Data = session;
             }
             catch (Exception ex)
             {
@@ -53,7 +57,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-                var foundSession = _context.AcademicSessions.FirstOrDefault(x => x.Id == Id);
+                var foundSession = _context.AcademicSessions.FirstOrDefault(x => x.SessionId == Id);
                 if (foundSession != null)
                 {
                     _context.AcademicSessions.Remove(foundSession);
@@ -145,7 +149,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-                var existingSession = _context.AcademicSessions.FirstOrDefault(x => x.Id == Id);
+                var existingSession = _context.AcademicSessions.FirstOrDefault(x => x.SessionId == Id);
                 if (existingSession == null)
                 {
                     response.Data = null;
@@ -167,6 +171,10 @@ namespace EduReg.Services.Repositories
 
                 _context.AcademicSessions.Update(existingSession);
                 await _context.SaveChangesAsync();
+
+                response.Data = null;
+                response.StatusCore = 200;
+                response.Message = "Session updated successfully";
             }
             catch (Exception ex)
             {

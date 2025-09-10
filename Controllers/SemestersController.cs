@@ -37,7 +37,7 @@ namespace EduReg.Controllers
                 return BadRequest(new GeneralResponse
                 {
                     Data = null,
-                    Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
+                    Message = "An Error occurred, please try again after some time.",
                     StatusCore = 400
                 });
             }
@@ -71,7 +71,7 @@ namespace EduReg.Controllers
                 return BadRequest(new GeneralResponse
                 {
                     Data = null,
-                    Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
+                    Message = "An Error occurred, please try again after some time.",
                     StatusCore = 400
                 });
             }
@@ -105,7 +105,7 @@ namespace EduReg.Controllers
                 return BadRequest(new GeneralResponse
                 {
                     Data = null,
-                    Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
+                    Message = "An Error occurred, please try again after some time.",
                     StatusCore = 400
                 });
             }
@@ -139,7 +139,7 @@ namespace EduReg.Controllers
                 return BadRequest(new GeneralResponse
                 {
                     Data = null,
-                    Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
+                    Message = "An Error occurred, please try again after some time.",
                     StatusCore = 400
                 });
             }
@@ -173,7 +173,7 @@ namespace EduReg.Controllers
                 return BadRequest(new GeneralResponse
                 {
                     Data = null,
-                    Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
+                    Message = "An Error occurred, please try again after some time.",
                     StatusCore = 400
                 });
             }
