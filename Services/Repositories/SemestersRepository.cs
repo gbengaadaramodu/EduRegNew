@@ -29,7 +29,7 @@ namespace EduReg.Services.Repositories
                     return response;
                 }
 
-                var foundSemester = _context.Semesters.FirstOrDefault(x => x.SemesterId == model.SemesterId && x.SemesterName == model.SemesterName);
+                var foundSemester = _context.Semesters.FirstOrDefault(x => x.SessionId == model.SessionId && x.SemesterName == model.SemesterName);
                 if (foundSemester != null)
                 {
                     response.Data = null;

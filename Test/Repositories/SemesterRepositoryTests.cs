@@ -92,12 +92,11 @@ namespace Test.Repositories
         {
             var context = GetDbContext();
             context.AcademicSessions.Add(new AcademicSession { SessionId = 1, SessionName = "2023/2024" });
-            context.Semesters.Add(new Semester { SemesterId = 1, SemesterName = "Fall 2023", SessionId = 1 });
+            context.Semesters.Add(new Semester { SemesterName = "Fall 2023", SessionId = 1 });
             context.SaveChanges();
             var service = new SemestersRepository(context);
             var duplicateSemester = new SemestersDto
             {
-                SemesterId = 1,
                 SemesterName = "Fall 2023",
                 SessionId = 1,
                 StartDate = DateTime.Now,
@@ -155,9 +154,13 @@ namespace Test.Repositories
         public async Task UpdateSemester_ExistingId_ReturnsSuccessResponse()
         {
             var context = GetDbContext();
+            context.Semesters.Add(new Semester { SemesterName = "Fall 2023", SessionId = 1, SemesterId = 1 });
+            context.SaveChanges();
             var service = new SemestersRepository(context);
             var updateDto = new SemestersDto
             {
+                SessionId = 1,
+                SemesterId = 1,
                 SemesterName = "Updated Fall 2023",
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddMonths(4)
@@ -194,14 +197,16 @@ namespace Test.Repositories
             var service = new SemestersRepository(context);
             var updateDto = new SemestersDto
             {
-                SemesterName = "Spring 2024", // Duplicate name
+                SessionId = 1,
+                SemesterName = "Spring 2024",
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddMonths(4)
             };
             var result = await service.UpdateSemesterAsync(1, updateDto);
+            Assert.Equal("Another semester with the same name exists", result.Message);
             Assert.Equal(400, result.StatusCore);
             Assert.Null(result.Data);
-            Assert.Equal("Another semester with the same name exists", result.Message);
+            
         }
 
         [Fact]

@@ -118,6 +118,15 @@ namespace EduReg.Controllers
             try
             {
                 var res = await _semester.UpdateSemesterAsync(Id, model);
+                if (res.StatusCore == 404)
+                {
+                    return NotFound(new GeneralResponse()
+                    {
+                        Data = null,
+                        Message = res.Message,
+                        StatusCore = 404
+                    });
+                }
                 return Ok(new GeneralResponse()
                 {
                     Data = res.Data,
