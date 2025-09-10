@@ -1,4 +1,6 @@
-﻿using EduReg.Managers;
+﻿using EduReg.Common;
+using EduReg.Managers;
+using EduReg.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +10,10 @@ namespace EduReg.Controllers
     [ApiController]
     public class AcademicSessionsController : ControllerBase
     {
-        private readonly AcademicsManager _manager;
-        public AcademicSessionsController(AcademicsManager manager)
+        private readonly IAcademicSessions _service;
+        public AcademicSessionsController(IAcademicSessions service)
         {
-            _manager = manager;
+            _service = service;
         }
 
         [HttpGet]
@@ -20,8 +22,8 @@ namespace EduReg.Controllers
         {
             try
             {
-                var res = await _manager.GetAllAcademicSessionsAsync();
-                return Ok(new Common.GeneralResponse()
+                var res = await _service.GetAllAcademicSessionsAsync();
+                return Ok(new GeneralResponse()
                 {
                     Data = res.Data,
                     Message = res.Message,
@@ -30,7 +32,7 @@ namespace EduReg.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new Common.GeneralResponse
+                return BadRequest(new GeneralResponse
                 {
                     Data = null,
                     Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
@@ -45,8 +47,8 @@ namespace EduReg.Controllers
         {
             try
             {
-                var res = await _manager.GetAcademicSessionByIdAsync(id);
-                return Ok(new Common.GeneralResponse()
+                var res = await _service.GetAcademicSessionByIdAsync(id);
+                return Ok(new GeneralResponse()
                 {
                     Data = res.Data,
                     Message = res.Message,
@@ -55,7 +57,7 @@ namespace EduReg.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new Common.GeneralResponse
+                return BadRequest(new GeneralResponse
                 {
                     Data = null,
                     Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
@@ -70,8 +72,8 @@ namespace EduReg.Controllers
         {
             try
             {
-                var res = await _manager.CreateAcademicSessionAsync(model);
-                return Ok(new Common.GeneralResponse()
+                var res = await _service.CreateAcademicSessionAsync(model);
+                return Ok(new GeneralResponse()
                 {
                     Data = res.Data,
                     Message = res.Message,
@@ -80,7 +82,7 @@ namespace EduReg.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new Common.GeneralResponse
+                return BadRequest(new GeneralResponse
                 {
                     Data = null,
                     Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
@@ -95,8 +97,8 @@ namespace EduReg.Controllers
         {
             try
             {
-                var res = await _manager.DeleteAcademicSessionAsync(id);
-                return Ok(new Common.GeneralResponse()
+                var res = await _service.DeleteAcademicSessionAsync(id);
+                return Ok(new GeneralResponse()
                 {
                     Data = res.Data,
                     Message = res.Message,
@@ -105,7 +107,7 @@ namespace EduReg.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new Common.GeneralResponse
+                return BadRequest(new GeneralResponse
                 {
                     Data = null,
                     Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
@@ -120,8 +122,8 @@ namespace EduReg.Controllers
         {
             try
             {
-                var res = await _manager.UpdateAcademicSessionAsync(id, model);
-                return Ok(new Common.GeneralResponse()
+                var res = await _service.UpdateAcademicSessionAsync(id, model);
+                return Ok(new GeneralResponse()
                 {
                     Data = res.Data,
                     Message = res.Message,
@@ -130,7 +132,7 @@ namespace EduReg.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new Common.GeneralResponse
+                return BadRequest(new GeneralResponse
                 {
                     Data = null,
                     Message = !string.IsNullOrEmpty(ex.Message) ? ex.Message : "An Error occurred, please try again after some time.",
