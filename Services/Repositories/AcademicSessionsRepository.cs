@@ -1,7 +1,9 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduReg.Services.Repositories
 {
@@ -12,34 +14,178 @@ namespace EduReg.Services.Repositories
         {
             _context = context;
         }
-        public Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
+        public async Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
         {
-            
+            var response = new GeneralResponse();
+            try
+            {
+                var foundSession = _context.AcademicSessions.FirstOrDefault(x => x.SessionId == model.SessionId || x.SessionName == model.SessionName);
+                if (foundSession != null)
+                {
+                    response.Data = null;
+                    response.StatusCore = 400;
+                    response.Message = "Session already exists";
+                    return response;
+                }
 
-            return Task.FromResult(new GeneralResponse { StatusCore = 200, Message = "Academic session created successfully" , Data = model});
-            
-           // return new GeneralResponse { StatusCore = 404, Message = "Not Found"};
+                var session = new AcademicSession
+                {
+                    SessionName = model.SessionName,
+                };
 
+                await _context.AcademicSessions.AddAsync(session);
+                await _context.SaveChangesAsync();
+
+                response.StatusCore = 200;
+                response.Message = "Session created successfully";
+                response.Data = session;
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    Data = null,
+                    StatusCore = 500,
+                    Message = ex.Message
+                };
+            }
+            return response;
         }
 
-        public Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
+        public async Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
         {
-            throw new NotImplementedException();
+            var response = new GeneralResponse();
+            try
+            {
+                var foundSession = _context.AcademicSessions.FirstOrDefault(x => x.SessionId == Id);
+                if (foundSession != null)
+                {
+                    _context.AcademicSessions.Remove(foundSession);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    response.Data = null;
+                    response.StatusCore = 404;
+                    response.Message = "Session not found";
+                    return response;
+                }
+
+                response.Data = null;
+                response.StatusCore = 200;
+                response.Message = "Session deleted successfully";
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    Data = null,
+                    StatusCore = 500,
+                    Message = ex.Message
+                };
+            }
         }
 
-        public Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id)
+        public async Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id)
         {
-            throw new NotImplementedException();
+            var response = new GeneralResponse();
+            try
+            {
+                var session = await _context.AcademicSessions.FirstOrDefaultAsync(x => x.SessionId == Id && x.IsDeleted == false);
+
+                if (session == null)
+                {
+                    response.Data = null;
+                    response.StatusCore = 404;
+                    response.Message = "Session not found";
+                    return response;
+                }
+
+                response.Data = session;
+                response.StatusCore = 200;
+                response.Message = "Successful";
+
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    Data = null,
+                    StatusCore = 500,
+                    Message = ex.Message
+                };
+            }
+            return response;
         }
 
-        public Task<GeneralResponse> GetAllAcademicSessionsAsync()
+        public async Task<GeneralResponse> GetAllAcademicSessionsAsync()
         {
-            throw new NotImplementedException();
+            var response = new GeneralResponse();
+            try
+            {
+                var session = await _context.AcademicSessions.Where(x => x.IsDeleted == false).ToListAsync();
+
+                response.Data = session;
+                response.StatusCore = 200;
+                response.Message = "Successful";
+
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    Data = null,
+                    StatusCore = 500,
+                    Message = ex.Message
+                };
+            }
+            return response;
         }
 
-        public Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model)
+        public async Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model)
         {
-            throw new NotImplementedException();
+            var response = new GeneralResponse();
+            try
+            {
+                var existingSession = _context.AcademicSessions.FirstOrDefault(x => x.SessionId == Id);
+                if (existingSession == null)
+                {
+                    response.Data = null;
+                    response.StatusCore = 404;
+                    response.Message = "Session does not exist";
+                    return response;
+                }
+
+                var duplicateSession = await _context.AcademicSessions.AnyAsync(x => x.SessionName == model.SessionName && x.SessionId != Id);
+                if (duplicateSession)
+                {
+                    response.Data = null;
+                    response.StatusCore = 400;
+                    response.Message = "Another session with the same name already exists";
+                    return response;
+                }
+
+                existingSession.SessionName = model.SessionName;
+
+                _context.AcademicSessions.Update(existingSession);
+                await _context.SaveChangesAsync();
+
+                response.Data = null;
+                response.StatusCore = 200;
+                response.Message = "Session updated successfully";
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    Data = null,
+                    StatusCore = 500,
+                    Message = ex.Message
+                };
+            }
+            return response;
         }
     }
 }
