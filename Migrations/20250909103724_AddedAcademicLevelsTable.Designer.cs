@@ -4,6 +4,7 @@ using EduReg.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduReg.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250909103724_AddedAcademicLevelsTable")]
+    partial class AddedAcademicLevelsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,11 +64,11 @@ namespace EduReg.Migrations
 
             modelBuilder.Entity("EduReg.Models.Entities.AcademicSession", b =>
                 {
-                    b.Property<int>("SessionId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SessionId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ActiveStatus")
                         .HasColumnType("int");
@@ -82,11 +85,11 @@ namespace EduReg.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<int>("SessionId")
+                        .HasColumnType("int");
 
                     b.Property<string>("SessionName")
                         .HasColumnType("nvarchar(max)");
@@ -94,7 +97,7 @@ namespace EduReg.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("SessionId");
+                    b.HasKey("Id");
 
                     b.ToTable("AcademicSessions");
                 });
@@ -193,201 +196,6 @@ namespace EduReg.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("EduReg.Models.Entities.Departments", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ActiveStatus")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DepartmentCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DepartmentName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FacultyCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MaximumNumberofSemesters")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberofSemesters")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Programme")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Departments");
-                });
-
-            modelBuilder.Entity("EduReg.Models.Entities.Faculties", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ActiveStatus")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FacultyCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FacultyName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InstitutionShortName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Faculties");
-                });
-
-            modelBuilder.Entity("EduReg.Models.Entities.Level", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ActiveStatus")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LevelName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AcademicLevels");
-                });
-
-            modelBuilder.Entity("EduReg.Models.Entities.Programmes", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ActiveStatus")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DepartmentCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MaximumNumberOfSemesters")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfSemesters")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProgrammeCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProgrammeName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Programmes");
-                });
-
-
-            modelBuilder.Entity("EduReg.Models.Entities.Semester", b =>
-                {
-                    b.Property<int>("SemesterId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SemesterId"));
-
-                    b.Property<int>("ActiveStatus")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SemesterName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SessionId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("SemesterId");
-
-                    b.HasIndex("SessionId");
-
-                    b.ToTable("Semesters");
                 });
 
             modelBuilder.Entity("EduReg.Models.Entities.StudentSignUp", b =>
@@ -602,17 +410,6 @@ namespace EduReg.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("EduReg.Models.Entities.Semester", b =>
-                {
-                    b.HasOne("EduReg.Models.Entities.AcademicSession", "Session")
-                        .WithMany("Semesters")
-                        .HasForeignKey("SessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Session");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -662,11 +459,6 @@ namespace EduReg.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("EduReg.Models.Entities.AcademicSession", b =>
-                {
-                    b.Navigation("Semesters");
                 });
 #pragma warning restore 612, 618
         }
