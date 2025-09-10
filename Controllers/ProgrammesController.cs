@@ -42,7 +42,7 @@ namespace EduReg.Controllers
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteProgrammeById/{id}")]
         public async Task<IActionResult> DeleteProgramme(int id)
         {
             _logger.LogInformation($"DELETE request received for programme with ID: {id}");
@@ -59,7 +59,7 @@ namespace EduReg.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("GetAllProgrammes")]
         public async Task<IActionResult> GetAllProgrammes()
         {
             _logger.LogInformation("GET request received to fetch all programmes");
@@ -81,7 +81,7 @@ namespace EduReg.Controllers
         }
 
 
-        [HttpGet("{id}")]
+        [HttpGet("GetProgrammeById/{id}")]
         public async Task<IActionResult> GetProgrammeById(int id)
         {
             _logger.LogInformation($"GET request received for programme with ID: {id}");
@@ -98,7 +98,7 @@ namespace EduReg.Controllers
         }
 
 
-        [HttpGet("GetByName/{programmeName}")]
+        [HttpGet("GetProgrammeByName/{programmeName}")]
         public async Task<IActionResult> GetProgrammeByName(string programmeName)
         {
             _logger.LogInformation($"GET request received for programme with Name: {programmeName}");
@@ -115,7 +115,7 @@ namespace EduReg.Controllers
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut("UpdateProgrammeById/{id}")]
         public async Task<IActionResult> UpdateProgramme(int id, [FromBody] ProgrammesDto model)
         {
             _logger.LogInformation($"PUT request received to update programme with ID: {id}");
