@@ -11,13 +11,13 @@ namespace EduReg.Managers
     {
         private readonly IAdmissionBatches _batches;
         private readonly IAcademicSessions _sessions;
-        private readonly IAcademicLevels _levels;
+        private readonly IAcademics _levels;
         private readonly ISemesters _semesters;
-        public AcademicsManager(IAdmissionBatches batches, IAcademicSessions sessions, IAcademicLevels levels, ISemesters semesters)
+        public AcademicsManager(IAdmissionBatches batches, IAcademicSessions sessions, IAcademics levels, ISemesters semesters)
         {
             _batches = batches;
             _sessions = sessions;
-            _levels = levels;
+                                     _levels = levels;  
             _semesters = semesters;
         }
 

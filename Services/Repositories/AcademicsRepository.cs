@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EduReg.Services.Repositories
 {
-    public class AcademicLevelsRepository : IAcademicLevels
+    public class AcademicsRepository : IAcademics
     {
         private readonly ApplicationDbContext _context;
 
-        public AcademicLevelsRepository(ApplicationDbContext context)
+        public AcademicsRepository(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -103,6 +103,8 @@ namespace EduReg.Services.Repositories
 
         public async Task<GeneralResponse> UpdateAcademicLevelAsync(int Id, AcademicLevelsDto model)
         {
+             
+            
             var level = await _context.AcademicLevels.FindAsync(Id);
 
             if (level == null)
