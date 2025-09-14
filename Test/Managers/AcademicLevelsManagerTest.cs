@@ -12,13 +12,13 @@ namespace EduReg.Tests
 {
     public class AcademicLevelsManagerTest
     {
-        private readonly Mock<IAcademicLevels> _levelsMock;
+        private readonly Mock<IAcademics> _levelsMock;
         private readonly AcademicsManager _manager;
         private readonly Fixture _fixture;
 
         public AcademicLevelsManagerTest()
         {
-            _levelsMock = new Mock<IAcademicLevels>();
+            _levelsMock = new Mock<IAcademics>();
          
             _manager = new AcademicsManager(null!, null!, _levelsMock.Object, null!);
             _fixture = new Fixture();

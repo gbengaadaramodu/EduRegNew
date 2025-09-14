@@ -1,7 +1,10 @@
 ﻿using EduReg.Common;
+using EduReg.Controllers;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduReg.Services.Repositories
 {
@@ -12,29 +15,177 @@ namespace EduReg.Services.Repositories
         {
             _context = context;
         }
-        public Task<GeneralResponse> CreateFacultyAsync(FacultiesDto model)
+        public async Task<GeneralResponse> CreateFacultyAsync(FacultiesDto model)
         {
-            throw new NotImplementedException();
+            var response = new GeneralResponse();
+            try
+            {
+                var faculties = new Faculties
+                {
+                    FacultyName = model.FacultyName,
+                    FacultyCode = model.FacultyCode,
+                    Description = model.Description,
+                    InstitutionShortName = model.InstitutionShortName
+                };
+                _context.Faculties.Add(faculties);
+                await _context.SaveChangesAsync();
+
+                response.StatusCore = 200;
+                response.Message = "New Faculty created successfully";
+                response.Data = faculties;
+            }
+            catch (Exception ex)
+            {
+                response.StatusCore = 500;
+                response.Message = "An error occurred, Try again later";
+                response.Data = null;
+            }
+
+            return response;
         }
 
-        public Task<GeneralResponse> DeleteFacultyAsync(int Id)
+        public async Task<GeneralResponse> UpdateFacultyAsync(int Id, FacultiesDto model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var faculty = await _context.Faculties.FindAsync(Id);
+                if (faculty == null)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCore = 404,
+                        Message = "Faculty not found",
+                        Data = null
+                    };
+                }
+
+                faculty.FacultyName = model.FacultyName;
+                faculty.FacultyCode = model.FacultyCode;
+                faculty.Description = model.Description;
+                faculty.InstitutionShortName = model.InstitutionShortName;
+
+                await _context.SaveChangesAsync();
+
+                return new GeneralResponse
+                {
+                    StatusCore = 200,
+                    Message = "Faculty updated successfully",
+                    Data = faculty
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCore = 500,
+                    Message = "An error occurred while updating faculty",
+                    Data = ex.Message 
+                };
+            }
         }
 
-        public Task<GeneralResponse> GetAllFacultiesAsync()
+        public async Task<GeneralResponse> DeleteFacultyAsync(int Id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var Faculty = await _context.Faculties.FindAsync(Id);
+                if (Faculty == null)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCore = 404,
+                        Message = "Faculty not found",
+                        Data = null
+                    };
+
+                }
+                _context.Faculties.Remove(Faculty);
+                await _context.SaveChangesAsync();
+                return new GeneralResponse
+                {
+                    StatusCore = 200,
+                    Message = "Faculty deleted successfully",
+                    Data = Faculty
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCore = 500,
+                    Message = "An error occurred while deleting faculty",
+                    Data = ex.Message
+                };
+            }
+
+
+
         }
 
-        public Task<GeneralResponse> GetFacultyByIdAsync(int Id)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<GeneralResponse> UpdateFacultyAsync(int Id, FacultiesDto model)
+        public async Task<GeneralResponse> GetAllFacultiesAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var faculties = await _context.Faculties.ToListAsync();
+                if (faculties == null || !faculties.Any())
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCore = 404,
+                        Message = "No faculties found",
+                        Data = null,
+                    };
+                }
+
+                return new GeneralResponse
+                {
+                    StatusCore = 200,
+                    Message = "Faculties retrieved successfully",
+                    Data = faculties
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCore = 500,
+                    Message = "An error occurred while retrieving faculty",
+                    Data = ex.Message
+                };
+            }
+        }
+        public async Task<GeneralResponse> GetFacultyByIdAsync(int Id)
+        {
+            try
+            {
+                var faculty = await _context.Faculties.FindAsync(Id);
+                if (faculty == null)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCore = 404,
+                        Message = "Faculty not found",
+                        Data = null
+                    };
+                }
+                return new GeneralResponse
+                {
+                    StatusCore = 200,
+                    Message = $"Faculty with ID {Id} retrieved successfully",
+                    Data = faculty
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCore = 500,
+                    Message = "An error occurred while retrieving faculty id",
+                    Data = ex.Message
+                };
+            }
         }
     }
 }
