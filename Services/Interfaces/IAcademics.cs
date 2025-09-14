@@ -3,7 +3,7 @@ using EduReg.Models.Dto;
 
 namespace EduReg.Services.Interfaces
 {
-    public interface IAcademicLevels
+    public interface IAcademics
     {
         Task<GeneralResponse> CreateAcademicLevel(AcademicLevelsDto model);
         Task<GeneralResponse> UpdateAcademicLevelAsync(int Id, AcademicLevelsDto model);

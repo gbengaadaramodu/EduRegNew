@@ -15,7 +15,7 @@ namespace EduReg.Tests
 {
     public class AcademicLevelsRepositoryTest
     {
-        private readonly AcademicLevelsRepository _repository;
+        private readonly AcademicsRepository _repository;
         private readonly ApplicationDbContext _context;
         private readonly Fixture _fixture;
 
@@ -28,7 +28,7 @@ namespace EduReg.Tests
                 .Options;
 
             _context = new ApplicationDbContext(options);
-            _repository = new AcademicLevelsRepository(_context);
+            _repository = new AcademicsRepository(_context);
         }
 
         [Fact]

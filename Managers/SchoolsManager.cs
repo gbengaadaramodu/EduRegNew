@@ -6,14 +6,16 @@ using EduReg.Services.Repositories;
 namespace EduReg.Managers
 {
 
-    public class SchoolManager: IFaculties, IDepartments
+    public class SchoolsManager: IFaculties, IDepartments, IProgrammes
     {
         private  readonly IFaculties _faculties; 
         private  readonly IDepartments _departments;
-        public SchoolManager(IFaculties faculties, IDepartments departments)
+        private readonly IProgrammes _programmesRepository;
+        public SchoolsManager(IFaculties faculties, IDepartments departments, IProgrammes programmesRepository)
         {
             _faculties = faculties;
             _departments = departments;
+            _programmesRepository = programmesRepository;
         }
 
         public async Task<GeneralResponse> CreateDepartmentAsync(DepartmentsDto model)
@@ -70,6 +72,36 @@ namespace EduReg.Managers
         public async Task<GeneralResponse> UpdateFacultyAsync(int Id, FacultiesDto model)
         {
             return await _faculties.UpdateFacultyAsync(Id, model);
+        }       
+
+        public async Task<GeneralResponse> CreateProgrammeAsync(ProgrammesDto model)
+        {
+            return await _programmesRepository.CreateProgrammeAsync(model);
+        }
+
+        public async Task<GeneralResponse> DeleteProgrammeAsync(int Id)
+        {
+            return await _programmesRepository.DeleteProgrammeAsync(Id);
+        }
+
+        public async Task<GeneralResponse> GetAllProgrammesAsync()
+        {
+            return await _programmesRepository.GetAllProgrammesAsync();
+        }
+
+        public async Task<GeneralResponse> GetProgrammeByIdAsync(int Id)
+        {
+            return await _programmesRepository.GetProgrammeByIdAsync(Id);
+        }
+
+        public async Task<GeneralResponse> GetProgrammeByNameAsync(string ProgrammeName)
+        {
+            return await _programmesRepository.GetProgrammeByNameAsync(ProgrammeName);
+        }
+
+        public async Task<GeneralResponse> UpdateProgrammeAsync(int id, ProgrammesDto model)
+        {
+            return await _programmesRepository.UpdateProgrammeAsync(id, model);
         }
     }
 }

@@ -5,6 +5,7 @@ namespace EduReg.Models.Entities
 {
     public class AcademicSession : CommonBase
     {
+        public string? InstittionShortName { get; set; }
         public string? BatchShortName { get; set; } //FK from Admission Batches// 
 
         [Key]

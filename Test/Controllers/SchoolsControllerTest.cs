@@ -38,10 +38,10 @@ namespace EduReg.Tests.Controllers
                 _mockLogger = new Mock<ILogger<SchoolsController>>();
 
                 // Create real SchoolManager instance with mocked dependencies
-                var schoolManager = new SchoolManager(_mockFaculties.Object, _mockDept.Object);
+               // var schoolManager = new SchoolsManager(_mockFaculties.Object, _mockDept.Object);
 
                 // Create controller with real SchoolManager instance
-                _controller = new SchoolsController(_mockLogger.Object, schoolManager);
+             //   _controller = new SchoolsController(_mockLogger.Object, schoolManager);
             }
 
             [Fact]
