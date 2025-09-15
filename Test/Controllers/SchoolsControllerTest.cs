@@ -27,6 +27,7 @@ namespace EduReg.Tests.Controllers
         {
             private readonly Mock<IDepartments> _mockDept;
             private readonly Mock<IFaculties> _mockFaculties;
+            private readonly Mock<IProgrammes> _mockProgrammes;
             private readonly Mock<ILogger<SchoolsController>> _mockLogger;
             private readonly SchoolsController _controller;
 
@@ -35,13 +36,14 @@ namespace EduReg.Tests.Controllers
                 // Create mocks
                 _mockDept = new Mock<IDepartments>();
                 _mockFaculties = new Mock<IFaculties>();
+                _mockProgrammes = new Mock<IProgrammes>();
                 _mockLogger = new Mock<ILogger<SchoolsController>>();
 
                 // Create real SchoolManager instance with mocked dependencies
-               // var schoolManager = new SchoolsManager(_mockFaculties.Object, _mockDept.Object);
+               var schoolManager = new SchoolsManager(_mockFaculties.Object, _mockDept.Object ,_mockProgrammes.Object);
 
                 // Create controller with real SchoolManager instance
-             //   _controller = new SchoolsController(_mockLogger.Object, schoolManager);
+                _controller = new SchoolsController(_mockLogger.Object, schoolManager);
             }
 
             [Fact]
