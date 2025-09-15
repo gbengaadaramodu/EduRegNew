@@ -152,22 +152,10 @@ namespace EduReg.Controllers
         public async Task<IActionResult> CreateProgrammeAsync([FromBody] ProgrammesDto model)
         {
             _logger.LogInformation("POST request received to create a new programme");
-
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid model state for creating a programme");
-                return BadRequest(ModelState);
-            }
             var response = await _manager.CreateProgrammeAsync(model);
 
-            if (response.StatusCore == 403)
-            {
-                _logger.LogWarning($"{response.Message}");
-                return Conflict(response);
-            }
-
-            _logger.LogInformation("Successfully created new programme");
-            return Ok(response);
+            _logger.LogInformation($"{response.Message}");
+            return StatusCode(response.StatusCore, response);
         }
 
 
@@ -188,14 +176,9 @@ namespace EduReg.Controllers
         public async Task<IActionResult> GetAllProgrammesAsync()
         {
             _logger.LogInformation("GET request received to fetch all programmes");
-
             var response = await _manager.GetAllProgrammesAsync();
 
-            if (response.StatusCore == 200)
-            {
-                _logger.LogInformation($"{response.Message}");
-            }
-
+            _logger.LogInformation($"{response.Message}");
             return StatusCode(response.StatusCore, response);
 
         }
@@ -207,6 +190,7 @@ namespace EduReg.Controllers
             _logger.LogInformation($"GET request received for programme with ID: {id}");
             var response = await _manager.GetProgrammeByIdAsync(id);
 
+            _logger.LogInformation($"{response.Message}");
             return StatusCode(response.StatusCore, response);
         }
 
@@ -218,6 +202,7 @@ namespace EduReg.Controllers
             _logger.LogInformation($"GET request received for programme with Name: {programmeName}");
             var response = await _manager.GetProgrammeByNameAsync(programmeName);
 
+            _logger.LogInformation($"{response.Message}");
             return StatusCode(response.StatusCore, response);
         }
 
@@ -227,15 +212,9 @@ namespace EduReg.Controllers
         public async Task<IActionResult> UpdateProgrammeAsync(int id, [FromBody] ProgrammesDto model)
         {
             _logger.LogInformation($"PUT request received to update programme with ID: {id}");
-
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid model state for updating a programme");
-                return BadRequest(ModelState);
-            }
-
             var response = await _manager.UpdateProgrammeAsync(id, model);
 
+            _logger.LogInformation($"{response.Message}");
             return StatusCode(response.StatusCore, response);
         }
 

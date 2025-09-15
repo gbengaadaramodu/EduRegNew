@@ -57,7 +57,7 @@ namespace EduReg.Services.Repositories
                 return new GeneralResponse
                 {
                     StatusCore = 500,
-                    Message = $"An error occurred while creating the Programme: {ex.Message}"                    
+                    Message = $"An error occurred while creating the Programme: {ex.Message}"
                 };
             }
 
@@ -158,7 +158,7 @@ namespace EduReg.Services.Repositories
                     MaximumNumberOfSemesters = programme.MaximumNumberOfSemesters
                 };
 
-                return new GeneralResponse 
+                return new GeneralResponse
                 {
                     StatusCore = 200,
                     Message = "Programme retrieved successfully",

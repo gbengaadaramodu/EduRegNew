@@ -3,21 +3,18 @@ using EduReg.Models.Dto;
 using EduReg.Models.Entities;
 using EduReg.Services.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
+using System.Threading.Tasks;
+using System.Linq;
 
-namespace Test.Repositories
+namespace EduReg.Tests.Repositories
 {
-    public class ProgrammeRepositoryTests
+    public class ProgrammesRepositoryTests
     {
-        private ApplicationDbContext CreateContext()
+        private ApplicationDbContext GetDbContext()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "EduReg_TestDB_" + Guid.NewGuid())
+                .UseInMemoryDatabase(databaseName: $"EduRegTestDb_{System.Guid.NewGuid()}")
                 .Options;
 
             return new ApplicationDbContext(options);
@@ -25,20 +22,21 @@ namespace Test.Repositories
 
 
         [Fact]
-        public async Task CreateProgrammeAsync_AddsProgrammeToDatabase()
+        public async Task CreateProgrammeAsync_ShouldReturn200_WhenProgrammeIsNew()
         {
             
-            using var context = CreateContext();
+            var context = GetDbContext();
             var repo = new ProgrammesRepository(context);
+
             var dto = new ProgrammesDto
             {
-                DepartmentCode = "D01",
-                ProgrammeCode = "TEST101",
-                ProgrammeName = "Test Programme",
-                Description = "desc",
-                Duration = 3,
-                NumberOfSemesters = 6,
-                MaximumNumberOfSemesters = 8
+                DepartmentCode = "CS",
+                ProgrammeCode = "CS101",
+                ProgrammeName = "Computer Science",
+                Description = "BSc in CS",
+                Duration = 4,
+                NumberOfSemesters = 8,
+                MaximumNumberOfSemesters = 10
             };
 
             
@@ -46,25 +44,129 @@ namespace Test.Repositories
 
             
             Assert.Equal(200, response.StatusCore);
-            var saved = await context.Programmes.FirstOrDefaultAsync(p => p.ProgrammeCode == "TEST101");
-            Assert.NotNull(saved);
-            Assert.Equal("Test Programme", saved.ProgrammeName);
+            Assert.Equal("Programme created successfully", response.Message);
+            Assert.NotNull(response.Data);
+
+            var dbProgramme = await context.Programmes.FirstOrDefaultAsync();
+            Assert.NotNull(dbProgramme);
+            Assert.Equal("CS101", dbProgramme.ProgrammeCode);
         }
 
+
+
         [Fact]
-        public async Task CreateProgrammeAsync_ReturnsConflict_WhenDuplicateCode()
+        public async Task CreateProgrammeAsync_ShouldReturn403_WhenProgrammeCodeAlreadyExists()
         {
-            using var context = CreateContext();
-            
-            context.Programmes.Add(new Programmes { ProgrammeCode = "DUP001", ProgrammeName = "Existing" });
+         
+            var context = GetDbContext();
+            await context.Programmes.AddAsync(new Programmes
+            {
+                DepartmentCode = "CS",
+                ProgrammeCode = "CS101",
+                ProgrammeName = "Existing CS",
+                Description = "Already in DB",
+                Duration = 4,
+                NumberOfSemesters = 8,
+                MaximumNumberOfSemesters = 10
+            });
             await context.SaveChangesAsync();
 
             var repo = new ProgrammesRepository(context);
-            var dto = new ProgrammesDto { ProgrammeCode = "DUP001", ProgrammeName = "Duplicate" };
 
+            var dto = new ProgrammesDto
+            {
+                DepartmentCode = "CS",
+                ProgrammeCode = "CS101",
+                ProgrammeName = "Computer Science",
+                Description = "Duplicate",
+                Duration = 4,
+                NumberOfSemesters = 8,
+                MaximumNumberOfSemesters = 10
+            };
+
+            
             var response = await repo.CreateProgrammeAsync(dto);
 
+            
             Assert.Equal(403, response.StatusCore);
+            Assert.Equal("A Programme with this Programme Code already exists", response.Message);
+        }
+
+        [Fact]
+        public async Task DeleteProgrammeAsync_ShouldReturn200_WhenProgrammeExists()
+        {
+            
+            var context = GetDbContext();
+            var programme = new Programmes
+            {
+                DepartmentCode = "ENG",
+                ProgrammeCode = "ENG201",
+                ProgrammeName = "English Studies",
+                Description = "BA in English",
+                Duration = 4,
+                NumberOfSemesters = 8,
+                MaximumNumberOfSemesters = 10
+            };
+
+            await context.Programmes.AddAsync(programme);
+            await context.SaveChangesAsync();
+
+            var repo = new ProgrammesRepository(context);
+
+            
+            var response = await repo.DeleteProgrammeAsync(programme.Id);
+
+            
+            Assert.Equal(200, response.StatusCore);
+            Assert.Equal("Programme deleted successfully", response.Message);
+
+            var deleted = await context.Programmes.FindAsync(programme.Id);
+            Assert.Null(deleted);
+        }
+
+        [Fact]
+        public async Task DeleteProgrammeAsync_ShouldReturn404_WhenProgrammeNotFound()
+        {
+            
+            var context = GetDbContext();
+            var repo = new ProgrammesRepository(context);
+
+            
+            var response = await repo.DeleteProgrammeAsync(999);
+
+            
+            Assert.Equal(404, response.StatusCore);
+            Assert.Equal("Programme not found", response.Message);
+        }
+
+        [Fact]
+        public async Task GetAllProgrammesAsync_ShouldReturn200_WithListOfProgrammes()
+        {
+            
+            var context = GetDbContext();
+            await context.Programmes.AddAsync(new Programmes
+            {
+                DepartmentCode = "MATH",
+                ProgrammeCode = "MATH101",
+                ProgrammeName = "Mathematics",
+                Description = "BSc in Math",
+                Duration = 4,
+                NumberOfSemesters = 8,
+                MaximumNumberOfSemesters = 10
+            });
+            await context.SaveChangesAsync();
+
+            var repo = new ProgrammesRepository(context);
+
+            
+            var response = await repo.GetAllProgrammesAsync();
+
+            
+            Assert.Equal(200, response.StatusCore);
+            Assert.NotNull(response.Data);
+            var programmes = response.Data as List<ProgrammesDto>;
+            Assert.Single(programmes);
+            Assert.Equal("Mathematics", programmes.First().ProgrammeName);
         }
     }
 }
