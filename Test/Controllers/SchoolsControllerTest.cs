@@ -27,6 +27,7 @@ namespace EduReg.Tests.Controllers
         {
             private readonly Mock<IDepartments> _mockDept;
             private readonly Mock<IFaculties> _mockFaculties;
+            private readonly Mock<IProgrammes> _mockProgrammes;
             private readonly Mock<ILogger<SchoolsController>> _mockLogger;
             private readonly SchoolsController _controller;
 
@@ -35,13 +36,14 @@ namespace EduReg.Tests.Controllers
                 // Create mocks
                 _mockDept = new Mock<IDepartments>();
                 _mockFaculties = new Mock<IFaculties>();
+                _mockProgrammes = new Mock<IProgrammes>();
                 _mockLogger = new Mock<ILogger<SchoolsController>>();
 
                 // Create real SchoolManager instance with mocked dependencies
-               // var schoolManager = new SchoolsManager(_mockFaculties.Object, _mockDept.Object);
+                var schoolManager = new SchoolsManager(_mockFaculties.Object, _mockDept.Object, _mockProgrammes.Object);
 
                 // Create controller with real SchoolManager instance
-             //   _controller = new SchoolsController(_mockLogger.Object, schoolManager);
+               _controller = new SchoolsController(_mockLogger.Object, schoolManager);
             }
 
             [Fact]
@@ -58,6 +60,18 @@ namespace EduReg.Tests.Controllers
             }
 
             [Fact]
+            public async Task CreateFacultyAsync_ShouldReturn200()
+            {
+                var dto = new FacultiesDto { FacultyName = "New Faculty", FacultyCode = "NF01" };
+                _mockFaculties.Setup(x => x.CreateFacultyAsync(dto))
+                              .ReturnsAsync(new GeneralResponse { StatusCore = 200 });
+                var result = await _controller.CreateFacultyAsync(dto);
+                var response = result as ObjectResult;
+                Assert.NotNull(response);
+                Assert.Equal(200, response.StatusCode);                            
+            }
+
+            [Fact]
             public async Task GetDepartmentByIdAsync_ShouldReturn200()
             {
                 _mockDept.Setup(x => x.GetDepartmentByIdAsync(1))
@@ -68,6 +82,19 @@ namespace EduReg.Tests.Controllers
                 Assert.NotNull(response);
                 Assert.Equal(200, response.StatusCode);
             }
+
+            [Fact]
+            public async Task GetFacultyByIdAsync_ShouldReturn200()
+            {
+                _mockFaculties.Setup(x => x.GetFacultyByIdAsync(1))
+                         .ReturnsAsync(new GeneralResponse { StatusCore = 200 });
+
+                var result = await _controller.GetFacultyByIdAsync(1);
+                var response = result as ObjectResult;
+                Assert.NotNull(response);
+                Assert.Equal(200, response.StatusCode);
+            }
+
 
             [Fact]
             public async Task GetDepartmentByNameAsync_ShouldReturn200()
@@ -94,6 +121,18 @@ namespace EduReg.Tests.Controllers
             }
 
             [Fact]
+            public async Task GetAllFacultiesAsync_ShouldReturn200()
+            {
+                _mockFaculties.Setup(x => x.GetAllFacultiesAsync())
+                         .ReturnsAsync(new GeneralResponse { StatusCore = 200 });
+
+                var result = await _controller.GetAllFacultiesAsync();
+                var response = result as ObjectResult;
+                Assert.NotNull(response);
+                Assert.Equal(200, response.StatusCode);
+            }
+
+            [Fact]
             public async Task UpdateDepartmentAsync_ShouldReturn200()
             {
                 var dto = new DepartmentsDto { DepartmentName = "Updated" };
@@ -101,6 +140,19 @@ namespace EduReg.Tests.Controllers
                          .ReturnsAsync(new GeneralResponse { StatusCore = 200 });
 
                 var result = await _controller.UpdateDepartmentAsync(1, dto);
+                var response = result as ObjectResult;
+                Assert.NotNull(response);
+                Assert.Equal(200, response.StatusCode);
+            }
+
+            [Fact]
+            public async Task UpdateFacultyAsync_ShouldReturn200()
+            {
+                var dto = new FacultiesDto { FacultyName = "Updated" };
+                _mockFaculties.Setup(x => x.UpdateFacultyAsync(1, dto))
+                         .ReturnsAsync(new GeneralResponse { StatusCore = 200 });
+
+                var result = await _controller.UpdateFacultyAsync(1, dto);
                 var response = result as ObjectResult;
                 Assert.NotNull(response);
                 Assert.Equal(200, response.StatusCode);
@@ -117,7 +169,19 @@ namespace EduReg.Tests.Controllers
                 Assert.NotNull(response);
                 Assert.Equal(200, response.StatusCode);
             }
-        }
+
+            [Fact]
+            public async Task DeleteFacultyAsync_ShouldReturn200()
+            {
+                _mockFaculties.Setup(x => x.DeleteFacultyAsync(1))
+                         .ReturnsAsync(new GeneralResponse { StatusCore = 200 });
+
+                var result = await _controller.DeleteFacultyAsync(1);
+                var response = result as ObjectResult;
+                Assert.NotNull(response);
+                Assert.Equal(200, response.StatusCode);
+            }
+    }
     
 }
 
