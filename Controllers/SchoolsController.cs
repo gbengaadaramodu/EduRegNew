@@ -63,8 +63,8 @@ namespace EduReg.Controllers
 
 
         [HttpGet]
-        [Route("GetByFacultiesById/{id}")]
-        public async Task<IActionResult> GetByFacultiesByIdAsync(int id)
+        [Route("GetFacultyById/{id}")]
+        public async Task<IActionResult> GetFacultyByIdAsync(int id)
         {
 
             var response = await _manager.GetFacultyByIdAsync(id);
