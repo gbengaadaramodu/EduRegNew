@@ -2,7 +2,7 @@
 
 namespace EduReg.Models.Dto
 {
-    public class ProgramCourseDto : CommonBaseDto
+    public class ProgramCoursesDto : CommonBaseDto
     {
         public string? InstitutionShortName { get; set; } //Pk -> Institution
         public string? DepartmentCode { get; set; } //FK -> Departments
