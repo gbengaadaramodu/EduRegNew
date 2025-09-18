@@ -57,7 +57,8 @@ namespace EduReg
             builder.Services.AddScoped<IFaculties, FacultiesRepository>();
             builder.Services.AddScoped<IDepartments, DepartmentsRepository>();
             builder.Services.AddScoped<IProgrammes, ProgrammesRepository>();
-
+            builder.Services.AddScoped<IRegistrations, RegistrationsRepository>();
+            builder.Services.AddScoped<IRegistrationsBusinessRules, RegistrationsBusinessRulesRepository>();
             builder.Services.AddScoped<IAcademics, AcademicsRepository>();
 
             //Courses 
@@ -71,7 +72,8 @@ namespace EduReg
             builder.Services.AddScoped<InstitutionsManager>();
             builder.Services.AddScoped<AcademicsManager>();
             builder.Services.AddScoped<SchoolsManager>();
-           // builder.Services.AddScoped<ProgrammesManager>();
+           //builder.Services.AddScoped<ProgrammesManager>();
+            builder  .Services.AddScoped<RegistrationsManager>();
 
             builder.Services.AddCors(options =>
             {

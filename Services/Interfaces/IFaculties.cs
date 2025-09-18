@@ -9,6 +9,7 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> UpdateFacultyAsync(int Id, FacultiesDto model);
         Task<GeneralResponse> DeleteFacultyAsync(int Id);
         Task<GeneralResponse> GetFacultyByIdAsync(int Id);
+        Task<GeneralResponse> GetFacultyByCodeAsync(string facultyCode);
         Task<GeneralResponse> GetAllFacultiesAsync();
     }
 }
