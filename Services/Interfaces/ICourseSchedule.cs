@@ -8,7 +8,7 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> CreateCourseScheduleAsync(CourseScheduleDto model); // Single
         Task<GeneralResponse> CreateCourseScheduleAsync(List<CourseScheduleDto> model); // Bulk
 
-        Task<GeneralResponse> CreateCourseScheduleAsync(byte[] model); // EXCEL, CSV, Flat file upload
+      //  Task<GeneralResponse> CreateCourseScheduleAsync(byte[] model); // EXCEL, CSV, Flat file upload
 
         Task<GeneralResponse> UpdateCourseScheduleAsync(int Id, CourseScheduleDto model);
 

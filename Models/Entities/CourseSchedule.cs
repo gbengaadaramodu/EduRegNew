@@ -2,7 +2,7 @@
 
 namespace EduReg.Models.Entities
 {
-    public class CourseSchedule
+    public class CourseSchedule: CommonBase
     {
         //id
         public string? InstitutionShortName { get; set; } //Pk -> Institution
@@ -19,9 +19,9 @@ namespace EduReg.Models.Entities
         public string? Prerequisite { get; set; } //FK -> CourseCode
 
         public string? BatchShortName { get; set; } //PK -> AcademicBatch 
+       // public decimal? FeeAmount { get; set; }
 
-
-        public decimal CourseFee { get; set; } = 0;
+        public decimal? CourseFee { get; set; } = 0;
 
         public int LMSId { get; set; } = 0; 
         public bool IsOnLMS { get; set; } = false;

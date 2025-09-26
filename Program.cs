@@ -64,6 +64,7 @@ namespace EduReg
             //Courses 
             builder.Services.AddScoped<IDepartmentCourses, DepartmentCoursesRepository>();
             builder.Services.AddScoped<IProgramCourses, ProgramCoursesRepository>();
+            builder.Services.AddScoped<ICourseSchedule, CourseScheduleRepository>();
          
 
             // Managers

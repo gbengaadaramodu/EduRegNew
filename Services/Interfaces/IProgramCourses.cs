@@ -8,7 +8,7 @@ namespace EduReg.Services.Interfaces
        Task<GeneralResponse> AssignCoursesToProgramsAsync(string departmentShortName, ProgramCoursesDto model); // DepartmentShortName
         Task<GeneralResponse> CreateProgramCourseAsync(ProgramCoursesDto model);
         Task<GeneralResponse> CreateProgramCourseAsync(List<ProgramCoursesDto> model);
-        Task<GeneralResponse> CreateProgramCourseAsync(byte[] model); // EXCEL, CSV, Flat file upload
+        //Task<GeneralResponse> CreateProgramCourseAsync(byte[] model); // EXCEL, CSV, Flat file upload
         Task<GeneralResponse> UpdateProgramCourseAsync(int Id, ProgramCoursesDto model);
         Task<GeneralResponse> DeleteProgramCourseAsync(int Id);
         Task<GeneralResponse> GetProgramCoursesByIdAsync(int Id);

@@ -1,122 +1,242 @@
-﻿using EduReg.Common;
+﻿
+
+using Azure;
+using EduReg.Common;
 using EduReg.Managers;
 using EduReg.Models.Dto;
 using EduReg.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduReg.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class CoursesController : ControllerBase
+    [Route("api/[controller]")]
+    public class CourseController : ControllerBase
     {
+        private readonly CoursesManager _coursesManager;
 
-         private readonly CoursesManager _manager;
-
-        public CoursesController(CoursesManager manager)
+        public CourseController(CoursesManager coursesManager)
         {
-            _manager = manager;
+            _coursesManager = coursesManager;
         }
 
+        // =========================
+        // Department Courses
+        // =========================
 
-        public Task<IActionResult> AssignCoursesToProgramsAsync(string departmentShortName, ProgramCoursesDto model)
+        [HttpPost]
+        [Route("CreateDepartmentCourse")]
+        public async Task<IActionResult> CreateDepartmentCourse([FromBody] DepartmentCoursesDto model)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<IActionResult> CreateDepartmentCourseAsync(DepartmentCoursesDto model)
-        {
-            throw new NotImplementedException();
+            var response = await _coursesManager.CreateDepartmentCourseAsync(model);
+           return StatusCode(response.StatusCore, response);
         }
 
         [HttpPost]
-        [Route ("CreateDepartmentCourses")]
-        public async Task<IActionResult> CreateDepartmentCourseAsync(List<DepartmentCoursesDto> model)
+        [Route("CreateDepartmentCoursesFromList")]
+        public async Task<IActionResult> CreateDepartmentCoursesFromList([FromBody] List<DepartmentCoursesDto> model)
         {
-            try
-            {
-                var response = await _manager.CreateDepartmentCourseAsync(model);
-
-                return StatusCode(response.StatusCore, response);
-            }
-            catch (Exception ex)
-            {
-                 
-                return BadRequest(ex.Message);
-            }
+            var response = await _coursesManager.CreateDepartmentCourseAsync(model);
+            return StatusCode(response.StatusCore, response);
         }
 
         [HttpPost]
-        [Route("UploadDepartmentCourses")]
-        public Task<IActionResult> CreateDepartmentCourseAsync(byte[] model)
+        [Route("UploadDepartmentalCourses")]
+        public async Task<IActionResult> UploadDepartmentCoursesFromFile(string base64filestring)
+
         {
-            throw new NotImplementedException();
+            byte[] file = Convert.FromBase64String(base64filestring);
+            var response = await _coursesManager.UploadDepartmentCourseAsync(file);
+            return StatusCode(response.StatusCore, response);
         }
 
-        public Task<IActionResult> CreateProgramCourseAsync(ProgramCoursesDto model)
+
+        [HttpPut]
+        [Route("UpdateDepartmentCourse/{id}")]
+        public async Task<IActionResult> UpdateDepartmentCourse(int id, [FromBody] DepartmentCoursesDto model)
         {
-            throw new NotImplementedException();
+            var response = await _coursesManager.UpdateDepartmentCourseAsync(id, model);
+            return StatusCode(response.StatusCore, response);
         }
 
-        public Task<IActionResult> CreateProgramCourseAsync(List<ProgramCoursesDto> model)
+        [HttpDelete]
+        [Route("DeleteDepartmentCourse/{id}")]
+        public async Task<IActionResult> DeleteDepartmentCourse(int id)
         {
-            throw new NotImplementedException();
+            var response = await _coursesManager.DeleteDepartmentCourseAsync(id);
+            return StatusCode(response.StatusCore, response);
         }
 
-        public Task<IActionResult> CreateProgramCourseAsync(byte[] model)
+        [HttpGet]
+        [Route("GetDepartmentCourseById/{id}")]
+        public async Task<IActionResult> GetDepartmentCourseById(int id)
         {
-            throw new NotImplementedException();
+            var response = await _coursesManager.GetDepartmentCoursesByIdAsync(id);
+            return StatusCode(response.StatusCore, response);
         }
 
-        public Task<IActionResult> DeleteDepartmentCourseAsync(int Id)
+        [HttpGet]
+        [Route("GetDepartmentCoursesByDepartmentName/{shortname}")]
+        public async Task<IActionResult> GetDepartmentCoursesByDepartmentName(string shortname)
         {
-            throw new NotImplementedException();
+            var response = await _coursesManager.GetDepartmentCoursesByDepartmentNameAsync(shortname);
+            return StatusCode(response.StatusCore, response);
         }
 
-        public Task<IActionResult> DeleteProgramCourseAsync(int Id)
+        [HttpGet]
+        [Route("GetAllDepartmentsByCourses")]
+        public async Task<IActionResult> GetAllDepartmentsByCourses()
         {
-            throw new NotImplementedException();
+            var response = await _coursesManager.GetAllDepartmentsByCoursesAsync();
+            return StatusCode(response.StatusCore, response);
         }
 
-        public Task<IActionResult> GetAllDepartmentsByCoursesAsync()
+        // =========================
+        // Program Courses
+        // =========================
+
+        [HttpPost]
+        [Route("CreateProgramCourse")]
+        public async Task<IActionResult> CreateProgramCourse([FromBody] ProgramCoursesDto model)
         {
-            throw new NotImplementedException();
+            var response = await _coursesManager.CreateProgramCourseAsync(model);
+            return StatusCode(response.StatusCore, response);
         }
 
-        public Task<IActionResult> GetAllProgramsByCoursesAsync()
+        [HttpPost]
+        [Route("CreateProgramCoursesFromList")]
+        public async Task<IActionResult> CreateProgramCourses([FromBody] List<ProgramCoursesDto> model)
         {
-            throw new NotImplementedException();
+            var response = await _coursesManager.CreateProgramCourseAsync(model);
+            return StatusCode(response.StatusCore, response);
         }
 
-        public Task<IActionResult> GetDepartmentCoursesByDepartmentNameAsync(string shortname)
+        
+
+        [HttpPut]
+        [Route("UpdateProgramCourse/{id}")]
+        public async Task<IActionResult> UpdateProgramCourse(int id, [FromBody] ProgramCoursesDto model)
         {
-            throw new NotImplementedException();
+            var response = await _coursesManager.UpdateProgramCourseAsync(id, model);
+            return StatusCode(response.StatusCore, response);
         }
 
-        public Task<IActionResult> GetDepartmentCoursesByIdAsync(int Id)
+        [HttpDelete]
+        [Route("DeleteProgramCourse/{id}")]
+        public async Task<IActionResult> DeleteProgramCourse(int id)
         {
-            throw new NotImplementedException();
+            var response = await _coursesManager.DeleteProgramCourseAsync(id);
+            return StatusCode(response.StatusCore, response);
         }
 
-        public Task<IActionResult> GetProgramCoursesByIdAsync(int Id)
+        [HttpGet]
+        [Route("GetProgramCourseById/{id}")]
+        public async Task<IActionResult> GetProgramCourseById(int id)
         {
-            throw new NotImplementedException();
+            var response = await _coursesManager.GetProgramCoursesByIdAsync(id);
+            return StatusCode(response.StatusCore, response);
         }
 
-        public Task<IActionResult> GetProgramCoursesByProgramNameAsync(string programName)
+        [HttpGet]
+        [Route("GetProgramCoursesByProgramName/{programName}")]
+        public async Task<IActionResult> GetProgramCoursesByProgramName(string programName)
         {
-            throw new NotImplementedException();
+            var response = await _coursesManager.GetProgramCoursesByProgramNameAsync(programName);
+            return StatusCode(response.StatusCore, response);
         }
 
-        public Task<IActionResult> UpdateDepartmentCourseAsync(int Id, DepartmentCoursesDto model)
+        [HttpGet]
+        [Route("GetAllProgramsByCourses")]
+        public async Task<IActionResult> GetAllProgramsByCourses()
         {
-            throw new NotImplementedException();
+            var response = await _coursesManager.GetAllProgramsByCoursesAsync();
+            return StatusCode(response.StatusCore, response);
         }
 
-        public Task<IActionResult> UpdateProgramCourseAsync(int Id, ProgramCoursesDto model)
+        [HttpPost]
+        [Route("AssignCourseToProgram/{departmentShortName}")]
+        public async Task<IActionResult> AssignCourseToProgram(string departmentShortName, [FromBody] ProgramCoursesDto model)
         {
-            throw new NotImplementedException();
+            var response = await _coursesManager.AssignCoursesToProgramsAsync(departmentShortName, model);
+            return StatusCode(response.StatusCore, response);
+        }
+
+        // =========================
+        // Course Schedule
+        // =========================
+
+        [HttpPost]
+        [Route("CreateCourseSchedule")]
+        public async Task<IActionResult> CreateCourseSchedule([FromBody] CourseScheduleDto model)
+        {
+            var response = await _coursesManager.CreateCourseScheduleAsync(model);
+            return StatusCode(response.StatusCore, response);
+        }
+
+        [HttpPost]
+        [Route("CreateCourseSchedulesFromList")]
+        public async Task<IActionResult> CreateCourseSchedules([FromBody] List<CourseScheduleDto> model)
+        {
+            var response = await _coursesManager.CreateCourseScheduleAsync(model);
+            return StatusCode(response.StatusCore, response);
+        }
+ 
+         
+
+        [HttpPut]
+        [Route("UpdateCourseSchedule/{id}")]
+        public async Task<IActionResult> UpdateCourseSchedule(int id, [FromBody] CourseScheduleDto model)
+        {
+            var response = await _coursesManager.UpdateCourseScheduleAsync(id, model);
+            return StatusCode(response.StatusCore, response);
+        }
+
+        [HttpDelete]
+        [Route("DeleteCourseSchedule/{id}")]
+        public async Task<IActionResult> DeleteCourseSchedule(int id)
+        {
+            var response = await _coursesManager.DeleteCourseScheduleAsync(id);
+            return StatusCode(response.StatusCore, response);
+        }
+
+        [HttpDelete]
+        [Route("DeleteManySchedules")]
+        public async Task<IActionResult> DeleteManySchedules([FromBody] List<int> ids)
+        {
+            var response = await _coursesManager.DeleteManyCourseSchedulesAsync(ids);
+            return StatusCode(response.StatusCore, response);
+        }
+
+        [HttpDelete]
+        [Route("DeleteManySchedulesByModel")]
+        public async Task<IActionResult> DeleteManySchedulesByModel([FromBody] List<CourseScheduleDto> model)
+        {
+            var response = await _coursesManager.DeleteManyCourseSchedulesAsync(model);
+            return StatusCode(response.StatusCore, response);
+        }
+
+        [HttpGet]
+        [Route("GetCourseScheduleById/{id}")]
+        public async Task<IActionResult> GetCourseScheduleById(int id)
+        {
+            var response = await _coursesManager.GetCourseScheduleByIdAsync(id);
+            return StatusCode(response.StatusCore, response);
+        }
+
+        [HttpGet]
+        [Route("GetScheduleByCourseCode/{courseCode}")]
+        public async Task<IActionResult> GetScheduleByCourseCode(string courseCode)
+        {
+            var response = await _coursesManager.GetCourseScheduleByCourseCodeAsync(courseCode);
+            return StatusCode(response.StatusCore, response);
+        }
+
+        [HttpGet]
+        [Route("GetAllCourseSchedules")]
+        public async Task<IActionResult> GetAllCourseSchedules()
+        {
+            var response = await _coursesManager.GetAllCourseSchedulesAsync();
+            return StatusCode(response.StatusCore, response);
         }
     }
 }

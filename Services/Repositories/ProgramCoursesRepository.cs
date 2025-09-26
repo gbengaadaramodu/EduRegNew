@@ -1,54 +1,238 @@
 ﻿using EduReg.Common;
+using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduReg.Services.Repositories
 {
     public class ProgramCoursesRepository : IProgramCourses
     {
-        public Task<GeneralResponse> AssignCoursesToProgramsAsync(string departmentShortName, ProgramCoursesDto model)
+        private readonly ApplicationDbContext _context;
+
+        public ProgramCoursesRepository(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task<GeneralResponse> CreateProgramCourseAsync(ProgramCoursesDto model)
+        public async Task<GeneralResponse> AssignCoursesToProgramsAsync(string departmentShortName, ProgramCoursesDto model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var course = new ProgramCourses
+                {
+                    InstitutionShortName = model.InstitutionShortName,
+                    DepartmentCode = departmentShortName,
+                    ProgrammeCode = model.ProgrammeCode,
+                    CourseCode = model.CourseCode,
+                    ClassCode = model.ClassCode,
+                    LevelName = model.LevelName,
+                    Title = model.Title,
+                    Units = model.Units,
+                    CourseType = model.CourseType,
+                    Prerequisite = model.Prerequisite,
+                    Description = model.Description
+                };
+
+                await _context.ProgramCourses.AddAsync(course);
+                await _context.SaveChangesAsync();
+
+                return new GeneralResponse
+                {
+                    StatusCore = 201,
+                    Message = "Course assigned to program successfully.",
+                    Data = course
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCore = 500,
+                    Message = $"Error: {ex.Message}",
+                    Data = null
+                };
+            }
         }
 
-        public Task<GeneralResponse> CreateProgramCourseAsync(List<ProgramCoursesDto> model)
+        public async Task<GeneralResponse> CreateProgramCourseAsync(ProgramCoursesDto model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var course = MapDtoToEntity(model);
+
+                await _context.ProgramCourses.AddAsync(course);
+                await _context.SaveChangesAsync();
+
+                return new GeneralResponse
+                {
+                    StatusCore = 201,
+                    Message = "Program course created successfully.",
+                    Data = course
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCore = 500,
+                    Message = $"Error: {ex.Message}",
+                    Data = null
+                };
+            }
         }
 
-        public Task<GeneralResponse> CreateProgramCourseAsync(byte[] model)
+        public async Task<GeneralResponse> CreateProgramCourseAsync(List<ProgramCoursesDto> models)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var entities = models.Select(MapDtoToEntity).ToList();
+
+                await _context.ProgramCourses.AddRangeAsync(entities);
+                await _context.SaveChangesAsync();
+
+                return new GeneralResponse
+                {
+                    StatusCore = 201,
+                    Message = "Program courses created successfully.",
+                    Data = entities
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCore = 500,
+                    Message = $"Error: {ex.Message}",
+                    Data = null
+                };
+            }
         }
 
-        public Task<GeneralResponse> DeleteProgramCourseAsync(int Id)
+        
+
+        public async Task<GeneralResponse> UpdateProgramCourseAsync(int id, ProgramCoursesDto model)
         {
-            throw new NotImplementedException();
+            var course = await _context.ProgramCourses.FindAsync(id);
+            if (course == null)
+            {
+                return new GeneralResponse
+                {
+                    StatusCore = 404,
+                    Message = "Program course not found",
+                    Data = null
+                };
+            }
+
+            course.CourseCode = model.CourseCode;
+            course.ClassCode = model.ClassCode;
+            course.LevelName = model.LevelName;
+            course.Title = model.Title;
+            course.Units = model.Units;
+            course.CourseType = model.CourseType;
+            course.Prerequisite = model.Prerequisite;
+            course.Description = model.Description;
+
+            _context.ProgramCourses.Update(course);
+            await _context.SaveChangesAsync();
+
+            return new GeneralResponse
+            {
+                StatusCore = 200,
+                Message = "Program course updated successfully",
+                Data = course
+            };
         }
 
-        public Task<GeneralResponse> GetAllProgramsByCoursesAsync()
+        public async Task<GeneralResponse> DeleteProgramCourseAsync(int id)
         {
-            throw new NotImplementedException();
+            var course = await _context.ProgramCourses.FindAsync(id);
+            if (course == null)
+            {
+                return new GeneralResponse
+                {
+                    StatusCore = 404,
+                    Message = "Program course not found",
+                    Data = null
+                };
+            }
+
+            _context.ProgramCourses.Remove(course);
+            await _context.SaveChangesAsync();
+
+            return new GeneralResponse
+            {
+                StatusCore = 200,
+                Message = "Program course deleted successfully",
+                Data = null
+            };
         }
 
-        public Task<GeneralResponse> GetProgramCoursesByIdAsync(int Id)
+        public async Task<GeneralResponse> GetProgramCoursesByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var course = await _context.ProgramCourses.FindAsync(id);
+            if (course == null)
+            {
+                return new GeneralResponse
+                {
+                    StatusCore = 404,
+                    Message = "Program course not found",
+                    Data = null
+                };
+            }
+
+            return new GeneralResponse
+            {
+                StatusCore = 200,
+                Message = "Success",
+                Data = course
+            };
         }
 
-        public Task<GeneralResponse> GetProgramCoursesByProgramNameAsync(string programName)
+        public async Task<GeneralResponse> GetProgramCoursesByProgramNameAsync(string programName)
         {
-            throw new NotImplementedException();
+            var courses = await _context.ProgramCourses
+                .Where(x => x.ProgrammeCode == programName)
+                .ToListAsync();
+
+            return new GeneralResponse
+            {
+                StatusCore = 200,
+                Message = "Success",
+                Data = courses
+            };
         }
 
-        public Task<GeneralResponse> UpdateProgramCourseAsync(int Id, ProgramCoursesDto model)
+        public async Task<GeneralResponse> GetAllProgramsByCoursesAsync()
         {
-            throw new NotImplementedException();
+            var courses = await _context.ProgramCourses.ToListAsync();
+
+            return new GeneralResponse
+            {
+                StatusCore = 200,
+                Message = "Success",
+                Data = courses
+            };
+        }
+
+        // Helper method
+        private ProgramCourses MapDtoToEntity(ProgramCoursesDto model)
+        {
+            return new ProgramCourses
+            {
+                InstitutionShortName = model.InstitutionShortName,
+                DepartmentCode = model.DepartmentCode,
+                ProgrammeCode = model.ProgrammeCode,
+                CourseCode = model.CourseCode,
+                ClassCode = model.ClassCode,
+                LevelName = model.LevelName,
+                Title = model.Title,
+                Units = model.Units,
+                CourseType = model.CourseType,
+                Prerequisite = model.Prerequisite,
+                Description = model.Description
+            };
         }
     }
 }

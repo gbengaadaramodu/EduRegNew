@@ -1,44 +1,47 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
 using EduReg.Services.Interfaces;
+using System.Threading.Tasks;
 
 namespace EduReg.Managers
 {
-    public class InstitutionsManager: IInstitutions
+    public class InstitutionsManager : IInstitutions
     {
-        private readonly IInstitutions _manager;
-        public InstitutionsManager(IInstitutions manager) 
+        private readonly IInstitutions _institution;
+
+        public InstitutionsManager(IInstitutions institution)
         {
-            _manager = manager;
+            _institution = institution;
         }
+
         public Task<GeneralResponse> CreateInstitutionAsync(InstitutionsDto model)
         {
-            throw new NotImplementedException();
+            return _institution.CreateInstitutionAsync(model);
         }
 
         public Task<GeneralResponse> DeleteInstitutionAsync(int Id)
         {
-            throw new NotImplementedException();
+            return _institution.DeleteInstitutionAsync(Id);
         }
 
         public Task<GeneralResponse> GetAllInstitutionAsync()
         {
-            throw new NotImplementedException();
+            return _institution.GetAllInstitutionAsync();
         }
 
         public Task<GeneralResponse> GetInstitutionByIdAsync(int Id)
         {
-            throw new NotImplementedException();
+            return _institution.GetInstitutionByIdAsync(Id);
         }
 
         public Task<GeneralResponse> GetInstitutionByShortNameAsync(string InstitutionShortName)
         {
-            throw new NotImplementedException();
+            return _institution.GetInstitutionByShortNameAsync(InstitutionShortName);
         }
 
         public Task<GeneralResponse> UpdateInstitutionAsync(int Id, InstitutionsDto model)
         {
-            throw new NotImplementedException();
+            return _institution.UpdateInstitutionAsync(Id, model);
         }
     }
 }

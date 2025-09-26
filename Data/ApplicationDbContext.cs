@@ -27,7 +27,10 @@ namespace EduReg.Data
         public DbSet<Registrations> Registrations { get; set; }
 
         public DbSet<RegistrationsBusinessRules> RegistrationsBusinessRules { get; set; }
-
+         
+        public DbSet<FeeItem> FeeItem { get; set; }
+        public DbSet<FeeRule> FeeRule { get; set; }
+        public DbSet<StudentFeeSchedule> StudentFeeSchedules { get; set; }
 
 
     }

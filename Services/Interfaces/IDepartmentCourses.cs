@@ -7,7 +7,7 @@ namespace EduReg.Services.Interfaces
     {
         Task<GeneralResponse> CreateDepartmentCourseAsync(DepartmentCoursesDto model);
         Task<GeneralResponse> CreateDepartmentCourseAsync(List<DepartmentCoursesDto> model);
-        Task<GeneralResponse> CreateDepartmentCourseAsync(byte[] model);
+        Task<GeneralResponse> UploadDepartmentCourseAsync(byte[] model); // upload excel file, csv,flat file
 
         Task<GeneralResponse> UpdateDepartmentCourseAsync(int Id, DepartmentCoursesDto model);
 
