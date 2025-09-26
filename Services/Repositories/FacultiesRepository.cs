@@ -187,5 +187,10 @@ namespace EduReg.Services.Repositories
                 };
             }
         }
+
+        public Task<GeneralResponse> GetFacultyByCodeAsync(string facultyCode)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

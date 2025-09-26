@@ -8,7 +8,7 @@ namespace EduReg.Models.Dto
         
         [MaxLength(8)]
         public string? InstitutionShortName { get; set; }
-        public string? InstitutionNameName { get; set; }
+        public string? InstitutionName { get; set; }
         public string? Address { get; set; }
         public string? ContactPerson { get; set; }
         [EmailAddress]

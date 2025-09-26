@@ -57,15 +57,23 @@ namespace EduReg
             builder.Services.AddScoped<IFaculties, FacultiesRepository>();
             builder.Services.AddScoped<IDepartments, DepartmentsRepository>();
             builder.Services.AddScoped<IProgrammes, ProgrammesRepository>();
+            builder.Services.AddScoped<IRegistrations, RegistrationsRepository>();
+            builder.Services.AddScoped<IRegistrationsBusinessRules, RegistrationsBusinessRulesRepository>();
+            builder.Services.AddScoped<IAcademics, AcademicsRepository>();
+
+            //Courses 
+            builder.Services.AddScoped<IDepartmentCourses, DepartmentCoursesRepository>();
+            builder.Services.AddScoped<IProgramCourses, ProgramCoursesRepository>();
+            builder.Services.AddScoped<ICourseSchedule, CourseScheduleRepository>();
+         
 
             // Managers
-           
+
+            builder.Services.AddScoped<CoursesManager>();
             builder.Services.AddScoped<InstitutionsManager>();
             builder.Services.AddScoped<AcademicsManager>();
             builder.Services.AddScoped<SchoolsManager>();
-            builder.Services.AddScoped<StudentManager>();
-
-            // builder.Services.AddScoped<ProgrammesManager>();
+           // builder.Services.AddScoped<ProgrammesManager>();
 
             builder.Services.AddCors(options =>
             {

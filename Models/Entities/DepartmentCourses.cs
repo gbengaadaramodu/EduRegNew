@@ -18,6 +18,5 @@ namespace EduReg.Models.Entities
 
         //ActiveStatus = 1, 2, InactiveStatus = 0, DeletedStatus = -1
 
-
     }
 }

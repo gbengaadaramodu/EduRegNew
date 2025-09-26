@@ -12,20 +12,20 @@ namespace EduReg.Controllers
     [ApiController]
     public class AcademicsController : ControllerBase
     {
-        private readonly AcademicsManager _manager;   
+        private readonly AcademicsManager _manager;
 
         public AcademicsController(AcademicsManager manager)
         {
             _manager = manager;
         }
- 
-       
-      
+
+
+
         [HttpPost]
         [Route("CreateAcademicSession")]
         public async Task<IActionResult> CreateAcademicSessionAsync([FromBody] AcademicSessionsDto model)
         {
-            var response = await _manager.CreateAcademicSessionAsync( model);
+            var response = await _manager.CreateAcademicSessionAsync(model);
             return StatusCode(response.StatusCore, response);
         }
         [HttpPost]
@@ -112,9 +112,9 @@ namespace EduReg.Controllers
         {
             var response = await _manager.GetAllAdmissionBatchAsync();
             return StatusCode(response.StatusCore, response);
-           
+
         }
-       
+
         [HttpGet]
         [Route("GetAllAcademicLevel")]
         public async Task<IActionResult> GetAllAcademicLevelsAsync()
