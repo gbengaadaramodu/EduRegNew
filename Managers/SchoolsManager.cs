@@ -1,7 +1,11 @@
-﻿using EduReg.Common;
+﻿using Azure;
+using EduReg.Common;
+using EduReg.Managers;
 using EduReg.Models.Dto;
 using EduReg.Services.Interfaces;
 using EduReg.Services.Repositories;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EduReg.Managers
 {
@@ -10,12 +14,12 @@ namespace EduReg.Managers
     {
         private  readonly IFaculties _faculties; 
         private  readonly IDepartments _departments;
-        private readonly IProgrammes _programmesRepository;
-        public SchoolsManager(IFaculties faculties, IDepartments departments, IProgrammes programmesRepository)
+        private readonly IProgrammes _programmes;
+        public SchoolsManager(IFaculties faculties, IDepartments departments, IProgrammes programmes)
         {
             _faculties = faculties;
             _departments = departments;
-            _programmesRepository = programmesRepository;
+            _programmes = programmes;
         }
 
         public async Task<GeneralResponse> CreateDepartmentAsync(DepartmentsDto model)
@@ -76,32 +80,32 @@ namespace EduReg.Managers
 
         public async Task<GeneralResponse> CreateProgrammeAsync(ProgrammesDto model)
         {
-            return await _programmesRepository.CreateProgrammeAsync(model);
+            return await _programmes.CreateProgrammeAsync(model);
         }
 
         public async Task<GeneralResponse> DeleteProgrammeAsync(int Id)
         {
-            return await _programmesRepository.DeleteProgrammeAsync(Id);
+            return await _programmes.DeleteProgrammeAsync(Id);
         }
 
         public async Task<GeneralResponse> GetAllProgrammesAsync()
         {
-            return await _programmesRepository.GetAllProgrammesAsync();
+            return await _programmes.GetAllProgrammesAsync();
         }
 
         public async Task<GeneralResponse> GetProgrammeByIdAsync(int Id)
         {
-            return await _programmesRepository.GetProgrammeByIdAsync(Id);
+            return await _programmes.GetProgrammeByIdAsync(Id);
         }
 
         public async Task<GeneralResponse> GetProgrammeByNameAsync(string ProgrammeName)
         {
-            return await _programmesRepository.GetProgrammeByNameAsync(ProgrammeName);
+            return await _programmes.GetProgrammeByNameAsync(ProgrammeName);
         }
 
         public async Task<GeneralResponse> UpdateProgrammeAsync(int id, ProgrammesDto model)
         {
-            return await _programmesRepository.UpdateProgrammeAsync(id, model);
+            return await _programmes.UpdateProgrammeAsync(id, model);
         }
 
         public Task<GeneralResponse> GetFacultyByCodeAsync(string facultyCode)

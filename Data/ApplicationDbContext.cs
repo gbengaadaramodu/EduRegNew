@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EduReg.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicantSignUp>
+    public class ApplicationDbContext : IdentityDbContext<Students>
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
 
         }
         public DbSet<Institutions> Institutions { get; set; }
-        public DbSet<StudentSignUp> StudentSignUps { get; set; }
+        public DbSet<Students> Students { get; set; }
         public DbSet<AcademicLevel> AcademicLevels { get; set; }
         public DbSet<AcademicSession> AcademicSessions { get; set; }
         public DbSet<Departments> Departments { get; set; }
@@ -30,8 +30,12 @@ namespace EduReg.Data
          
         public DbSet<FeeItem> FeeItem { get; set; }
         public DbSet<FeeRule> FeeRule { get; set; }
-        public DbSet<StudentFeeSchedule> StudentFeeSchedules { get; set; }
+        public DbSet<StudentFeeSchedule> StudentFeeSchedule { get; set; }
+                     
+        public DbSet<ProgrammeFeeSchedule> ProgrammeFeeSchedule { get; set; }
 
+   
+        public DbSet<StudentFeeItem> StudentFeeItem { get; set; }
 
     }
 }

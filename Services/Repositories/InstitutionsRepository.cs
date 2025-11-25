@@ -30,7 +30,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 400,
+                        StatusCode = 400,
                         Message = "Institution with this short name already exists."
                     };
                 }
@@ -54,7 +54,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 201,
+                    StatusCode = 201,
                     Message = "Institution created successfully.",
                     Data = institution
                 };
@@ -63,7 +63,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -78,7 +78,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Institution not found."
                     };
                 }
@@ -88,7 +88,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Institution deleted successfully."
                 };
             }
@@ -96,7 +96,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -109,7 +109,7 @@ namespace EduReg.Services.Repositories
                 var institutions = await _context.Institutions.ToListAsync();
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = institutions.Count == 0 ? "No institutions found." : "Institutions retrieved successfully.",
                     Data = institutions
                 };
@@ -118,7 +118,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -133,14 +133,14 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Institution not found."
                     };
                 }
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Institution retrieved successfully.",
                     Data = institution
                 };
@@ -149,7 +149,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -166,14 +166,14 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Institution not found."
                     };
                 }
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Institution retrieved successfully.",
                     Data = institution
                 };
@@ -182,7 +182,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -197,7 +197,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Institution not found."
                     };
                 }
@@ -216,7 +216,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Institution updated successfully.",
                     Data = institution
                 };
@@ -225,7 +225,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }

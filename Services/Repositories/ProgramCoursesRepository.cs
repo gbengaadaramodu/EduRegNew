@@ -40,7 +40,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 201,
+                    StatusCode = 201,
                     Message = "Course assigned to program successfully.",
                     Data = course
                 };
@@ -49,7 +49,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Error: {ex.Message}",
                     Data = null
                 };
@@ -67,7 +67,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 201,
+                    StatusCode = 201,
                     Message = "Program course created successfully.",
                     Data = course
                 };
@@ -76,7 +76,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Error: {ex.Message}",
                     Data = null
                 };
@@ -94,7 +94,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 201,
+                    StatusCode = 201,
                     Message = "Program courses created successfully.",
                     Data = entities
                 };
@@ -103,7 +103,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Error: {ex.Message}",
                     Data = null
                 };
@@ -119,7 +119,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Program course not found",
                     Data = null
                 };
@@ -139,7 +139,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Program course updated successfully",
                 Data = course
             };
@@ -152,7 +152,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Program course not found",
                     Data = null
                 };
@@ -163,7 +163,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Program course deleted successfully",
                 Data = null
             };
@@ -176,7 +176,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Program course not found",
                     Data = null
                 };
@@ -184,7 +184,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Success",
                 Data = course
             };
@@ -198,7 +198,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Success",
                 Data = courses
             };
@@ -210,7 +210,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Success",
                 Data = courses
             };

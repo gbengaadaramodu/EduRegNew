@@ -19,7 +19,7 @@ namespace EduReg
 
             // Add services to the container.
             builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("connectionstring")));
-            builder.Services.AddIdentity<ApplicantSignUp, IdentityRole>(options =>
+            builder.Services.AddIdentity<Students, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 8;
                 options.Password.RequireUppercase = true;
@@ -40,13 +40,12 @@ namespace EduReg
             builder.Services.Configure<BaseUrlConfiguration>(builder.Configuration.GetSection("BaseUrlConfiguration"));
 
             //  builder.Services.AddAutoMapper(typeof(MappingProfile));
-            builder.Services.AddScoped<StudentManager>();
-         
+           // builder.Services.AddScoped<StudentManager>();     
 
 
 
             //IOC for Repositories
-            builder.Services.AddScoped<IStudent, StudentRepository>();
+         //   builder.Services.AddScoped<IStudent, StudentRepository>();
                        
             builder.Services.AddScoped<IInstitutions, InstitutionsRepository>();
             builder.Services.AddScoped<IAdmissionBatches, AdmissionBatchesRepository>();
@@ -65,7 +64,13 @@ namespace EduReg
             builder.Services.AddScoped<IDepartmentCourses, DepartmentCoursesRepository>();
             builder.Services.AddScoped<IProgramCourses, ProgramCoursesRepository>();
             builder.Services.AddScoped<ICourseSchedule, CourseScheduleRepository>();
-         
+
+            // Fees
+            builder.Services.AddScoped<IFeeItems, FeeItemsRepository>();
+            builder.Services.AddScoped<IFeeRules, FeeRulesRepository>();
+            builder.Services.AddScoped<IProgrammeFeeSchedule, ProgrammeFeeScheduleRepository>();
+            builder.Services.AddScoped<IStudentFeePaymentService, StudentFeePaymentServiceRepository>();
+
 
             // Managers
 
@@ -75,6 +80,9 @@ namespace EduReg
             builder.Services.AddScoped<SchoolsManager>();
            //builder.Services.AddScoped<ProgrammesManager>();
             builder  .Services.AddScoped<RegistrationsManager>();
+            builder.Services.AddScoped<ProgrammeFeeScheduleManager>();
+            builder .Services.AddScoped<FeeServiceManager>();
+
 
             builder.Services.AddCors(options =>
             {

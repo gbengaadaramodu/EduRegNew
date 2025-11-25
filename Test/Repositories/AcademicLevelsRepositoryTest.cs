@@ -38,7 +38,7 @@ namespace EduReg.Tests
 
             var result = await _repository.CreateAcademicLevel(dto);
 
-            result.StatusCore.Should().Be(201);
+            result.StatusCode.Should().Be(201);
             result.Data.Should().BeOfType<AcademicLevel>();
 
             var saved = await _context.AcademicLevels.FirstOrDefaultAsync(a => a.LevelName == dto.LevelName);
@@ -54,7 +54,7 @@ namespace EduReg.Tests
 
             var result = await _repository.GetAllAcademicLevelAsync();
 
-            result.StatusCore.Should().Be(200);
+            result.StatusCode.Should().Be(200);
             ((IEnumerable<AcademicLevel>)result.Data!).Count().Should().Be(3);
         }
 
@@ -67,7 +67,7 @@ namespace EduReg.Tests
 
             var result = await _repository.GetAcademicLevelByIdAsync(level.Id);
 
-            result.StatusCore.Should().Be(200);
+            result.StatusCode.Should().Be(200);
             result.Data.Should().Be(level);
         }
 
@@ -82,7 +82,7 @@ namespace EduReg.Tests
 
             var result = await _repository.UpdateAcademicLevelAsync(level.Id, dto);
 
-            result.StatusCore.Should().Be(200);
+            result.StatusCode.Should().Be(200);
             result.Data.Should().Be(level);
             level.LevelName.Should().Be(dto.LevelName);
             level.Description.Should().Be(dto.Description);
@@ -97,7 +97,7 @@ namespace EduReg.Tests
 
             var result = await _repository.DeleteAcademicLevelAsync(level.Id);
 
-            result.StatusCore.Should().Be(200);
+            result.StatusCode.Should().Be(200);
 
             var deleted = await _context.AcademicLevels.FindAsync(level.Id);
             deleted.Should().BeNull();

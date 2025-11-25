@@ -15,6 +15,9 @@ namespace EduReg.Services.Repositories
         public AcademicsRepository(ApplicationDbContext context)
         {
             _context = context;
+             
+             
+            
         }
 
 
@@ -24,7 +27,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid academic level data",
                     Data = null
                 };
@@ -41,7 +44,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 201,
+                StatusCode = 201,
                 Message = "Academic level created successfully",
                 Data = entity
             };
@@ -55,7 +58,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "No academic levels found",
                     Data = null
                 };
@@ -63,7 +66,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Academic levels retrieved successfully",
                 Data = levels
             };
@@ -75,7 +78,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid ID",
                     Data = null
                 };
@@ -86,7 +89,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Academic level not found",
                     Data = null
                 };
@@ -94,7 +97,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Academic level retrieved successfully",
                 Data = level
             };
@@ -111,7 +114,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Academic level not found",
                     Data = null
                 };
@@ -125,7 +128,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Academic level updated successfully",
                 Data = level
             };
@@ -140,7 +143,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Academic level not found",
                     Data = null
                 };
@@ -151,7 +154,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Academic level deleted successfully",
                 Data = null
             };

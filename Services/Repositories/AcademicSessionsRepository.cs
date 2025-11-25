@@ -16,7 +16,7 @@ namespace EduReg.Services.Repositories
         {
             
 
-            return Task.FromResult(new GeneralResponse { StatusCore = 200, Message = "Academic session created successfully" , Data = model});
+            return Task.FromResult(new GeneralResponse { StatusCode = 200, Message = "Academic session created successfully" , Data = model});
             
            // return new GeneralResponse { StatusCore = 404, Message = "Not Found"};
 

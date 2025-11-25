@@ -1,16 +1,16 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Entities;
+using Microsoft.EntityFrameworkCore; 
 
 namespace EduReg.Models.Dto
 {
+     
     public class FeeRuleDto : CommonBaseDto
     {
-
         public int FeeItemId { get; set; }
-        public FeeItem FeeItem { get; set; }
+        public FeeItem? FeeItem { get; set; }
         public string? InstitutionShortName { get; set; }
 
-        // Applicability (optional filters)
         public string? ProgrammeCode { get; set; }
         public string? DepartmentCode { get; set; }
         public string? LevelName { get; set; }
@@ -21,8 +21,11 @@ namespace EduReg.Models.Dto
 
         public decimal Amount { get; set; }
         public bool IsRecurring { get; set; }
+        public DateTime? EffectiveFrom { get; set; }
+        public DateTime? EffectiveTo { get; set; }
 
-        public FeeRecurrenceType RecurrenceType { get; set; }             // How often
-        public FeeApplicabilityScope ApplicabilityScope { get; set; }     // Who it applies to
+        public FeeRecurrenceType RecurrenceType { get; set; }
+        public FeeApplicabilityScope ApplicabilityScope { get; set; }
     }
 }
+

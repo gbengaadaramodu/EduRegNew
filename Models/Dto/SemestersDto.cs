@@ -1,8 +1,11 @@
-﻿namespace EduReg.Models.Dto
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace EduReg.Models.Dto
 {
+    [Index(nameof(InstitutionShortName))]
     public class SemestersDto: CommonBaseDto
     {
-
+        public string? InstitutionShortName { get; set; } //FK Institution
         public int SessionId { get; set; } //FK Academic Session
         public string? SemesterName { get; set; }
         public int SemesterId { get; set; }

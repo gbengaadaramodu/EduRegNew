@@ -6,10 +6,10 @@ namespace EduReg.Services.Interfaces
     public interface IFeeItems
     {
         Task<GeneralResponse> CreateFeeItemAsync(FeeItemDto model);
-        Task<GeneralResponse> AddFeeItemToSemesterSchedule(List<FeeItemDto> model);
+        Task<GeneralResponse> AddFeeItemToSemesterScheduleAsync(List<FeeItemDto> model);
         Task<GeneralResponse> UpdateFeeItemAsync(int Id, FeeItemDto model); 
-        Task<GeneralResponse> DeleteFeeItemAsync(int id);
-        Task<GeneralResponse> GetFeeItemByAsync(int id);
+        Task<GeneralResponse> DeleteFeeItemAsync(int Id);
+        Task<GeneralResponse> GetFeeItemByIdAsync(int Id);
         Task<GeneralResponse> GetAllFeeItemsAsync();
     }
 }

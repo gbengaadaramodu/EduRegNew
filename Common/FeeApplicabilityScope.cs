@@ -1,15 +1,40 @@
-﻿namespace EduReg.Common
+﻿using System.ComponentModel;
+
+namespace EduReg.Common
 {
-    [Flags]
+
+    [Flags]     
     public enum FeeApplicabilityScope
     {
-        InstitutionWide = 1,   // Applies to all students       
-        PerDepartment = 2,     // Specific department
-        PerProgramme = 4,      // Specific programme
-        PerLevel = 8,          // Specific level
-        PerClass = 16,          // Specific class (e.g., for specific cohort or curriculum)
-        PerStudent= 32        // Specific individual student
+        //InstitutionWide = 1,
+        //PerFaculty = 2,
+        //PerDepartment = 4,
+        //PerProgramme = 8,
+        //PerLevel = 16,
+        //PerStudent = 32,
+        //Other = 64
+        [Description("Institution-wide")]
+        InstitutionWide = 1,
+
+        [Description("Per Faculty")]
+        PerFaculty = 2,
+
+        [Description("Per Department")]
+        PerDepartment = 4,
+
+        [Description("Per Programme")]
+        PerProgramme = 8,
+
+        [Description("Per Level")]
+        PerLevel = 16,
+
+        [Description("Per Student")]
+        PerStudent = 32,
+
+        [Description("Other")]
+        Other = 64
     }
+
 }
 
 

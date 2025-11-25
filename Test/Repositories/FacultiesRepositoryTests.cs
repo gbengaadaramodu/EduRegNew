@@ -50,7 +50,7 @@ public class FacultiesRepositoryTests
         var result = await repo.UpdateFacultyAsync(1, dto);
 
         // Assert
-        result.StatusCore.Should().Be(200);
+        result.StatusCode.Should().Be(200);
         result.Message.Should().Be("Faculty updated successfully");
 
         var updated = await ctx.Faculties.FindAsync(1);
@@ -76,7 +76,7 @@ public class FacultiesRepositoryTests
 
         var result = await repo.UpdateFacultyAsync(999, dto);
 
-        result.StatusCore.Should().Be(404);
+        result.StatusCode.Should().Be(404);
         result.Data.Should().BeNull();
     }
 
@@ -92,7 +92,7 @@ public class FacultiesRepositoryTests
 
         var result = await repo.GetAllFacultiesAsync();
 
-        result.StatusCore.Should().Be(200);
+        result.StatusCode.Should().Be(200);
         result.Data.Should().NotBeNull();
     }
 
@@ -107,7 +107,7 @@ public class FacultiesRepositoryTests
 
         var result = await repo.DeleteFacultyAsync(7);
 
-        result.StatusCore.Should().Be(200);
+        result.StatusCode.Should().Be(200);
         (await ctx.Faculties.FindAsync(7)).Should().BeNull();
     }
 }

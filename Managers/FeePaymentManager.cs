@@ -1,69 +1,24 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
 using EduReg.Services.Interfaces;
+using Microsoft.OpenApi.Validations;
 
 namespace EduReg.Managers
 {
-    public class FeePaymentManager : IFeeItems, IFeeRules
+    
+    public class FeePaymentManager : IStudentFeePaymentService
     {
-        public Task<GeneralResponse> AddFeeItemToSemesterSchedule(List<FeeItemDto> model)
+        private readonly IStudentFeePaymentService _feepayment;
+        public FeePaymentManager(IStudentFeePaymentService feepayment)
         {
-            throw new NotImplementedException();
+            _feepayment = feepayment;
         }
-
-        public Task<GeneralResponse> ApplyFeeRuleToSemesterSchedule(List<FeeRuleDto> model)
+        public async Task<GeneralResponse> UpdateStudentPaymentAsync(string matricNumber, List<int> paidItemIds)
         {
-            throw new NotImplementedException();
-        }
+             var result = await _feepayment.UpdateStudentPaymentAsync(matricNumber, paidItemIds);
+            return result;
 
-        public Task<GeneralResponse> CreateFeeItemAsync(FeeItemDto model)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<GeneralResponse> CreateFeeRuleAsync(FeeRuleDto model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<GeneralResponse> DeleteFeeItemAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<GeneralResponse> DeleteFeeRuleAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<GeneralResponse> GetAllFeeItemsAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<GeneralResponse> GetAllFeeRuleAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<GeneralResponse> GetFeeItemByAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<GeneralResponse> GetFeeRuleByAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<GeneralResponse> UpdateFeeItemAsync(int Id, FeeItemDto model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<GeneralResponse> UpdateFeeRuleAsync(int Id, FeeRuleDto model)
-        {
-            throw new NotImplementedException();
         }
     }
 }

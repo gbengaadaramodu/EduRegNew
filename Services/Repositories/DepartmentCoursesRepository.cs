@@ -39,7 +39,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 201,
+                    StatusCode = 201,
                     Message = "Department course created successfully.",
                     Data = entity
                 };
@@ -48,7 +48,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"An error occurred: {ex.Message}",
                     Data = null
                 };
@@ -79,7 +79,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 201,
+                    StatusCode = 201,
                     Message = "Department courses created successfully.",
                     Data = entities
                 };
@@ -88,7 +88,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"An error occurred: {ex.Message}",
                     Data = null
                 };
@@ -109,7 +109,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Course not found",
                     Data = null
                 };
@@ -127,7 +127,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Course updated successfully",
                 Data = course
             };
@@ -140,7 +140,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Course not found",
                     Data = null
                 };
@@ -151,7 +151,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Course deleted successfully",
                 Data = null
             };
@@ -164,7 +164,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Course not found",
                     Data = null
                 };
@@ -172,7 +172,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Success",
                 Data = course
             };
@@ -186,7 +186,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Success",
                 Data = courses
             };
@@ -197,7 +197,7 @@ namespace EduReg.Services.Repositories
             var courses = await _context.DepartmentCourses.ToListAsync();
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Success",
                 Data = courses
             };

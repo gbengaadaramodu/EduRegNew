@@ -34,7 +34,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Business rule not defined for the given session/semester/class/level."
                     };
                 }
@@ -44,7 +44,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Business rule found.",
                     Data = ruleEntity
                 };
@@ -53,7 +53,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -78,7 +78,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 400,
+                        StatusCode = 400,
                         Message = "A business rule already exists for this session/semester/level/class."
                     };
                 }
@@ -108,7 +108,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 201,
+                    StatusCode = 201,
                     Message = "Business rule created successfully.",
                     Data = entity
                 };
@@ -117,7 +117,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -169,7 +169,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 400,
+                        StatusCode = 400,
                         Message = "No new business rules added (all duplicates or none provided)."
                     };
                 }
@@ -179,7 +179,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 201,
+                    StatusCode = 201,
                     Message = $"{added.Count} business rule(s) created successfully.",
                     Data = added
                 };
@@ -188,7 +188,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -204,7 +204,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 400,
+                        StatusCode = 400,
                         Message = "No valid business rules found in the uploaded file."
                     };
                 }
@@ -215,7 +215,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -242,7 +242,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = list.Any() ? "Business rules retrieved." : "No business rules found.",
                     Data = list
                 };
@@ -251,7 +251,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -264,7 +264,7 @@ namespace EduReg.Services.Repositories
                 var list = await _context.RegistrationsBusinessRules.ToListAsync();
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = list.Any() ? "Business rules retrieved successfully." : "No business rules found.",
                     Data = list
                 };
@@ -273,7 +273,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -288,7 +288,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Business rule not found."
                     };
                 }
@@ -314,7 +314,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Business rule updated successfully.",
                     Data = entity
                 };
@@ -323,7 +323,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -338,7 +338,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Business rule not found."
                     };
                 }
@@ -348,7 +348,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Business rule deleted successfully."
                 };
             }
@@ -356,7 +356,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }

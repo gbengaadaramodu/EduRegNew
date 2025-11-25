@@ -42,7 +42,7 @@ namespace EduReg.Services.Repositories
                 };
 
                 var validationResponse = await _rulesRepo.ValidateStudentRegistrationAsync(ruleDto);
-                if (validationResponse.StatusCore != 200)
+                if (validationResponse.StatusCode != 200)
                 {
                     return validationResponse;
                 }
@@ -61,7 +61,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 500,
+                        StatusCode = 500,
                         Message = "Business rule configuration error."
                     };
                 }
@@ -72,7 +72,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 400,
+                        StatusCode = 400,
                         Message = $"Unit limit exceeded. You already have {existingUnits} units registered; adding {model.Units} would exceed maximum {ruleEntity.TotalMaximumCreditUnits} units."
                     };
                 }
@@ -110,7 +110,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 201,
+                    StatusCode = 201,
                     Message = "Registration created successfully.",
                     Data = registration
                 };
@@ -119,7 +119,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -133,7 +133,7 @@ namespace EduReg.Services.Repositories
                 foreach (var model in models)
                 {
                     var singleResp = await CreateStudentRegistrationAsync(model);
-                    if (singleResp.StatusCore != 201)
+                    if (singleResp.StatusCode != 201)
                     {
                         // Option: you could abort full batch or collect errors. Here, aborting and returning error.
                         return singleResp;
@@ -146,7 +146,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 201,
+                    StatusCode = 201,
                     Message = $"{responses.Count} registrations created successfully.",
                     Data = responses
                 };
@@ -155,7 +155,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -171,7 +171,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 400,
+                        StatusCode = 400,
                         Message = "No valid registration entries found in file."
                     };
                 }
@@ -182,7 +182,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -197,7 +197,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Registration not found."
                     };
                 }
@@ -207,7 +207,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Registration dropped successfully."
                 };
             }
@@ -215,7 +215,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -233,14 +233,14 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "No registrations found for this student."
                     };
                 }
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Registrations retrieved successfully.",
                     Data = list
                 };
@@ -249,7 +249,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -265,7 +265,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = list.Any() ? "Department registrations retrieved successfully." : "No registrations found for this session.",
                     Data = list
                 };
@@ -274,7 +274,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -290,7 +290,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = list.Any() ? "Department registrations retrieved successfully." : "No registrations found for this semester.",
                     Data = list
                 };
@@ -299,7 +299,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -315,7 +315,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = list.Any() ? "Registrations retrieved successfully." : "No registrations found for this student in that session.",
                     Data = list
                 };
@@ -324,7 +324,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }
@@ -340,7 +340,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = list.Any() ? "Registrations retrieved successfully." : "No registrations found for this student in that semester.",
                     Data = list
                 };
@@ -349,7 +349,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Internal Server Error: {ex.Message}"
                 };
             }

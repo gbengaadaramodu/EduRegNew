@@ -26,7 +26,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 400,
+                        StatusCode = 400,
                         Message = "Department with this code already exists",
                         Data = null
                     };
@@ -37,7 +37,7 @@ namespace EduReg.Services.Repositories
                     DepartmentName = model.DepartmentName,
                     DepartmentCode = model.DepartmentCode,
                     Description = model.Description,
-                    Programme = model.Programme,
+                   // Programme = model.Programme,
                     Duration = model.Duration,
                     NumberofSemesters = model.NumberofSemesters,
                     MaximumNumberofSemesters = model.MaximumNumberofSemesters
@@ -48,7 +48,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Department Created Successfully",
                     Data = department
                 };
@@ -57,7 +57,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = ex.Message,
                     Data = null
                 };
@@ -75,7 +75,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Department not found",
                         Data = null
                     };
@@ -86,7 +86,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Deleted successfully",
                     Data = null
                 };
@@ -95,7 +95,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = ex.Message,
                     Data = null
                 };
@@ -108,7 +108,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Success",
                 Data = departments
             };
@@ -122,7 +122,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Department not found",
                     Data = null
                 };
@@ -130,7 +130,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Success",
                 Data = department
             };
@@ -145,7 +145,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Department not found",
                     Data = null
                 };
@@ -153,7 +153,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Success",
                 Data = department
             };
@@ -170,7 +170,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Department not found",
                         Data = null
                     };
@@ -179,7 +179,7 @@ namespace EduReg.Services.Repositories
                 department.FacultyCode = model.FacultyCode;
                 department.DepartmentName = model.DepartmentName;
                 department.Description = model.Description;
-                department.Programme = model.Programme;
+               // department.Programme = model.Programme;
                 department.Duration = model.Duration;
                 department.NumberofSemesters = model.NumberofSemesters;
                 department.MaximumNumberofSemesters = model.MaximumNumberofSemesters;
@@ -188,7 +188,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Updated successfully",
                     Data = department
                 };
@@ -197,7 +197,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = ex.Message,
                     Data = null
                 };

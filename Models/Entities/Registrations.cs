@@ -1,7 +1,16 @@
-﻿namespace EduReg.Models.Entities
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace EduReg.Models.Entities
 {
+    [Index(nameof(InstitutionShortName))]
     public class Registrations: CommonBase
     {
+        public string? InstitutionShortName { get; set; } //FK
+
+        public string? DepartmentShortName { get; set; } //FK
+
+        public string? ProgrammeCode { get; set; } //FK -> Programmes
+
         public  string? MatricNumber { get; set; }
         public string? SessionId { get; set; }
         public string? DepartmentId { get; set; }

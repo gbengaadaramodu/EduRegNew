@@ -30,7 +30,7 @@ namespace EduReg.Tests
            
             var dto = _fixture.Create<AcademicLevelsDto>();
             var response = _fixture.Build<GeneralResponse>()
-                                   .With(r => r.StatusCore, 201)
+                                   .With(r => r.StatusCode, 201)
                                    .Create();
 
             _levelsMock.Setup(l => l.CreateAcademicLevel(dto))
@@ -49,7 +49,7 @@ namespace EduReg.Tests
             var id = 1;
             var dto = _fixture.Create<AcademicLevelsDto>();
             var response = _fixture.Build<GeneralResponse>()
-                                   .With(r => r.StatusCore, 200)
+                                   .With(r => r.StatusCode, 200)
                                    .Create();
 
             _levelsMock.Setup(l => l.UpdateAcademicLevelAsync(id, dto))
@@ -65,7 +65,7 @@ namespace EduReg.Tests
         {
             var id = 1;
             var response = _fixture.Build<GeneralResponse>()
-                                   .With(r => r.StatusCore, 204)
+                                   .With(r => r.StatusCode, 204)
                                    .Create();
 
             _levelsMock.Setup(l => l.DeleteAcademicLevelAsync(id))
@@ -81,7 +81,7 @@ namespace EduReg.Tests
         {
             var id = 1;
             var response = _fixture.Build<GeneralResponse>()
-                                   .With(r => r.StatusCore, 200)
+                                   .With(r => r.StatusCode, 200)
                                    .Create();
 
             _levelsMock.Setup(l => l.GetAcademicLevelByIdAsync(id))
@@ -96,7 +96,7 @@ namespace EduReg.Tests
         public async Task GetAllAcademicLevelsAsync_ShouldReturnExpectedResponse()
         {
             var response = _fixture.Build<GeneralResponse>()
-                                   .With(r => r.StatusCore, 200)
+                                   .With(r => r.StatusCode, 200)
                                    .Create();
 
             _levelsMock.Setup(l => l.GetAllAcademicLevelAsync())

@@ -33,7 +33,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid input: model is null",
                     Data = null
                 });
@@ -49,7 +49,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid input: no courses to create",
                     Data = null
                 });
@@ -64,7 +64,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid file upload",
                     Data = null
                 });
@@ -79,7 +79,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid Id",
                     Data = null
                 });
@@ -88,7 +88,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid input: model is null",
                     Data = null
                 });
@@ -103,7 +103,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid Id",
                     Data = null
                 });
@@ -118,7 +118,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid Id",
                     Data = null
                 });
@@ -133,7 +133,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Department shortname required",
                     Data = null
                 });
@@ -157,7 +157,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Department short name is required",
                     Data = null
                 });
@@ -166,7 +166,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid program course model",
                     Data = null
                 });
@@ -185,7 +185,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid program course model",
                     Data = null
                 });
@@ -200,7 +200,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "No program courses to create",
                     Data = null
                 });
@@ -217,7 +217,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid Id",
                     Data = null
                 });
@@ -226,7 +226,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid model",
                     Data = null
                 });
@@ -241,7 +241,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid Id",
                     Data = null
                 });
@@ -256,7 +256,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid Id",
                     Data = null
                 });
@@ -271,7 +271,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Programme code/name required",
                     Data = null
                 });
@@ -295,7 +295,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid schedule model",
                     Data = null
                 });
@@ -310,7 +310,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "No course schedules to create",
                     Data = null
                 });
@@ -327,7 +327,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid Id",
                     Data = null
                 });
@@ -336,7 +336,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid model",
                     Data = null
                 });
@@ -350,7 +350,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid Id",
                     Data = null
                 });
@@ -364,7 +364,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "No schedule DTOs provided to delete",
                     Data = null
                 });
@@ -378,7 +378,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "No IDs provided for delete many",
                     Data = null
                 });
@@ -392,7 +392,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid Id",
                     Data = null
                 });
@@ -406,7 +406,7 @@ namespace EduReg.Managers
             {
                 return Task.FromResult(new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Course code required",
                     Data = null
                 });

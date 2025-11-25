@@ -1,12 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EduReg.Models.Entities
 {
+    [Index(nameof(InstitutionShortName))]
     public class AdmissionBatches: CommonBase
     {
-
-
  
         [Key]
         public string? BatchShortName { get; set; } //PK

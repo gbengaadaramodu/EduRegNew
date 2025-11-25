@@ -24,7 +24,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 403,
+                        StatusCode = 403,
                         Message = "A Programme with this Programme Code already exists"
                     };
                 }
@@ -45,7 +45,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Programme created successfully",
                     Data = programme
                 };
@@ -56,7 +56,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"An error occurred while creating the Programme: {ex.Message}"                    
                 };
             }
@@ -72,7 +72,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Programme not found"
                     };
                 }
@@ -82,7 +82,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Programme deleted successfully",
                     Data = programme
                 };
@@ -91,7 +91,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"An error occurred while deleting the Programme: {ex.Message}"
                 };
             }
@@ -116,7 +116,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Programmes retrieved successfully",
                     Data = programmesDto
                 };
@@ -126,7 +126,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"An error occurred while retrieving Programmes: {ex.Message}"
                 };
             }
@@ -142,7 +142,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Programme not found"
                     };
                 }
@@ -160,7 +160,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse 
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Programme retrieved successfully",
                     Data = programmeDto
                 };
@@ -169,7 +169,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"An error occurred while retrieving the Programme: {ex.Message}"
                 };
             }
@@ -185,7 +185,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Programme not found"
                     };
                 }
@@ -203,7 +203,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Programme retrieved successfully",
                     Data = programmeDto
                 };
@@ -212,7 +212,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"An error occurred while retrieving the Programme: {ex.Message}"
                 };
             }
@@ -228,7 +228,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Programme not found"
                     };
                 }
@@ -246,7 +246,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Programme updated successfully",
                     Data = programme
                 };
@@ -255,7 +255,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"An error occurred while updating the Programme: {ex.Message}"
                 };
             }

@@ -10,5 +10,6 @@ namespace EduReg.Models.Entities
         public string? CreatedBy { get; set; }
         public int ActiveStatus { get; set; }
  
+
     }
 }

@@ -33,7 +33,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 201,
+                    StatusCode = 201,
                     Message = "Course schedule created successfully.",
                     Data = entity
                 };
@@ -42,7 +42,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Error when creating course schedule: {ex.Message}",
                     Data = null
                 };
@@ -59,7 +59,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 201,
+                    StatusCode = 201,
                     Message = "Course schedules created successfully.",
                     Data = entities
                 };
@@ -68,7 +68,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Error when creating course schedules in bulk: {ex.Message}",
                     Data = null
                 };
@@ -85,7 +85,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Course schedule not found.",
                         Data = null
                     };
@@ -117,7 +117,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Course schedule updated successfully.",
                     Data = entity
                 };
@@ -126,7 +126,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Error when updating course schedule: {ex.Message}",
                     Data = null
                 };
@@ -142,7 +142,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Course schedule not found.",
                         Data = null
                     };
@@ -153,7 +153,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Course schedule deleted successfully.",
                     Data = null
                 };
@@ -162,7 +162,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Error when deleting course schedule: {ex.Message}",
                     Data = null
                 };
@@ -199,7 +199,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "No matching course schedules found to delete.",
                         Data = null
                     };
@@ -210,7 +210,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = $"{toRemove.Count} course schedules deleted successfully.",
                     Data = null
                 };
@@ -219,7 +219,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Error when deleting many course schedules: {ex.Message}",
                     Data = null
                 };
@@ -238,7 +238,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "No course schedules found for the supplied Ids.",
                         Data = null
                     };
@@ -249,7 +249,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = $"{entities.Count} course schedules deleted successfully.",
                     Data = null
                 };
@@ -258,7 +258,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Error when deleting many schedules by Ids: {ex.Message}",
                     Data = null
                 };
@@ -274,7 +274,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Course schedule not found.",
                         Data = null
                     };
@@ -282,7 +282,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Success",
                     Data = entity
                 };
@@ -291,7 +291,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Error retrieving course schedule: {ex.Message}",
                     Data = null
                 };
@@ -310,7 +310,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "No course schedules found for the given course code.",
                         Data = null
                     };
@@ -318,7 +318,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Success",
                     Data = entities
                 };
@@ -327,7 +327,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Error when retrieving by course code: {ex.Message}",
                     Data = null
                 };
@@ -342,7 +342,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Success",
                     Data = entities
                 };
@@ -351,7 +351,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"Error retrieving all course schedules: {ex.Message}",
                     Data = null
                 };
