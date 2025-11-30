@@ -37,5 +37,18 @@ namespace EduReg.Data
    
         public DbSet<StudentFeeItem> StudentFeeItem { get; set; }
 
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            
+            modelBuilder.Entity<AdmissionBatches>()
+                .HasKey(x => new { x.Id, x.BatchShortName });
+            
+            modelBuilder.Entity<Institutions>()
+                .HasKey(x => new { x.Id, x.InstitutionShortName });
+            
+        }
+
     }
 }

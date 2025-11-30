@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace EduReg.Models.Entities
 {
     [Index(nameof(InstitutionShortName))]
-    public class ProgramCourses
+    public class ProgramCourses : CommonBase
     {
         //id
         public string? InstitutionShortName { get; set; } //Pk -> Institution
