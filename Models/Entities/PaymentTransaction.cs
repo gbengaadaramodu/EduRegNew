@@ -2,7 +2,6 @@
 using static Azure.Core.HttpHeader;
 
 using EduReg.Common;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EduReg.Models.Entities

@@ -40,12 +40,9 @@ namespace EduReg
             builder.Services.Configure<BaseUrlConfiguration>(builder.Configuration.GetSection("BaseUrlConfiguration"));
 
             //  builder.Services.AddAutoMapper(typeof(MappingProfile));
-           // builder.Services.AddScoped<StudentManager>();     
 
-
-
-            //IOC for Repositories
-         //   builder.Services.AddScoped<IStudent, StudentRepository>();
+            // IOC for Repositories
+            builder.Services.AddScoped<IStudent, StudentRepository>();
                        
             builder.Services.AddScoped<IInstitutions, InstitutionsRepository>();
             builder.Services.AddScoped<IAdmissionBatches, AdmissionBatchesRepository>();
@@ -74,14 +71,15 @@ namespace EduReg
 
             // Managers
 
+            builder.Services.AddScoped<StudentManager>();
             builder.Services.AddScoped<CoursesManager>();
             builder.Services.AddScoped<InstitutionsManager>();
             builder.Services.AddScoped<AcademicsManager>();
             builder.Services.AddScoped<SchoolsManager>();
-           //builder.Services.AddScoped<ProgrammesManager>();
-            builder  .Services.AddScoped<RegistrationsManager>();
+            builder.Services.AddScoped<RegistrationsManager>();
             builder.Services.AddScoped<ProgrammeFeeScheduleManager>();
-            builder .Services.AddScoped<FeeServiceManager>();
+            builder.Services.AddScoped<FeeServiceManager>();
+            builder.Services.AddScoped<FeePaymentManager>();
 
 
             builder.Services.AddCors(options =>

@@ -4,7 +4,6 @@ using EduReg.Models.Dto;
 using EduReg.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using EduReg.Managers;
 
 namespace EduReg.Api.Controllers
 {
