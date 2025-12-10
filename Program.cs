@@ -61,6 +61,7 @@ namespace EduReg
             builder.Services.AddScoped<IDepartmentCourses, DepartmentCoursesRepository>();
             builder.Services.AddScoped<IProgramCourses, ProgramCoursesRepository>();
             builder.Services.AddScoped<ICourseSchedule, CourseScheduleRepository>();
+            builder.Services.AddScoped<ICourseRegistration, CourseRegistrationRepository>();
 
             // Fees
             builder.Services.AddScoped<IFeeItems, FeeItemsRepository>();
@@ -101,6 +102,11 @@ namespace EduReg
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+            else
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
