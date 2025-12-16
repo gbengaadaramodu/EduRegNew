@@ -19,6 +19,8 @@ namespace EduReg.Models.Entities
         public int AdmittedSessionId { get; set; } //FK -> Academic   SessionId  
         public int AdmittedLevelId { get; set; }
         public int CurrentLevel { get; set; } //FK -> Academic   Level
+        public int? CurrentSessionId { get; set; }
+        public int? CurrentSemesterId { get; set; }
 
         //public bool? IsAdminUser { get; set; }
         //public bool? AdminUserHasChangePassword { get; set; }

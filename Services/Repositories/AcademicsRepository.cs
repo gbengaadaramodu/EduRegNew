@@ -36,7 +36,8 @@ namespace EduReg.Services.Repositories
             var entity = new AcademicLevel
             {
                 LevelName = model.LevelName,
-                Description = model.Description
+                Description = model.Description,
+                InstitutionShortName = model.InstitutionShortName
             };
 
             await _context.AcademicLevels.AddAsync(entity);
