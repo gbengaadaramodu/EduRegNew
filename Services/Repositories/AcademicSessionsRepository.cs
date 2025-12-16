@@ -1,7 +1,9 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduReg.Services.Repositories
 {
@@ -12,34 +14,141 @@ namespace EduReg.Services.Repositories
         {
             _context = context;
         }
-        public Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
+        public async Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
         {
-            
+            if (model == null)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = "Invalid academic session data",
+                    Data = null
+                };
+            }
 
-            return Task.FromResult(new GeneralResponse { StatusCode = 200, Message = "Academic session created successfully" , Data = model});
-            
-           // return new GeneralResponse { StatusCore = 404, Message = "Not Found"};
+            var entity = new AcademicSession
+            {
+                BatchShortName = model.BatchShortName,
+                SessionName = model.SessionName,
+                IsDeleted = model.IsDeleted
+            };
 
+            await _context.AcademicSessions.AddAsync(entity);
+            await _context.SaveChangesAsync();
+
+            return new GeneralResponse
+            {
+                StatusCode = 201,
+                Message = "Academic session created successfully",
+                Data = entity
+            };
         }
 
-        public Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
+        public async Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
         {
-            throw new NotImplementedException();
+            var session = await _context.AcademicSessions.FindAsync(Id);
+
+            if (session == null)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 404,
+                    Message = "Academic session not found",
+                    Data = null
+                };
+            }
+
+            _context.AcademicSessions.Remove(session);
+            await _context.SaveChangesAsync();
+
+            return new GeneralResponse
+            {
+                StatusCode = 200,
+                Message = "Academic session deleted successfully",
+                Data = null
+            };
         }
 
-        public Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id)
+        public async Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id)
         {
-            throw new NotImplementedException();
+            if (Id <= 0)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = "Invalid ID",
+                    Data = null
+                };
+            }
+
+            var session = await _context.AcademicSessions.FindAsync(Id);
+            if (session == null)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 404,
+                    Message = "Academic session not found",
+                    Data = null
+                };
+            }
+
+            return new GeneralResponse
+            {
+                StatusCode = 200,
+                Message = "Academic session retrieved successfully",
+                Data = session
+            };
         }
 
-        public Task<GeneralResponse> GetAllAcademicSessionsAsync()
+        public async Task<GeneralResponse> GetAllAcademicSessionsAsync()
         {
-            throw new NotImplementedException();
+            var sessions = await _context.AcademicSessions.ToListAsync();
+
+            if (!sessions.Any())
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 404,
+                    Message = "No academic sessions found",
+                    Data = null
+                };
+            }
+
+            return new GeneralResponse
+            {
+                StatusCode = 200,
+                Message = "Academic sessions retrieved successfully",
+                Data = sessions
+            };
         }
 
-        public Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model)
+        public async Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model)
         {
-            throw new NotImplementedException();
+            var session = await _context.AcademicSessions.FindAsync(Id);
+
+            if (session == null)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 404,
+                    Message = "Academic session not found",
+                    Data = null
+                };
+            }
+
+            session.BatchShortName = model.BatchShortName;
+            session.SessionName = model.SessionName;
+            session.IsDeleted = model.IsDeleted;
+
+            _context.AcademicSessions.Update(session);
+            await _context.SaveChangesAsync();
+
+            return new GeneralResponse
+            {
+                StatusCode = 200,
+                Message = "Academic session updated successfully",
+                Data = session
+            };
         }
     }
 }

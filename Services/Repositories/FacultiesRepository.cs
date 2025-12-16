@@ -188,9 +188,46 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public Task<GeneralResponse> GetFacultyByCodeAsync(string facultyCode)
+        public async Task<GeneralResponse> GetFacultyByCodeAsync(string facultyCode)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (string.IsNullOrEmpty(facultyCode))
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = "Invalid faculty code",
+                        Data = null
+                    };
+                }
+
+                var faculty = await _context.Faculties.FirstOrDefaultAsync(f => f.FacultyCode == facultyCode);
+                if (faculty == null)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 404,
+                        Message = "Faculty not found",
+                        Data = null
+                    };
+                }
+                return new GeneralResponse
+                {
+                    StatusCode = 200,
+                    Message = $"Faculty with code {facultyCode} retrieved successfully",
+                    Data = faculty
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 500,
+                    Message = "An error occurred while retrieving faculty by code",
+                    Data = ex.Message
+                };
+            }
         }
     }
 }

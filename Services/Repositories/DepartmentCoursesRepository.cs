@@ -95,11 +95,16 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public Task<GeneralResponse> UploadDepartmentCourseAsync(byte[] model)
+        public async Task<GeneralResponse> UploadDepartmentCourseAsync(byte[] model)
         {
-            // Use a library like EPPlus or ExcelDataReader to parse the byte array
-            // Example: Convert Excel file -> List<DepartmentCoursesDto>
-            throw new NotImplementedException();
+            // TODO: Implement Excel file parsing using EPPlus or similar library
+            // For now, return a placeholder response
+            return new GeneralResponse
+            {
+                StatusCode = 501,
+                Message = "Upload functionality not yet implemented. Please use individual course creation.",
+                Data = null
+            };
         }
 
         public async Task<GeneralResponse> UpdateDepartmentCourseAsync(int id, DepartmentCoursesDto model)

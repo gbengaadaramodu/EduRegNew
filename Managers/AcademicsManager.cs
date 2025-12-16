@@ -21,14 +21,14 @@ namespace EduReg.Managers
             _semesters = semesters;
         }
 
-        public  Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
+        public async Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
         {
-            throw new NotImplementedException();
+            return await _sessions.CreateAcademicSessionAsync(model);
         }
 
-        public Task<GeneralResponse> CreateAdmissionBatchAsync(AdmissionBatchesDto model)
+        public async Task<GeneralResponse> CreateAdmissionBatchAsync(AdmissionBatchesDto model)
         {
-            throw new NotImplementedException();
+            return await _batches.CreateAdmissionBatchAsync(model);
         }
 
         public  async Task<GeneralResponse> CreateAcademicLevelAsync(AcademicLevelsDto model)
@@ -36,19 +36,19 @@ namespace EduReg.Managers
            return await _levels.CreateAcademicLevel(model);
         }
 
-        public Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
+        public async Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
         {
-            throw new NotImplementedException();
+            return await _semesters.CreateSemesterAsync(model);
         }
 
-        public Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
+        public async Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _sessions.DeleteAcademicSessionAsync(Id);
         }
 
-        public Task<GeneralResponse> DeleteAdmissionBatchAsync(int Id)
+        public async Task<GeneralResponse> DeleteAdmissionBatchAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _batches.DeleteAdmissionBatchAsync(Id);
         }
 
         public async Task<GeneralResponse> DeleteAcademicLevelAsync(int Id)
@@ -56,19 +56,19 @@ namespace EduReg.Managers
             return await _levels.DeleteAcademicLevelAsync(Id);
         }
 
-        public Task<GeneralResponse> DeleteSemesterAsync(int Id)
+        public async Task<GeneralResponse> DeleteSemesterAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _semesters.DeleteSemesterAsync(Id);
         }
 
-        public Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id)
+        public async Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _sessions.GetAcademicSessionByIdAsync(Id);
         }
 
-        public Task<GeneralResponse> GetAdmissionBatchByIdAsync(int Id)
+        public async Task<GeneralResponse> GetAdmissionBatchByIdAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _batches.GetAdmissionBatchByIdAsync(Id);
         }
 
         public async Task<GeneralResponse> GetAcademicLevelByIdAsync(int Id)
@@ -77,14 +77,14 @@ namespace EduReg.Managers
         }
 
 
-        public Task<GeneralResponse> GetAllAcademicSessionsAsync()
+        public async Task<GeneralResponse> GetAllAcademicSessionsAsync()
         {
-            throw new NotImplementedException();
+            return await _sessions.GetAllAcademicSessionsAsync();
         }
 
-        public Task<GeneralResponse> GetAllAdmissionBatchAsync()
+        public async Task<GeneralResponse> GetAllAdmissionBatchAsync()
         {
-            throw new NotImplementedException();
+            return await _batches.GetAllAdmissionBatchAsync();
         }
 
         public async Task<GeneralResponse> GetAllAcademicLevelsAsync()
@@ -92,24 +92,24 @@ namespace EduReg.Managers
             return await _levels.GetAllAcademicLevelAsync();
         }
 
-        public Task<GeneralResponse> GetAllSemestersAsync()
+        public async Task<GeneralResponse> GetAllSemestersAsync()
         {
-            throw new NotImplementedException();
+            return await _semesters.GetAllSemestersAsync();
         }
 
-        public Task<GeneralResponse> GetSemesterByIdAsync(int Id)
+        public async Task<GeneralResponse> GetSemesterByIdAsync(int Id)
         {
-            throw new NotImplementedException();
+            return await _semesters.GetSemesterByIdAsync(Id);
         }
 
-        public Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model)
+        public async Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model)
         {
-            throw new NotImplementedException();
+            return await _sessions.UpdateAcademicSessionAsync(Id, model);
         }
 
-        public Task<GeneralResponse> UpdateAdmissionBatchAsync(int Id, AdmissionBatchesDto model)
+        public async Task<GeneralResponse> UpdateAdmissionBatchAsync(int Id, AdmissionBatchesDto model)
         {
-            throw new NotImplementedException();
+            return await _batches.UpdateAdmissionBatchAsync(Id, model);
         }
 
         public async Task<GeneralResponse> UpdateAcademicLevelAsync(int Id, AcademicLevelsDto model)
@@ -117,9 +117,9 @@ namespace EduReg.Managers
         return await _levels.UpdateAcademicLevelAsync(Id, model);
         }
 
-        public Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model)
+        public async Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model)
         {
-            throw new NotImplementedException();
+            return await _semesters.UpdateSemesterAsync(Id, model);
         }
 
         

@@ -108,9 +108,9 @@ namespace EduReg.Managers
             return await _programmes.UpdateProgrammeAsync(id, model);
         }
 
-        public Task<GeneralResponse> GetFacultyByCodeAsync(string facultyCode)
+        public async Task<GeneralResponse> GetFacultyByCodeAsync(string facultyCode)
         {
-            throw new NotImplementedException();
+            return await _faculties.GetFacultyByCodeAsync(facultyCode);
         }
     }
 }
