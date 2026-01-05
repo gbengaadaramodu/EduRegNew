@@ -224,7 +224,7 @@ namespace EduReg.Services.Repositories
         }
 
 
-        private async Task<(List<CourseSchedule> courseSchedules, bool success, string message)> ValidateCourseSchedules(List<int> courseScheduleIds, int? currentSessionId, int? currentSemesterId, string institutionShortName)
+        private async Task<(List<CourseSchedule> courseSchedules, bool success, string message)> ValidateCourseSchedules(List<long> courseScheduleIds, int? currentSessionId, int? currentSemesterId, string institutionShortName)
         {
             var courseSchedules = new List<CourseSchedule>();
             string message = "";

@@ -73,7 +73,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAcademicLevelByIdAsync(int Id)
+        public async Task<GeneralResponse> GetAcademicLevelByIdAsync(long Id)
         {
             if (Id <= 0)
             {
@@ -105,7 +105,7 @@ namespace EduReg.Services.Repositories
         }
 
 
-        public async Task<GeneralResponse> UpdateAcademicLevelAsync(int Id, AcademicLevelsDto model)
+        public async Task<GeneralResponse> UpdateAcademicLevelAsync(long Id, AcademicLevelsDto model)
         {
              
             
@@ -136,7 +136,7 @@ namespace EduReg.Services.Repositories
         }
 
 
-        public async Task<GeneralResponse> DeleteAcademicLevelAsync(int Id)
+        public async Task<GeneralResponse> DeleteAcademicLevelAsync(long Id)
         {
             var level = await _context.AcademicLevels.FindAsync(Id);
 

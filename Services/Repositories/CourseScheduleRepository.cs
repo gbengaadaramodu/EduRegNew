@@ -76,7 +76,7 @@ namespace EduReg.Services.Repositories
         }
  
 
-        public async Task<GeneralResponse> UpdateCourseScheduleAsync(int id, CourseScheduleDto model)
+        public async Task<GeneralResponse> UpdateCourseScheduleAsync(long id, CourseScheduleDto model)
         {
             try
             {
@@ -133,7 +133,7 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> DeleteCourseScheduleAsync(int id)
+        public async Task<GeneralResponse> DeleteCourseScheduleAsync(long id)
         {
             try
             {
@@ -226,7 +226,7 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> DeleteManyCourseSchedulesAsync(List<int> Ids)
+        public async Task<GeneralResponse> DeleteManyCourseSchedulesAsync(List<long> Ids)
         {
             try
             {
@@ -265,7 +265,7 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetCourseScheduleByIdAsync(int id)
+        public async Task<GeneralResponse> GetCourseScheduleByIdAsync(long id)
         {
             try
             {

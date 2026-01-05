@@ -17,7 +17,7 @@ namespace EduReg.Models.Entities
         public string? CourseCode { get; set; }
 
         // FeeItem reference (core fee category)
-        public int FeeItemId { get; set; }                     // FK to FeeItem
+        public long FeeItemId { get; set; }                     // FK to FeeItem
         public List<FeeItem>? FeeItem { get; set; }                  // Navigation property
 
         // Rule source (optional)

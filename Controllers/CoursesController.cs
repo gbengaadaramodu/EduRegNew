@@ -201,7 +201,7 @@ namespace EduReg.Controllers
 
         [HttpDelete]
         [Route("DeleteManySchedules")]
-        public async Task<IActionResult> DeleteManySchedules([FromBody] List<int> ids)
+        public async Task<IActionResult> DeleteManySchedules([FromBody] List<long> ids)
         {
             var response = await _coursesManager.DeleteManyCourseSchedulesAsync(ids);
             return StatusCode(response.StatusCode, response);

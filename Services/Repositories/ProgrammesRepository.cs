@@ -63,7 +63,7 @@ namespace EduReg.Services.Repositories
 
         }
 
-        public async Task<GeneralResponse> DeleteProgrammeAsync(int Id)
+        public async Task<GeneralResponse> DeleteProgrammeAsync(long Id)
         {
             try
             {
@@ -132,7 +132,7 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetProgrammeByIdAsync(int Id)
+        public async Task<GeneralResponse> GetProgrammeByIdAsync(long Id)
         {
             try
             {
@@ -218,7 +218,7 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> UpdateProgrammeAsync(int Id, ProgrammesDto model)
+        public async Task<GeneralResponse> UpdateProgrammeAsync(long Id, ProgrammesDto model)
         {
             try
             {

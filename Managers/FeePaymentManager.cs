@@ -13,7 +13,7 @@ namespace EduReg.Managers
         {
             _feepayment = feepayment;
         }
-        public async Task<GeneralResponse> UpdateStudentPaymentAsync(string matricNumber, List<int> paidItemIds)
+        public async Task<GeneralResponse> UpdateStudentPaymentAsync(string matricNumber, List<long> paidItemIds)
         {
              var result = await _feepayment.UpdateStudentPaymentAsync(matricNumber, paidItemIds);
             return result;

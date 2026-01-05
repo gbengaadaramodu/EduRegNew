@@ -15,7 +15,7 @@ namespace EduReg.Services.Repositories
             _context = context;
         }
 
-        public async Task<GeneralResponse> UpdateStudentPaymentAsync(string matricNumber, List<int> paidItemIds)
+        public async Task<GeneralResponse> UpdateStudentPaymentAsync(string matricNumber, List<long> paidItemIds)
         {
             var schedule = await _context.StudentFeeSchedule
                 .Include(s => s.StudentFeeItems)

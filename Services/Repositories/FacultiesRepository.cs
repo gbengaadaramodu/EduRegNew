@@ -44,7 +44,7 @@ namespace EduReg.Services.Repositories
             return response;
         }
 
-        public async Task<GeneralResponse> UpdateFacultyAsync(int Id, FacultiesDto model)
+        public async Task<GeneralResponse> UpdateFacultyAsync(long Id, FacultiesDto model)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> DeleteFacultyAsync(int Id)
+        public async Task<GeneralResponse> DeleteFacultyAsync(long Id)
         {
             try
             {
@@ -156,7 +156,7 @@ namespace EduReg.Services.Repositories
                 };
             }
         }
-        public async Task<GeneralResponse> GetFacultyByIdAsync(int Id)
+        public async Task<GeneralResponse> GetFacultyByIdAsync(long Id)
         {
             try
             {

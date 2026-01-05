@@ -65,7 +65,7 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> DeleteDepartmentAsync(int Id)
+        public async Task<GeneralResponse> DeleteDepartmentAsync(long Id)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetDepartmentByIdAsync(int Id)
+        public async Task<GeneralResponse> GetDepartmentByIdAsync(long Id)
         {
             var department = await _context.Departments.FindAsync(Id);
 
@@ -160,7 +160,7 @@ namespace EduReg.Services.Repositories
         }
 
 
-        public async Task<GeneralResponse> UpdateDepartmentAsync(int Id, DepartmentsDto model)
+        public async Task<GeneralResponse> UpdateDepartmentAsync(long Id, DepartmentsDto model)
         {
             try
             {

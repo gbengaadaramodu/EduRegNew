@@ -321,7 +321,7 @@ namespace EduReg.Managers
 
        
 
-        public Task<GeneralResponse> UpdateCourseScheduleAsync(int Id, CourseScheduleDto model)
+        public Task<GeneralResponse> UpdateCourseScheduleAsync(long Id, CourseScheduleDto model)
         {
             if (Id <= 0)
             {
@@ -344,7 +344,7 @@ namespace EduReg.Managers
             return _scheduleRepo.UpdateCourseScheduleAsync(Id, model);
         }
 
-        public Task<GeneralResponse> DeleteCourseScheduleAsync(int Id)
+        public Task<GeneralResponse> DeleteCourseScheduleAsync(long Id)
         {
             if (Id <= 0)
             {
@@ -372,7 +372,7 @@ namespace EduReg.Managers
             return _scheduleRepo.DeleteManyCourseSchedulesAsync(model);
         }
 
-        public Task<GeneralResponse> DeleteManyCourseSchedulesAsync(List<int> Id)
+        public Task<GeneralResponse> DeleteManyCourseSchedulesAsync(List<long> Id)
         {
             if (Id == null || Id.Count == 0)
             {
@@ -386,7 +386,7 @@ namespace EduReg.Managers
             return _scheduleRepo.DeleteManyCourseSchedulesAsync(Id);
         }
 
-        public Task<GeneralResponse> GetCourseScheduleByIdAsync(int Id)
+        public Task<GeneralResponse> GetCourseScheduleByIdAsync(long Id)
         {
             if (Id <= 0)
             {

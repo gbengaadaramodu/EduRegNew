@@ -5,7 +5,7 @@
         public string MatricNo { get; set; }
         public string InstitutionShortName { get; set; }
 
-        public List<int> CourseScheduleIds { get; set; }
+        public List<long> CourseScheduleIds { get; set; }
     }
 
     public class CourseRegistrationRequestDto

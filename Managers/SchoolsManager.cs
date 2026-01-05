@@ -33,12 +33,12 @@ namespace EduReg.Managers
             return await _faculties.CreateFacultyAsync(model);
         }
 
-        public async Task<GeneralResponse> DeleteDepartmentAsync(int Id)
+        public async Task<GeneralResponse> DeleteDepartmentAsync(long Id)
         {
             return await _departments.DeleteDepartmentAsync(Id);
         }
 
-        public async Task<GeneralResponse> DeleteFacultyAsync(int Id)
+        public async Task<GeneralResponse> DeleteFacultyAsync(long Id)
         {
             return await _faculties.DeleteFacultyAsync(Id);
         }
@@ -53,7 +53,7 @@ namespace EduReg.Managers
             return await _faculties.GetAllFacultiesAsync();
         }
 
-        public async Task<GeneralResponse> GetDepartmentByIdAsync(int Id)
+        public async Task<GeneralResponse> GetDepartmentByIdAsync(long Id)
         {
             return await _departments.GetDepartmentByIdAsync(Id);
         }
@@ -63,17 +63,17 @@ namespace EduReg.Managers
             return await _departments.GetDepartmentByNameAsync(DepartmentName);
         }
 
-        public async Task<GeneralResponse> GetFacultyByIdAsync(int Id)
+        public async Task<GeneralResponse> GetFacultyByIdAsync(long Id)
         {
             return await _faculties.GetFacultyByIdAsync(Id);
         }
 
-        public async Task<GeneralResponse> UpdateDepartmentAsync(int Id, DepartmentsDto model)
+        public async Task<GeneralResponse> UpdateDepartmentAsync(long Id, DepartmentsDto model)
         {
             return await _departments.UpdateDepartmentAsync(Id, model);
         }
 
-        public async Task<GeneralResponse> UpdateFacultyAsync(int Id, FacultiesDto model)
+        public async Task<GeneralResponse> UpdateFacultyAsync(long Id, FacultiesDto model)
         {
             return await _faculties.UpdateFacultyAsync(Id, model);
         }       
@@ -83,7 +83,7 @@ namespace EduReg.Managers
             return await _programmes.CreateProgrammeAsync(model);
         }
 
-        public async Task<GeneralResponse> DeleteProgrammeAsync(int Id)
+        public async Task<GeneralResponse> DeleteProgrammeAsync(long Id)
         {
             return await _programmes.DeleteProgrammeAsync(Id);
         }
@@ -93,7 +93,7 @@ namespace EduReg.Managers
             return await _programmes.GetAllProgrammesAsync();
         }
 
-        public async Task<GeneralResponse> GetProgrammeByIdAsync(int Id)
+        public async Task<GeneralResponse> GetProgrammeByIdAsync(long Id)
         {
             return await _programmes.GetProgrammeByIdAsync(Id);
         }
@@ -103,7 +103,7 @@ namespace EduReg.Managers
             return await _programmes.GetProgrammeByNameAsync(ProgrammeName);
         }
 
-        public async Task<GeneralResponse> UpdateProgrammeAsync(int id, ProgrammesDto model)
+        public async Task<GeneralResponse> UpdateProgrammeAsync(long id, ProgrammesDto model)
         {
             return await _programmes.UpdateProgrammeAsync(id, model);
         }
