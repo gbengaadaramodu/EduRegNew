@@ -197,14 +197,34 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAllDepartmentsByCoursesAsync()
+        public async Task<GeneralResponse> GetAllDepartmentsByCoursesAsync(PagingParameters paging)
         {
-            var courses = await _context.DepartmentCourses.ToListAsync();
+            var query = _context.DepartmentCourses.AsQueryable();
+
+            var totalRecords = await query.CountAsync();
+
+            var courses = await query
+                .OrderBy(x => x.Title)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
+
             return new GeneralResponse
             {
                 StatusCode = 200,
-                Message = "Success",
-                Data = courses
+                Message = totalRecords == 0
+                    ? "No department courses found"
+                    : "Department courses retrieved successfully",
+                Data = courses, // EMPTY LIST if none
+                Meta = new
+                {
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
             };
         }
     }

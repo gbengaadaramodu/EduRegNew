@@ -9,6 +9,6 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model);
         Task<GeneralResponse> DeleteSemesterAsync(int Id);
         Task<GeneralResponse> GetSemesterByIdAsync(int Id);
-        Task<GeneralResponse> GetAllSemestersAsync();
+        Task<GeneralResponse> GetAllSemestersAsync(PagingParameters paging);
     }
 }

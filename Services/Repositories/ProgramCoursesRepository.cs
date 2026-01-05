@@ -204,15 +204,34 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAllProgramsByCoursesAsync()
+        public async Task<GeneralResponse> GetAllProgramsByCoursesAsync(PagingParameters paging)
         {
-            var courses = await _context.ProgramCourses.ToListAsync();
+            var query = _context.ProgramCourses.AsQueryable();
+
+            var totalRecords = await query.CountAsync();
+
+            var courses = await query
+                .OrderBy(x => x.Title) // Use Title as the ordering column
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
 
             return new GeneralResponse
             {
                 StatusCode = 200,
-                Message = "Success",
-                Data = courses
+                Message = totalRecords == 0
+                    ? "No program courses found"
+                    : "Program courses retrieved successfully",
+                Data = courses, // EMPTY LIST if none
+                Meta = new
+                {
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
             };
         }
 
@@ -234,5 +253,7 @@ namespace EduReg.Services.Repositories
                 Description = model.Description
             };
         }
+
+       
     }
 }

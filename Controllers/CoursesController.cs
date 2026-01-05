@@ -85,9 +85,9 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllDepartmentsByCourses")]
-        public async Task<IActionResult> GetAllDepartmentsByCourses()
+        public async Task<IActionResult> GetAllDepartmentsByCourses([FromQuery] PagingParameters paging)
         {
-            var response = await _coursesManager.GetAllDepartmentsByCoursesAsync();
+            var response = await _coursesManager.GetAllDepartmentsByCoursesAsync(paging);
             return StatusCode(response.StatusCode, response);
         }
 
@@ -147,9 +147,9 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllProgramsByCourses")]
-        public async Task<IActionResult> GetAllProgramsByCourses()
+        public async Task<IActionResult> GetAllProgramsByCourses([FromQuery] PagingParameters paging)
         {
-            var response = await _coursesManager.GetAllProgramsByCoursesAsync();
+            var response = await _coursesManager.GetAllProgramsByCoursesAsync(paging);
             return StatusCode(response.StatusCode, response);
         }
 
@@ -233,9 +233,9 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllCourseSchedules")]
-        public async Task<IActionResult> GetAllCourseSchedules()
+        public async Task<IActionResult> GetAllCourseSchedules([FromQuery] PagingParameters paging)
         {
-            var response = await _coursesManager.GetAllCourseSchedulesAsync();
+            var response = await _coursesManager.GetAllCourseSchedulesAsync(paging);
             return StatusCode(response.StatusCode, response);
         }
     }

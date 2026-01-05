@@ -46,9 +46,9 @@ namespace EduReg.Api.Controllers
 
         [HttpGet]
         [Route("GetAllProgrammeFeeSchedules/{institutionShortName}")]
-        public async Task<IActionResult> GetAllProgrammeFeeSchedulesAsync(string institutionShortName)
+        public async Task<IActionResult> GetAllProgrammeFeeSchedulesAsync(string institutionShortName, [FromQuery] PagingParameters paging)
         {
-            var result = await _manager.GetAllProgrammeFeeSchedulesAsync(institutionShortName);
+            var result = await _manager.GetAllProgrammeFeeSchedulesAsync(institutionShortName,paging);
             return StatusCode(result.StatusCode, result);
         }
 

@@ -32,9 +32,9 @@ namespace EduReg.Api.Controllers
 
         [HttpGet]
         [Route("GetAllFeeItems")]
-        public async Task<IActionResult> GetAllFeeItemsAsync()
+        public async Task<IActionResult> GetAllFeeItemsAsync([FromQuery] PagingParameters paging)
         {
-            var result = await _manager.GetAllFeeItemsAsync();
+            var result = await _manager.GetAllFeeItemsAsync(paging);
             return StatusCode(result.StatusCode, result);
         }
 
@@ -84,9 +84,9 @@ namespace EduReg.Api.Controllers
 
         [HttpGet]
         [Route("GetAllFeeRules/{institutionShortName}")]
-        public async Task<IActionResult> GetAllFeeRulesAsync(string institutionShortName)
+        public async Task<IActionResult> GetAllFeeRulesAsync(string institutionShortName, [FromQuery] PagingParameters paging)
         {
-            var result = await _manager.GetAllFeeRuleAsync(institutionShortName);
+            var result = await _manager.GetAllFeeRuleAsync(institutionShortName, paging);
             return StatusCode(result.StatusCode, result);
         }
 
