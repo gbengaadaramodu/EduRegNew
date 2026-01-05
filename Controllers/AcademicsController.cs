@@ -99,33 +99,33 @@ namespace EduReg.Controllers
         }
         [HttpGet]
         [Route("GetAllAcademicSessions")]
-        public async Task<IActionResult> GetAllAcademicSessionsAsync()
+        public async Task<IActionResult> GetAllAcademicSessionsAsync([FromQuery] PagingParameters paging)
         {
-            var response = await _manager.GetAllAcademicSessionsAsync();
+            var response = await _manager.GetAllAcademicSessionsAsync(paging);
             return StatusCode(response.StatusCode, response);
         }
         [HttpGet]
         [Route("GetAllAdmissionBatch")]
-        public async Task<IActionResult> GetAllAdmissionBatchAsync()
+        public async Task<IActionResult> GetAllAdmissionBatchAsync([FromQuery] PagingParameters paging)
         {
-            var response = await _manager.GetAllAdmissionBatchAsync();
+            var response = await _manager.GetAllAdmissionBatchAsync(paging);
             return StatusCode(response.StatusCode, response);
 
         }
 
         [HttpGet]
         [Route("GetAllAcademicLevel")]
-        public async Task<IActionResult> GetAllAcademicLevelsAsync()
+        public async Task<IActionResult> GetAllAcademicLevelsAsync([FromQuery] PagingParameters paging)
         {
 
-            var response = await _manager.GetAllAcademicLevelsAsync();
+            var response = await _manager.GetAllAcademicLevelsAsync(paging);
             return StatusCode(response.StatusCode, response);
         }
         [HttpGet]
         [Route("GetAllSemesters")]
-        public async Task<IActionResult> GetAllSemestersAsync()
+        public async Task<IActionResult> GetAllSemestersAsync([FromQuery] PagingParameters paging)
         {
-            var response = await _manager.GetAllSemestersAsync();
+            var response = await _manager.GetAllSemestersAsync(paging);
             return StatusCode(response.StatusCode, response);
         }
         [HttpGet]

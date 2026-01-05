@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using EduReg.Models.Dto;
+﻿using EduReg.Common;
 using EduReg.Managers;
+using EduReg.Models.Dto;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace EduReg.Controllers
 {
@@ -58,9 +59,9 @@ namespace EduReg.Controllers
 
         // GET: api/Institutions/GetAllInstitutions
         [HttpGet("GetAllInstitutions")]
-        public async Task<IActionResult> GetAllInstitutions()
+        public async Task<IActionResult> GetAllInstitutions([FromQuery] PagingParameters paging)
         {
-            var response = await _manager.GetAllInstitutionAsync();
+            var response = await _manager.GetAllInstitutionAsync(paging);
             return StatusCode(response.StatusCode, response);
         }
     }

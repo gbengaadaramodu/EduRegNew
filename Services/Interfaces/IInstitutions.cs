@@ -11,6 +11,6 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> DeleteInstitutionAsync(int Id);
         Task<GeneralResponse> GetInstitutionByIdAsync(int Id);
         Task<GeneralResponse> GetInstitutionByShortNameAsync(string  InstitutionShortName);
-        Task<GeneralResponse> GetAllInstitutionAsync();
+        Task<GeneralResponse> GetAllInstitutionAsync(PagingParameters paging);
     }
 }

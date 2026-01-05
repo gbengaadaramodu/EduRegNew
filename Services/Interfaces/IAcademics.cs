@@ -9,6 +9,6 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> UpdateAcademicLevelAsync(long Id, AcademicLevelsDto model);
         Task<GeneralResponse> DeleteAcademicLevelAsync(long Id);
         Task<GeneralResponse> GetAcademicLevelByIdAsync(long Id);
-        Task<GeneralResponse> GetAllAcademicLevelAsync();
+        Task<GeneralResponse> GetAllAcademicLevelAsync(PagingParameters paging);
     }
 }

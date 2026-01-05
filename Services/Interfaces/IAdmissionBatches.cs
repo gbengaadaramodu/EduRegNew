@@ -9,7 +9,7 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> UpdateAdmissionBatchAsync(int Id, AdmissionBatchesDto model);
         Task<GeneralResponse> DeleteAdmissionBatchAsync(int Id);
         Task<GeneralResponse> GetAdmissionBatchByIdAsync(int Id);
-        Task<GeneralResponse> GetAllAdmissionBatchAsync();
+        Task<GeneralResponse> GetAllAdmissionBatchAsync(PagingParameters paging);
 
     }
 }

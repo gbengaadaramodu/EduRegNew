@@ -18,7 +18,7 @@ namespace EduReg.Services.Interfaces
 
         Task<GeneralResponse> GetCourseScheduleByIdAsync(long Id);
         Task<GeneralResponse> GetCourseScheduleByCourseCodeAsync(string courseCode);
-        Task<GeneralResponse> GetAllCourseSchedulesAsync();
+        Task<GeneralResponse> GetAllCourseSchedulesAsync(PagingParameters paging);
 
     }
 }

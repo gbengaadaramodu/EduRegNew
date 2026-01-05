@@ -101,28 +101,36 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAllAdmissionBatchAsync()
+        public async Task<GeneralResponse> GetAllAdmissionBatchAsync(PagingParameters paging)
         {
-            var batches = await _context.AdmissionBatches.ToListAsync();
+            var query = _context.AdmissionBatches.AsQueryable();
 
-            if (!batches.Any())
-            {
-                return new GeneralResponse
-                {
-                    StatusCode = 404,
-                    Message = "No admission batches found",
-                    Data = null
-                };
-            }
+            var totalRecords = await query.CountAsync();
+
+            var batches = await query
+                .OrderBy(x => x.BatchName)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
 
             return new GeneralResponse
             {
                 StatusCode = 200,
-                Message = "Admission batches retrieved successfully",
-                Data = batches
+                Message = totalRecords == 0
+                    ? "No admission batches found"
+                    : "Admission batches retrieved successfully",
+                Data = batches, // EMPTY LIST if none
+                Meta = new
+                {
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
             };
         }
-
         public async Task<GeneralResponse> UpdateAdmissionBatchAsync(int Id, AdmissionBatchesDto model)
         {
             var batch = await _context.AdmissionBatches.FindAsync(Id);

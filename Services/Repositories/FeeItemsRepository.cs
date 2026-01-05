@@ -62,27 +62,34 @@ namespace EduReg.Services.Repositories
 
 
         // ✅ Get all Fee Items
-        public async Task<GeneralResponse> GetAllFeeItemsAsync()
+        public async Task<GeneralResponse> GetAllFeeItemsAsync(PagingParameters paging)
         {
-            var items = await _context.FeeItem
-                .AsNoTracking()
-                .Include(x => x.FeeRules)
-                .ToListAsync();
+            var query = _context.FeeItem.AsQueryable();
 
-            if (!items.Any())
-            {
-                return new GeneralResponse
-                {
-                    StatusCode = 404,
-                    Message = "No fee items found."
-                };
-            }
+            var totalRecords = await query.CountAsync();
+
+            var feeItems = await query
+                .OrderBy(x => x.Name) 
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
 
             return new GeneralResponse
             {
                 StatusCode = 200,
-                Message = "Success",
-                Data = items
+                Message = totalRecords == 0
+                    ? "No fee items found"
+                    : "Fee items retrieved successfully",
+                Data = feeItems,
+                Meta = new
+                {
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
             };
         }
 

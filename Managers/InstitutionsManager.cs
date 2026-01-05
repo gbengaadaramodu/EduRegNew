@@ -24,9 +24,9 @@ namespace EduReg.Managers
             return _institution.DeleteInstitutionAsync(Id);
         }
 
-        public Task<GeneralResponse> GetAllInstitutionAsync()
+        public Task<GeneralResponse> GetAllInstitutionAsync(PagingParameters paging)
         {
-            return _institution.GetAllInstitutionAsync();
+            return _institution.GetAllInstitutionAsync(paging);
         }
 
         public Task<GeneralResponse> GetInstitutionByIdAsync(int Id)

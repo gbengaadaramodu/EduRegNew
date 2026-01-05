@@ -77,24 +77,24 @@ namespace EduReg.Managers
         }
 
 
-        public async Task<GeneralResponse> GetAllAcademicSessionsAsync()
+        public async Task<GeneralResponse> GetAllAcademicSessionsAsync(PagingParameters paging)
         {
-            return await _sessions.GetAllAcademicSessionsAsync();
+            return await _sessions.GetAllAcademicSessionsAsync(paging);
         }
 
-        public async Task<GeneralResponse> GetAllAdmissionBatchAsync()
+        public async Task<GeneralResponse> GetAllAdmissionBatchAsync(PagingParameters paging)
         {
-            return await _batches.GetAllAdmissionBatchAsync();
+            return await _batches.GetAllAdmissionBatchAsync(paging);
         }
 
-        public async Task<GeneralResponse> GetAllAcademicLevelsAsync()
+        public async Task<GeneralResponse> GetAllAcademicLevelsAsync(PagingParameters paging)
         {
-            return await _levels.GetAllAcademicLevelAsync();
+            return await _levels.GetAllAcademicLevelAsync(paging);
         }
 
-        public async Task<GeneralResponse> GetAllSemestersAsync()
+        public async Task<GeneralResponse> GetAllSemestersAsync(PagingParameters paging)
         {
-            return await _semesters.GetAllSemestersAsync();
+            return await _semesters.GetAllSemestersAsync(paging);
         }
 
         public async Task<GeneralResponse> GetSemesterByIdAsync(int Id)

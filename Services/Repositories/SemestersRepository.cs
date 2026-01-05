@@ -72,25 +72,34 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAllSemestersAsync()
+        public async Task<GeneralResponse> GetAllSemestersAsync(PagingParameters paging)
         {
-            var semesters = await _context.Semesters.ToListAsync();
+            var query = _context.Semesters.AsQueryable();
 
-            if (!semesters.Any())
-            {
-                return new GeneralResponse
-                {
-                    StatusCode = 404,
-                    Message = "No semesters found",
-                    Data = null
-                };
-            }
+            var totalRecords = await query.CountAsync();
+
+            var semesters = await query
+                .OrderBy(x => x.SemesterName)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
 
             return new GeneralResponse
             {
                 StatusCode = 200,
-                Message = "Semesters retrieved successfully",
-                Data = semesters
+                Message = totalRecords == 0
+                    ? "No semesters found"
+                    : "Semesters retrieved successfully",
+                Data = semesters, // EMPTY LIST if none
+                Meta = new
+                {
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
             };
         }
 
