@@ -113,7 +113,8 @@ namespace EduReg.Services.Repositories
 
                     if(courseLevel?.Order < currentLevel?.Order)
                     {
-                        courseRegistration.IsCarryOver = true;
+                        //courseRegistration.IsCarryOver = true;
+                        //Work on the above
                     }
 
                     coursesToRegister.Add(courseRegistration);
