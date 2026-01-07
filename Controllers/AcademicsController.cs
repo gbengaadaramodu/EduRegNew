@@ -145,7 +145,7 @@ namespace EduReg.Controllers
 
         [HttpPut]
         [Route("UpdateAdmissionBatch/{Id}")]
-        public async Task<IActionResult> UpdateAdmissionBatchAsync(int Id, [FromBody] AdmissionBatchesDto model)
+        public async Task<IActionResult> UpdateAdmissionBatchAsync(int Id, [FromBody] UpdateAdmissionBatchesDto model)
         {
             var response = await _manager.UpdateAdmissionBatchAsync(Id, model);
             return StatusCode(response.StatusCode, response);

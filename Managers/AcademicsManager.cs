@@ -107,7 +107,7 @@ namespace EduReg.Managers
             return await _sessions.UpdateAcademicSessionAsync(Id, model);
         }
 
-        public async Task<GeneralResponse> UpdateAdmissionBatchAsync(long Id, AdmissionBatchesDto model)
+        public async Task<GeneralResponse> UpdateAdmissionBatchAsync(long Id, UpdateAdmissionBatchesDto model)
         {
             return await _batches.UpdateAdmissionBatchAsync(Id, model);
         }

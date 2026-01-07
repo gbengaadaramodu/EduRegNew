@@ -48,7 +48,7 @@ namespace EduReg.Services.Repositories
 
         public async Task<GeneralResponse> DeleteAdmissionBatchAsync(long Id)
         {
-            var batch = await _context.AdmissionBatches.FindAsync(Id);
+            var batch = await _context.AdmissionBatches.FirstOrDefaultAsync(x => x.Id == Id);
 
             if (batch == null)
             {
@@ -83,7 +83,7 @@ namespace EduReg.Services.Repositories
                 };
             }
 
-            var batch = await _context.AdmissionBatches.FindAsync(Id);
+            var batch = await _context.AdmissionBatches.FirstOrDefaultAsync(x => x.Id == Id);
             if (batch == null)
             {
                 return new GeneralResponse
@@ -133,11 +133,11 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> UpdateAdmissionBatchAsync(long Id, AdmissionBatchesDto model)
+        public async Task<GeneralResponse> UpdateAdmissionBatchAsync(long Id, UpdateAdmissionBatchesDto model)
 
 
         {
-            var batch = await _context.AdmissionBatches.FindAsync(Id);
+            var batch = await _context.AdmissionBatches.FirstOrDefaultAsync(x => x.Id == Id);
 
             if (batch == null)
             {
@@ -149,8 +149,6 @@ namespace EduReg.Services.Repositories
                 };
             }
 
-            batch.BatchShortName = model.BatchShortName;
-            batch.InstitutionShortName = model.InstitutionShortName;
             batch.BatchName = model.BatchName;
             batch.Description = model.Description;
 

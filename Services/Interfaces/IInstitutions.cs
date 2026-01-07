@@ -7,7 +7,7 @@ namespace EduReg.Services.Interfaces
     {
        
         Task<GeneralResponse> CreateInstitutionAsync(InstitutionsDto model);
-        Task<GeneralResponse> UpdateInstitutionAsync(int Id, InstitutionsDto model);
+        Task<GeneralResponse> UpdateInstitutionAsync(int Id, UpdateInstitutionsDto model);
         Task<GeneralResponse> DeleteInstitutionAsync(int Id);
         Task<GeneralResponse> GetInstitutionByIdAsync(int Id);
         Task<GeneralResponse> GetInstitutionByShortNameAsync(string  InstitutionShortName);

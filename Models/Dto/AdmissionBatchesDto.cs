@@ -11,4 +11,10 @@ namespace EduReg.Models.Dto
 
 
     }
+
+    public class UpdateAdmissionBatchesDto: CommonBaseDto
+    {
+        public string? BatchName { get; set; }
+        public string? Description { get; set; }
+    }
 }
