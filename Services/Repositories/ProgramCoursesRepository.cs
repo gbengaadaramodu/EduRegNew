@@ -112,7 +112,7 @@ namespace EduReg.Services.Repositories
 
         
 
-        public async Task<GeneralResponse> UpdateProgramCourseAsync(int id, ProgramCoursesDto model)
+        public async Task<GeneralResponse> UpdateProgramCourseAsync(long id, ProgramCoursesDto model)
         {
             var course = await _context.ProgramCourses.FindAsync(id);
             if (course == null)
@@ -145,7 +145,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> DeleteProgramCourseAsync(int id)
+        public async Task<GeneralResponse> DeleteProgramCourseAsync(long id)
         {
             var course = await _context.ProgramCourses.FindAsync(id);
             if (course == null)
@@ -169,7 +169,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetProgramCoursesByIdAsync(int id)
+        public async Task<GeneralResponse> GetProgramCoursesByIdAsync(long id)
         {
             var course = await _context.ProgramCourses.FindAsync(id);
             if (course == null)

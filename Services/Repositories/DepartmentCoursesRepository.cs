@@ -107,7 +107,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> UpdateDepartmentCourseAsync(int id, DepartmentCoursesDto model)
+        public async Task<GeneralResponse> UpdateDepartmentCourseAsync(long id, DepartmentCoursesDto model)
         {
             var course = await _context.DepartmentCourses.FindAsync(id);
             if (course == null)
@@ -138,7 +138,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> DeleteDepartmentCourseAsync(int id)
+        public async Task<GeneralResponse> DeleteDepartmentCourseAsync(long id)
         {
             var course = await _context.DepartmentCourses.FindAsync(id);
             if (course == null)
@@ -162,7 +162,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetDepartmentCoursesByIdAsync(int id)
+        public async Task<GeneralResponse> GetDepartmentCoursesByIdAsync(long id)
         {
             var course = await _context.DepartmentCourses.FindAsync(id);
             if (course == null)

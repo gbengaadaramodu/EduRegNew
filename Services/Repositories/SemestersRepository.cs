@@ -47,7 +47,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> DeleteSemesterAsync(int Id)
+        public async Task<GeneralResponse> DeleteSemesterAsync(long Id)
         {
             var semester = await _context.Semesters.FindAsync(Id);
 
@@ -94,7 +94,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetSemesterByIdAsync(int Id)
+        public async Task<GeneralResponse> GetSemesterByIdAsync(long Id)
         {
             if (Id <= 0)
             {
@@ -125,7 +125,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model)
+        public async Task<GeneralResponse> UpdateSemesterAsync(long Id, SemestersDto model)
         {
             var semester = await _context.Semesters.FindAsync(Id);
 

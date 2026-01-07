@@ -188,7 +188,7 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> DropStudentRegistrationAsync(int Id)
+        public async Task<GeneralResponse> DropStudentRegistrationAsync(long Id)
         {
             try
             {

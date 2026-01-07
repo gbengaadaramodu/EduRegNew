@@ -111,7 +111,7 @@ namespace EduReg.Services.Repositories
             return new GeneralResponse { StatusCode = 201, Message = "Created successfully.", Data = entity };
         }
 
-        public async Task<GeneralResponse> UpdateProgrammeFeeScheduleAsync(int id, ProgrammeFeeScheduleDto model)
+        public async Task<GeneralResponse> UpdateProgrammeFeeScheduleAsync(long id, ProgrammeFeeScheduleDto model)
         {
             var entity = await _context.ProgrammeFeeSchedule
                 .FirstOrDefaultAsync(p => p.Id == id && p.InstitutionShortName == model.InstitutionShortName);
@@ -135,7 +135,7 @@ namespace EduReg.Services.Repositories
             return new GeneralResponse { StatusCode = 200, Message = "Updated successfully.", Data = entity };
         }
 
-        public async Task<GeneralResponse> DeleteProgrammeFeeScheduleAsync(int id, string institutionShortName)
+        public async Task<GeneralResponse> DeleteProgrammeFeeScheduleAsync(long id, string institutionShortName)
         {
             var entity = await _context.ProgrammeFeeSchedule
                 .FirstOrDefaultAsync(p => p.Id == id && p.InstitutionShortName == institutionShortName);
@@ -149,7 +149,7 @@ namespace EduReg.Services.Repositories
             return new GeneralResponse { StatusCode = 200, Message = "Deleted successfully." };
         }
 
-        public async Task<GeneralResponse> GetProgrammeFeeScheduleByIdAsync(int id, string institutionShortName)
+        public async Task<GeneralResponse> GetProgrammeFeeScheduleByIdAsync(long id, string institutionShortName)
         {
             var entity = await _context.ProgrammeFeeSchedule
                 .Include(p => p.FeeItem)

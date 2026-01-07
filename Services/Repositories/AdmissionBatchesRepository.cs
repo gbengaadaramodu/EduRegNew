@@ -32,6 +32,7 @@ namespace EduReg.Services.Repositories
                 InstitutionShortName = model.InstitutionShortName,
                 BatchName = model.BatchName,
                 Description = model.Description
+                
             };
 
             await _context.AdmissionBatches.AddAsync(entity);
@@ -45,7 +46,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> DeleteAdmissionBatchAsync(int Id)
+        public async Task<GeneralResponse> DeleteAdmissionBatchAsync(long Id)
         {
             var batch = await _context.AdmissionBatches.FindAsync(Id);
 
@@ -70,7 +71,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAdmissionBatchByIdAsync(int Id)
+        public async Task<GeneralResponse> GetAdmissionBatchByIdAsync(long Id)
         {
             if (Id <= 0)
             {
@@ -123,7 +124,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> UpdateAdmissionBatchAsync(int Id, AdmissionBatchesDto model)
+        public async Task<GeneralResponse> UpdateAdmissionBatchAsync(long Id, AdmissionBatchesDto model)
         {
             var batch = await _context.AdmissionBatches.FindAsync(Id);
 

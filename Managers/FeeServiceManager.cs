@@ -38,13 +38,13 @@ namespace EduReg.Managers
             return result;
         }
 
-        public async Task<GeneralResponse> DeleteFeeItemAsync(int id)
+        public async Task<GeneralResponse> DeleteFeeItemAsync(long id)
         {
             var result = await _feeItems.DeleteFeeItemAsync(id);
             return result;
         }
 
-        public async Task<GeneralResponse> DeleteFeeRuleAsync(int id, string institutionShortName)
+        public async Task<GeneralResponse> DeleteFeeRuleAsync(long id, string institutionShortName)
         {
             var result = await  _feeRules.DeleteFeeRuleAsync(id, institutionShortName);
             return result;
@@ -63,27 +63,27 @@ namespace EduReg.Managers
             return result;
         }
 
-        public async Task<GeneralResponse> GetFeeItemByIdAsync(int id)
+        public async Task<GeneralResponse> GetFeeItemByIdAsync(long id)
         {
             var result = await _feeItems.GetFeeItemByIdAsync(id);
 
             return result;
         }
 
-        public async Task<GeneralResponse> GetFeeRuleByIdAsync(int id, string institutionShortName)
+        public async Task<GeneralResponse> GetFeeRuleByIdAsync(long id, string institutionShortName)
         {
             var result = await  _feeRules.GetFeeRuleByIdAsync(id, institutionShortName);
             return result;
         }
 
-        public async Task<GeneralResponse> UpdateFeeItemAsync(int Id, FeeItemDto model)
+        public async Task<GeneralResponse> UpdateFeeItemAsync(long Id, FeeItemDto model)
         {
             var result = await _feeItems.UpdateFeeItemAsync(Id,model);
 
             return result;
         }
 
-        public async Task<GeneralResponse> UpdateFeeRuleAsync(int id, FeeRuleDto model, string institutionShortName)
+        public async Task<GeneralResponse> UpdateFeeRuleAsync(long id, FeeRuleDto model, string institutionShortName)
         {
            var result = await  _feeRules.UpdateFeeRuleAsync(id, model, institutionShortName);
             return result;

@@ -15,8 +15,8 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> GetRegistrationBusinessRulesByDepartmentAsync(string DepartmentCode, RegistrationBusinessRulesDto model);
         Task<GeneralResponse> GetAllRegistrationBusinessRulesAsync();
    
-        Task<GeneralResponse> UpdateRegistrationBusinessRuleAsync(int Id, RegistrationBusinessRulesDto model);
-        Task<GeneralResponse> DeleteRegistrationBusinessRuleAsync(int Id);
+        Task<GeneralResponse> UpdateRegistrationBusinessRuleAsync(long Id, RegistrationBusinessRulesDto model);
+        Task<GeneralResponse> DeleteRegistrationBusinessRuleAsync(long Id);
 
     }
 }

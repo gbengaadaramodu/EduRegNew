@@ -44,7 +44,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
+        public async Task<GeneralResponse> DeleteAcademicSessionAsync(long Id)
         {
             var session = await _context.AcademicSessions.FindAsync(Id);
 
@@ -69,7 +69,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id)
+        public async Task<GeneralResponse> GetAcademicSessionByIdAsync(long Id)
         {
             if (Id <= 0)
             {
@@ -122,7 +122,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model)
+        public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model)
         {
             var session = await _context.AcademicSessions.FindAsync(Id);
 

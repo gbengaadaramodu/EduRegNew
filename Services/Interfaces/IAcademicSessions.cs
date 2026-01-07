@@ -7,9 +7,9 @@ namespace EduReg.Services.Interfaces
     public interface IAcademicSessions
     {
         Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model);
-        Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model);
-        Task<GeneralResponse> DeleteAcademicSessionAsync(int Id);
-        Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id);
+        Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model);
+        Task<GeneralResponse> DeleteAcademicSessionAsync(long Id);
+        Task<GeneralResponse> GetAcademicSessionByIdAsync(long Id);
         Task<GeneralResponse> GetAllAcademicSessionsAsync();
     }
 }

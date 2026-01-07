@@ -193,7 +193,7 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetCourseRegistrationById(int id)
+        public async Task<GeneralResponse> GetCourseRegistrationById(long id)
         {
             var response = new GeneralResponse();
             try

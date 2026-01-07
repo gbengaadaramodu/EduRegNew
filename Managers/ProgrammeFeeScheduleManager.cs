@@ -17,7 +17,7 @@ namespace EduReg.Managers
             return result;
         }
 
-        public async Task<GeneralResponse> DeleteProgrammeFeeScheduleAsync(int id, string institutionShortName)
+        public async Task<GeneralResponse> DeleteProgrammeFeeScheduleAsync(long id, string institutionShortName)
         {
             var result = await _schedule.DeleteProgrammeFeeScheduleAsync(id, institutionShortName);
             return result;
@@ -35,7 +35,7 @@ namespace EduReg.Managers
             return result;
         }
 
-        public async Task<GeneralResponse> GetProgrammeFeeScheduleByIdAsync(int id, string institutionShortName)
+        public async Task<GeneralResponse> GetProgrammeFeeScheduleByIdAsync(long id, string institutionShortName)
         {
             var result = await _schedule.GetProgrammeFeeScheduleByIdAsync(id, institutionShortName);
             return result;
@@ -53,7 +53,7 @@ namespace EduReg.Managers
             return result;
         }
 
-        public async Task<GeneralResponse> UpdateProgrammeFeeScheduleAsync(int id, ProgrammeFeeScheduleDto model)
+        public async Task<GeneralResponse> UpdateProgrammeFeeScheduleAsync(long id, ProgrammeFeeScheduleDto model)
         {
             var result = await _schedule.UpdateProgrammeFeeScheduleAsync(id, model);
             return result;

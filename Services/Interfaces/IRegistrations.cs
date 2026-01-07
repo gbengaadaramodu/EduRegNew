@@ -15,7 +15,7 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> CreateStudentRegistrationAsync(List<RegistrationsDto> model); //Get list of ProgramCoursesDto
         Task<GeneralResponse> CreateStudentRegistrationAsync(byte[] model); // EXCEL, CSV, Flat file upload - Admin
 
-        Task<GeneralResponse> DropStudentRegistrationAsync(int Id); // Add and Drop Courses
+        Task<GeneralResponse> DropStudentRegistrationAsync(long Id); // Add and Drop Courses
         
 
     }

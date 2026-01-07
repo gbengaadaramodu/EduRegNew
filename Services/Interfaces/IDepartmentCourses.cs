@@ -9,11 +9,11 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> CreateDepartmentCourseAsync(List<DepartmentCoursesDto> model);
         Task<GeneralResponse> UploadDepartmentCourseAsync(byte[] model); // upload excel file, csv,flat file
 
-        Task<GeneralResponse> UpdateDepartmentCourseAsync(int Id, DepartmentCoursesDto model);
+        Task<GeneralResponse> UpdateDepartmentCourseAsync(long Id, DepartmentCoursesDto model);
 
-        Task<GeneralResponse> DeleteDepartmentCourseAsync(int Id);
+        Task<GeneralResponse> DeleteDepartmentCourseAsync(long Id);
 
-        Task<GeneralResponse> GetDepartmentCoursesByIdAsync(int Id); 
+        Task<GeneralResponse> GetDepartmentCoursesByIdAsync(long Id); 
         Task<GeneralResponse> GetDepartmentCoursesByDepartmentNameAsync(string shortname); 
         
         Task<GeneralResponse> GetAllDepartmentsByCoursesAsync();
