@@ -102,16 +102,32 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetAllInstitutionAsync()
+        public async Task<GeneralResponse> GetAllInstitutionAsync(PagingParameters paging)
         {
             try
             {
-                var institutions = await _context.Institutions.ToListAsync();
+                var query = _context.Institutions.AsQueryable();
+
+                var totalRecords = await query.CountAsync();
+
+                var institutions = await query
+                    .OrderBy(i => i.InstitutionName) // Sort by institution name
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
+                    .ToListAsync();
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
-                    Message = institutions.Count == 0 ? "No institutions found." : "Institutions retrieved successfully.",
-                    Data = institutions
+                    Message = totalRecords == 0 ? "No institutions found." : "Institutions retrieved successfully.",
+                    Data = institutions,
+                    Meta = new
+                    {
+                        paging.PageNumber,
+                        paging.PageSize,
+                        TotalRecords = totalRecords,
+                        TotalPages = totalRecords == 0 ? 0 : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                    }
                 };
             }
             catch (Exception ex)
@@ -119,11 +135,11 @@ namespace EduReg.Services.Repositories
                 return new GeneralResponse
                 {
                     StatusCode = 500,
-                    Message = $"Internal Server Error: {ex.Message}"
+                    Message = $"Internal Server Error: {ex.Message}",
+                    Data = null
                 };
             }
         }
-
         public async Task<GeneralResponse> GetInstitutionByIdAsync(int id)
         {
             try

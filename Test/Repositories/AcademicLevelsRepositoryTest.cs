@@ -24,12 +24,18 @@ namespace EduReg.Tests
             _fixture = new Fixture();
 
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDb_" + System.Guid.NewGuid()) 
+                .UseInMemoryDatabase(databaseName: "TestDb_" + System.Guid.NewGuid())
                 .Options;
 
             _context = new ApplicationDbContext(options);
             _repository = new AcademicsRepository(_context);
         }
+
+        private PagingParameters DefaultPaging => new PagingParameters
+        {
+            PageNumber = 1,
+            PageSize = 10
+        };
 
         [Fact]
         public async Task CreateAcademicLevel_ShouldReturnCreatedResponse()
@@ -46,17 +52,24 @@ namespace EduReg.Tests
         }
 
         [Fact]
-        public async Task GetAllAcademicLevelAsync_ShouldReturnLevels()
+        public async Task GetAllAcademicLevelAsync_ShouldReturnLevels_WhenDataExists()
         {
+            // Arrange
             var levels = _fixture.CreateMany<AcademicLevel>(3).ToList();
             _context.AcademicLevels.AddRange(levels);
             await _context.SaveChangesAsync();
 
-            var result = await _repository.GetAllAcademicLevelAsync();
+            // Act
+            var result = await _repository.GetAllAcademicLevelAsync(DefaultPaging);
 
+            // Assert
             result.StatusCode.Should().Be(200);
-            ((IEnumerable<AcademicLevel>)result.Data!).Count().Should().Be(3);
+
+            var data = result.Data as IEnumerable<AcademicLevel>;
+            data.Should().NotBeNull();
+            data!.Count().Should().Be(3);
         }
+
 
         [Fact]
         public async Task GetAcademicLevelByIdAsync_ShouldReturnLevel_WhenFound()

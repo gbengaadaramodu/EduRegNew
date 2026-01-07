@@ -50,16 +50,16 @@ namespace EduReg.Managers
             return result;
         }
 
-        public async Task<GeneralResponse> GetAllFeeItemsAsync()
+        public async Task<GeneralResponse> GetAllFeeItemsAsync(PagingParameters paging)
         {
-            var result = await _feeItems.GetAllFeeItemsAsync();
+            var result = await _feeItems.GetAllFeeItemsAsync(paging);
 
            return result;
         }
 
-        public async Task<GeneralResponse> GetAllFeeRuleAsync(string institutionShortName)
+        public async Task<GeneralResponse> GetAllFeeRuleAsync(string institutionShortName, PagingParameters paging)
         {
-            var result = await _feeRules.GetAllFeeRuleAsync(institutionShortName);
+            var result = await _feeRules.GetAllFeeRuleAsync(institutionShortName, paging);
             return result;
         }
 

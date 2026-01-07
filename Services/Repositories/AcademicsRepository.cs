@@ -51,25 +51,34 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAllAcademicLevelAsync()
+        public async Task<GeneralResponse> GetAllAcademicLevelAsync(PagingParameters paging)
         {
-            var levels = await _context.AcademicLevels.ToListAsync();
+            var query = _context.AcademicLevels.AsQueryable();
 
-            if (!levels.Any())
-            {
-                return new GeneralResponse
-                {
-                    StatusCode = 404,
-                    Message = "No academic levels found",
-                    Data = null
-                };
-            }
+            var totalRecords = await query.CountAsync();
+
+            var levels = await query
+                .OrderBy(x => x.LevelName)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
 
             return new GeneralResponse
             {
                 StatusCode = 200,
-                Message = "Academic levels retrieved successfully",
-                Data = levels
+                Message = totalRecords == 0
+                    ? "No academic levels found"
+                    : "Academic levels retrieved successfully",
+                Data = levels, // EMPTY LIST if none
+                Meta = new
+                {
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
             };
         }
 

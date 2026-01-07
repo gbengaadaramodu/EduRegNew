@@ -142,9 +142,9 @@ namespace EduReg.Managers
             return _departmentRepo.GetDepartmentCoursesByDepartmentNameAsync(shortname);
         }
 
-        public Task<GeneralResponse> GetAllDepartmentsByCoursesAsync()
+        public Task<GeneralResponse> GetAllDepartmentsByCoursesAsync(PagingParameters paging)
         {
-            return _departmentRepo.GetAllDepartmentsByCoursesAsync();
+            return _departmentRepo.GetAllDepartmentsByCoursesAsync(paging);
         }
 
         // -----------------------
@@ -280,9 +280,9 @@ namespace EduReg.Managers
             return _programRepo.GetProgramCoursesByProgramNameAsync(programName);
         }
 
-        public Task<GeneralResponse> GetAllProgramsByCoursesAsync()
+        public Task<GeneralResponse> GetAllProgramsByCoursesAsync(PagingParameters paging)
         {
-            return _programRepo.GetAllProgramsByCoursesAsync();
+            return _programRepo.GetAllProgramsByCoursesAsync(paging);
         }
 
         // -----------------------
@@ -414,9 +414,9 @@ namespace EduReg.Managers
             return _scheduleRepo.GetCourseScheduleByCourseCodeAsync(courseCode);
         }
 
-        public Task<GeneralResponse> GetAllCourseSchedulesAsync()
+        public Task<GeneralResponse> GetAllCourseSchedulesAsync(PagingParameters paging)
         {
-            return _scheduleRepo.GetAllCourseSchedulesAsync();
+            return _scheduleRepo.GetAllCourseSchedulesAsync(paging);
         }
     }
 }

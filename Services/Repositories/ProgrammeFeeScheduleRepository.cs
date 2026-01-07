@@ -163,16 +163,49 @@ namespace EduReg.Services.Repositories
             return new GeneralResponse { StatusCode = 200, Message = "Retrieved successfully.", Data = entity };
         }
 
-        public async Task<GeneralResponse> GetAllProgrammeFeeSchedulesAsync(string institutionShortName)
+        public async Task<GeneralResponse> GetAllProgrammeFeeSchedulesAsync(string institutionShortName, PagingParameters paging)
         {
-            var list = await _context.ProgrammeFeeSchedule
-                .Where(p => p.InstitutionShortName == institutionShortName)
-                .Include(p => p.FeeItem)
-                .Include(p => p.FeeRule)
-                .AsNoTracking()
-                .ToListAsync();
+            try
+            {
+                var query = _context.ProgrammeFeeSchedule
+                    .Where(p => p.InstitutionShortName == institutionShortName)
+                    .Include(p => p.FeeItem)
+                    .Include(p => p.FeeRule)
+                    .AsNoTracking();
 
-            return new GeneralResponse { StatusCode = 200, Message = "Retrieved successfully.", Data = list };
+                var totalCount = await query.CountAsync();
+
+                if (totalCount == 0)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 404,
+                        Message = "No programme fee schedules found.",
+                        Data = null
+                    };
+                }
+
+                var pagedData = await query
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
+                    .ToListAsync();
+
+                return new GeneralResponse
+                {
+                    StatusCode = 200,
+                    Message = "Programme fee schedules retrieved successfully.",
+                    Data = pagedData
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 500,
+                    Message = $"Error retrieving programme fee schedules: {ex.Message}",
+                    Data = null
+                };
+            }
         }
 
         public async Task<GeneralResponse> GetProgrammeFeeSchedulesByProgrammeAsync(string institutionShortName, string programmeCode)

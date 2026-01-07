@@ -124,26 +124,35 @@ namespace EduReg.Services.Repositories
         }
 
 
-        public async Task<GeneralResponse> GetAllFacultiesAsync()
+        public async Task<GeneralResponse> GetAllFacultiesAsync(PagingParameters paging)
         {
             try
             {
-                var faculties = await _context.Faculties.ToListAsync();
-                if (faculties == null || !faculties.Any())
+                var query = _context.Faculties
+                    .AsNoTracking();
+
+                var totalCount = await query.CountAsync();
+
+                if (totalCount == 0)
                 {
                     return new GeneralResponse
                     {
                         StatusCode = 404,
-                        Message = "No faculties found",
-                        Data = null,
+                        Message = "No faculties found.",
+                        Data = null
                     };
                 }
+
+                var pagedList = await query
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
+                    .ToListAsync();
 
                 return new GeneralResponse
                 {
                     StatusCode = 200,
-                    Message = "Faculties retrieved successfully",
-                    Data = faculties
+                    Message = "Faculties retrieved successfully.",
+                    Data = pagedList
                 };
             }
             catch (Exception ex)
@@ -151,8 +160,8 @@ namespace EduReg.Services.Repositories
                 return new GeneralResponse
                 {
                     StatusCode = 500,
-                    Message = "An error occurred while retrieving faculty",
-                    Data = ex.Message
+                    Message = $"Internal Server Error: {ex.Message}",
+                    Data = null
                 };
             }
         }

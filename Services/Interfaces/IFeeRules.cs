@@ -10,7 +10,7 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> UpdateFeeRuleAsync(long id, FeeRuleDto model, string institutionShortName);
         Task<GeneralResponse> DeleteFeeRuleAsync(long id, string institutionShortName);
         Task<GeneralResponse> GetFeeRuleByIdAsync(long id, string institutionShortName);
-        Task<GeneralResponse> GetAllFeeRuleAsync(string institutionShortName);
+        Task<GeneralResponse> GetAllFeeRuleAsync(string institutionShortName, PagingParameters paging);
     }
 }
 

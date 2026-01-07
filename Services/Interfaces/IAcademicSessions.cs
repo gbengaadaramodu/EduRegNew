@@ -10,6 +10,7 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model);
         Task<GeneralResponse> DeleteAcademicSessionAsync(long Id);
         Task<GeneralResponse> GetAcademicSessionByIdAsync(long Id);
-        Task<GeneralResponse> GetAllAcademicSessionsAsync();
+        Task<GeneralResponse> GetAllAcademicSessionsAsync(PagingParameters paging);
+
     }
 }

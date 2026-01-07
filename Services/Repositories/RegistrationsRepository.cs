@@ -255,19 +255,36 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetDepartmentRegistrationsBySessionIdAsync(string sessionId)
+        public async Task<GeneralResponse> GetDepartmentRegistrationsBySessionIdAsync(string sessionId,PagingParameters paging)
         {
             try
             {
-                var list = await _context.Registrations
+                var query = _context.Registrations
                     .Where(r => r.SessionId == sessionId)
+                    .AsNoTracking();
+
+                var totalCount = await query.CountAsync();
+
+                if (totalCount == 0)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 404,
+                        Message = "No registrations found for this session.",
+                        Data = null
+                    };
+                }
+
+                var pagedList = await query
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
                     .ToListAsync();
 
                 return new GeneralResponse
                 {
                     StatusCode = 200,
-                    Message = list.Any() ? "Department registrations retrieved successfully." : "No registrations found for this session.",
-                    Data = list
+                    Message = "Department registrations retrieved successfully.",
+                    Data = pagedList
                 };
             }
             catch (Exception ex)
@@ -275,24 +292,43 @@ namespace EduReg.Services.Repositories
                 return new GeneralResponse
                 {
                     StatusCode = 500,
-                    Message = $"Internal Server Error: {ex.Message}"
+                    Message = $"Internal Server Error: {ex.Message}",
+                    Data = null
                 };
             }
         }
 
-        public async Task<GeneralResponse> GetDepartmentRegistrationsBySemesterIdAsync(string semesterId)
+
+        public async Task<GeneralResponse> GetDepartmentRegistrationsBySemesterIdAsync(string semesterId,PagingParameters paging)
         {
             try
             {
-                var list = await _context.Registrations
+                var query = _context.Registrations
                     .Where(r => r.SemesterId == semesterId)
+                    .AsNoTracking();
+
+                var totalCount = await query.CountAsync();
+
+                if (totalCount == 0)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 404,
+                        Message = "No registrations found for this semester.",
+                        Data = null
+                    };
+                }
+
+                var pagedList = await query
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
                     .ToListAsync();
 
                 return new GeneralResponse
                 {
                     StatusCode = 200,
-                    Message = list.Any() ? "Department registrations retrieved successfully." : "No registrations found for this semester.",
-                    Data = list
+                    Message = "Department registrations retrieved successfully.",
+                    Data = pagedList
                 };
             }
             catch (Exception ex)
@@ -300,7 +336,8 @@ namespace EduReg.Services.Repositories
                 return new GeneralResponse
                 {
                     StatusCode = 500,
-                    Message = $"Internal Server Error: {ex.Message}"
+                    Message = $"Internal Server Error: {ex.Message}",
+                    Data = null
                 };
             }
         }

@@ -34,9 +34,9 @@ namespace EduReg.Managers
             return _registrationRules.DeleteRegistrationBusinessRuleAsync(Id);
         }
 
-        public Task<GeneralResponse> GetAllRegistrationBusinessRulesAsync()
+        public Task<GeneralResponse> GetAllRegistrationBusinessRulesAsync(PagingParameters paging)
         {
-            return _registrationRules.GetAllRegistrationBusinessRulesAsync();
+            return _registrationRules.GetAllRegistrationBusinessRulesAsync(paging);
         }
 
         public Task<GeneralResponse> GetRegistrationBusinessRulesByDepartmentAsync(string DepartmentCode, RegistrationBusinessRulesDto model)
@@ -86,14 +86,14 @@ namespace EduReg.Managers
             return _registrations.GetAllStudentRegistrationsAync(matricNumber);
         }
 
-        public Task<GeneralResponse> GetDepartmentRegistrationsBySemesterIdAsync(string sessionId)
+        public Task<GeneralResponse> GetDepartmentRegistrationsBySemesterIdAsync(string sessionId, PagingParameters paging)
         {
-            return _registrations.GetDepartmentRegistrationsBySemesterIdAsync(sessionId);
+            return _registrations.GetDepartmentRegistrationsBySemesterIdAsync(sessionId, paging);
         }
 
-        public Task<GeneralResponse> GetDepartmentRegistrationsBySessionIdAsync(string sessionId)
+        public Task<GeneralResponse> GetDepartmentRegistrationsBySessionIdAsync(string sessionId, PagingParameters paging)
         {
-            return _registrations.GetDepartmentRegistrationsBySessionIdAsync(sessionId);
+            return _registrations.GetDepartmentRegistrationsBySessionIdAsync(sessionId, paging);
         }
 
         public Task<GeneralResponse> GetStudentRegistrationsBySemesterIdAync(RegistrationsDto model)

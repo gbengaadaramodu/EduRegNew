@@ -334,17 +334,36 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetAllCourseSchedulesAsync()
+        public async Task<GeneralResponse> GetAllCourseSchedulesAsync(PagingParameters paging)
         {
             try
             {
-                var entities = await _context.CourseSchedules.ToListAsync();
+                var query = _context.CourseSchedules.AsQueryable();
+
+                var totalRecords = await query.CountAsync();
+
+                var schedules = await query
+                    .OrderBy(x => x.CourseCode) // or another meaningful column
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
+                    .ToListAsync();
 
                 return new GeneralResponse
                 {
                     StatusCode = 200,
-                    Message = "Success",
-                    Data = entities
+                    Message = totalRecords == 0
+                        ? "No course schedules found"
+                        : "Course schedules retrieved successfully",
+                    Data = schedules, // empty list if none
+                    Meta = new
+                    {
+                        paging.PageNumber,
+                        paging.PageSize,
+                        TotalRecords = totalRecords,
+                        TotalPages = totalRecords == 0
+                            ? 0
+                            : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                    }
                 };
             }
             catch (Exception ex)

@@ -100,29 +100,43 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAllAcademicSessionsAsync()
+        public async Task<GeneralResponse> GetAllAcademicSessionsAsync(PagingParameters paging)
         {
-            var sessions = await _context.AcademicSessions.ToListAsync();
+            var query = _context.AcademicSessions
+            .Where(x => !x.IsDeleted)
+            .AsQueryable();
 
-            if (!sessions.Any())
-            {
-                return new GeneralResponse
-                {
-                    StatusCode = 404,
-                    Message = "No academic sessions found",
-                    Data = null
-                };
-            }
+            var totalRecords = await query.CountAsync();
+
+            var sessions = await query
+                .OrderByDescending(x => x.Created)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
 
             return new GeneralResponse
             {
                 StatusCode = 200,
-                Message = "Academic sessions retrieved successfully",
-                Data = sessions
+                Message = totalRecords == 0
+              ? "No academic sessions found"
+              : "Academic sessions retrieved successfully",
+                Data = sessions,
+                Meta = new
+                {
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                ? 0
+                : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
             };
         }
 
+
         public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model)
+
+
         {
             var session = await _context.AcademicSessions.FindAsync(Id);
 

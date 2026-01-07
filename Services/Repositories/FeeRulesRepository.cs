@@ -52,15 +52,38 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetAllFeeRuleAsync(string institutionShortName)
+        public async Task<GeneralResponse> GetAllFeeRuleAsync(string institutionShortName,PagingParameters paging)
         {
-            var rules = await _context.FeeRule
-                .Where(r => r.InstitutionShortName == institutionShortName)
-                .Include(r => r.FeeItem)
+            var query = _context.FeeRule
+                .Where(x => x.InstitutionShortName == institutionShortName)
+                .AsQueryable();
+
+
+            var totalRecords = await query.CountAsync();
+
+            var feeRules = await query
+                .OrderBy(x => x.FeeItemId) 
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
                 .ToListAsync();
 
-
-            return new GeneralResponse { StatusCode = 200, Message = "Fee rules retrieved successfully.", Data = rules };
+            return new GeneralResponse
+            {
+                StatusCode = 200,
+                Message = totalRecords == 0
+                    ? "No fee rules found"
+                    : "Fee rules retrieved successfully",
+                Data = feeRules,
+                Meta = new
+                {
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
+            };
         }
 
         public async Task<GeneralResponse> GetFeeRuleByIdAsync( long id, string institutionShortName)

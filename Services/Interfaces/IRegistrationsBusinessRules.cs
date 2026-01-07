@@ -13,7 +13,7 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> UploadRegistrationBusinessRuleAsync(byte[] model); // EXCEL, CSV, Flat file upload - Admin
 
         Task<GeneralResponse> GetRegistrationBusinessRulesByDepartmentAsync(string DepartmentCode, RegistrationBusinessRulesDto model);
-        Task<GeneralResponse> GetAllRegistrationBusinessRulesAsync();
+        Task<GeneralResponse> GetAllRegistrationBusinessRulesAsync(PagingParameters paging);
    
         Task<GeneralResponse> UpdateRegistrationBusinessRuleAsync(long Id, RegistrationBusinessRulesDto model);
         Task<GeneralResponse> DeleteRegistrationBusinessRuleAsync(long Id);

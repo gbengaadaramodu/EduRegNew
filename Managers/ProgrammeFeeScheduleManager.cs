@@ -29,9 +29,9 @@ namespace EduReg.Managers
             return result;
         }
 
-        public async Task<GeneralResponse> GetAllProgrammeFeeSchedulesAsync(string institutionShortName)
+        public async Task<GeneralResponse> GetAllProgrammeFeeSchedulesAsync(string institutionShortName, PagingParameters paging)
         {
-            var result = await _schedule.GetAllProgrammeFeeSchedulesAsync(institutionShortName);
+            var result = await _schedule.GetAllProgrammeFeeSchedulesAsync(institutionShortName, paging);
             return result;
         }
 

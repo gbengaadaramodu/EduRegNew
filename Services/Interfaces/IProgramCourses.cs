@@ -13,6 +13,6 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> DeleteProgramCourseAsync(long Id);
         Task<GeneralResponse> GetProgramCoursesByIdAsync(long Id);
         Task<GeneralResponse> GetProgramCoursesByProgramNameAsync(string programName);//Shortname
-        Task<GeneralResponse> GetAllProgramsByCoursesAsync();
+        Task<GeneralResponse> GetAllProgramsByCoursesAsync(PagingParameters paging);
     }
 }

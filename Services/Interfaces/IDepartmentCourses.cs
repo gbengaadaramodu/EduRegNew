@@ -16,6 +16,6 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> GetDepartmentCoursesByIdAsync(long Id); 
         Task<GeneralResponse> GetDepartmentCoursesByDepartmentNameAsync(string shortname); 
         
-        Task<GeneralResponse> GetAllDepartmentsByCoursesAsync();
+        Task<GeneralResponse> GetAllDepartmentsByCoursesAsync(PagingParameters paging);
     }
 }

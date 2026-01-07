@@ -97,37 +97,54 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetAllProgrammesAsync()
+        public async Task<GeneralResponse> GetAllProgrammesAsync(PagingParameters paging)
         {
             try
             {
-                var programmes = await _context.Programmes.ToListAsync();
+                var query = _context.Programmes
+                    .AsNoTracking();
 
-                var programmesDto = programmes.Select(p => new ProgrammesDto
+                var totalCount = await query.CountAsync();
+
+                if (totalCount == 0)
                 {
-                    DepartmentCode = p.DepartmentCode,
-                    ProgrammeCode = p.ProgrammeCode,
-                    ProgrammeName = p.ProgrammeName,
-                    Description = p.Description,
-                    Duration = p.Duration,
-                    NumberOfSemesters = p.NumberOfSemesters,
-                    MaximumNumberOfSemesters = p.MaximumNumberOfSemesters
-                }).ToList();
+                    return new GeneralResponse
+                    {
+                        StatusCode = 404,
+                        Message = "No programmes found.",
+                        Data = null
+                    };
+                }
+
+                var pagedList = await query
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
+                    .Select(p => new ProgrammesDto
+                    {
+                        DepartmentCode = p.DepartmentCode,
+                        ProgrammeCode = p.ProgrammeCode,
+                        ProgrammeName = p.ProgrammeName,
+                        Description = p.Description,
+                        Duration = p.Duration,
+                        NumberOfSemesters = p.NumberOfSemesters,
+                        MaximumNumberOfSemesters = p.MaximumNumberOfSemesters
+                    })
+                    .ToListAsync();
 
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = "Programmes retrieved successfully",
-                    Data = programmesDto
+                    Data = pagedList
                 };
             }
-
             catch (Exception ex)
             {
                 return new GeneralResponse
                 {
                     StatusCode = 500,
-                    Message = $"An error occurred while retrieving Programmes: {ex.Message}"
+                    Message = $"An error occurred while retrieving Programmes: {ex.Message}",
+                    Data = null
                 };
             }
         }
