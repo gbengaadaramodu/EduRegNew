@@ -7,6 +7,7 @@
         public string? InstitutionShortName { get; set; } //FK
         public string? DepartmentCode { get; set; } //FK
         public string? ProgrammeCode { get; set; } //FK
+        public string? SemesterName { get; set; } //FK
         public int SemesterId { get; set; } //FK
         public string? LevelName { get; set; } //FK
         public string? ClassCode { get; set; } //FK

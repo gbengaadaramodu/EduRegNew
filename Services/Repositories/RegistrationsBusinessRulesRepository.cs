@@ -25,6 +25,7 @@ namespace EduReg.Services.Repositories
                         rb.InstitutionShortName == model.InstitutionShortName &&
                         rb.DepartmentCode == model.DepartmentCode &&
                         rb.ProgrammeCode == model.ProgrammeCode &&
+                        rb.SemesterName == model.SemesterName &&
                         rb.SemesterId == model.SemesterId &&
                         rb.LevelName == model.LevelName &&
                         rb.ClassCode == model.ClassCode
@@ -69,6 +70,7 @@ namespace EduReg.Services.Repositories
                         rb.InstitutionShortName == model.InstitutionShortName &&
                         rb.DepartmentCode == model.DepartmentCode &&
                         rb.ProgrammeCode == model.ProgrammeCode &&
+                        rb.SemesterName == model.SemesterName &&
                         rb.SemesterId == model.SemesterId &&
                         rb.LevelName == model.LevelName &&
                         rb.ClassCode == model.ClassCode
@@ -90,6 +92,7 @@ namespace EduReg.Services.Repositories
                     InstitutionShortName = model.InstitutionShortName,
                     DepartmentCode = model.DepartmentCode,
                     ProgrammeCode = model.ProgrammeCode,
+                    SemesterName = model.SemesterName,
                     SemesterId = model.SemesterId,
                     LevelName = model.LevelName,
                     ClassCode = model.ClassCode,
@@ -137,6 +140,7 @@ namespace EduReg.Services.Repositories
                             rb.DepartmentCode == model.DepartmentCode &&
                             rb.ProgrammeCode == model.ProgrammeCode &&
                             rb.SemesterId == model.SemesterId &&
+                            rb.SemesterName == model.SemesterName &&
                             rb.LevelName == model.LevelName &&
                             rb.ClassCode == model.ClassCode
                         );
@@ -151,6 +155,7 @@ namespace EduReg.Services.Repositories
                         DepartmentCode = model.DepartmentCode,
                         ProgrammeCode = model.ProgrammeCode,
                         SemesterId = model.SemesterId,
+                        SemesterName = model.SemesterName,
                         LevelName = model.LevelName,
                         ClassCode = model.ClassCode,
                         TotalCompulsoryUnits = model.TotalCompulsoryUnits,
@@ -320,6 +325,7 @@ namespace EduReg.Services.Repositories
                 entity.InstitutionShortName = model.InstitutionShortName;
                 entity.DepartmentCode = model.DepartmentCode;
                 entity.ProgrammeCode = model.ProgrammeCode;
+                entity.SemesterName = model.SemesterName;
                 entity.SemesterId = model.SemesterId;
                 entity.LevelName = model.LevelName;
                 entity.ClassCode = model.ClassCode;

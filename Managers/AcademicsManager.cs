@@ -21,7 +21,7 @@ namespace EduReg.Managers
             _semesters = semesters;
         }
 
-        public async Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
+        public async Task<GeneralResponse> CreateAcademicSessionAsync(CreateAcademicSessionDto model)
         {
             return await _sessions.CreateAcademicSessionAsync(model);
         }
@@ -102,7 +102,7 @@ namespace EduReg.Managers
             return await _semesters.GetSemesterByIdAsync(Id);
         }
 
-        public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model)
+        public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, UpdateAcademicSessionDto model)
         {
             return await _sessions.UpdateAcademicSessionAsync(Id, model);
         }

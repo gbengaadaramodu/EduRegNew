@@ -133,6 +133,7 @@ namespace EduReg.Services.Repositories
             course.CourseType = model.CourseType;
             course.Prerequisite = model.Prerequisite;
             course.Description = model.Description;
+            course.ActiveStatus = model.ActiveStatus;
 
             _context.ProgramCourses.Update(course);
             await _context.SaveChangesAsync();
@@ -250,7 +251,8 @@ namespace EduReg.Services.Repositories
                 Units = model.Units,
                 CourseType = model.CourseType,
                 Prerequisite = model.Prerequisite,
-                Description = model.Description
+                Description = model.Description,
+                ActiveStatus = model.ActiveStatus
             };
         }
 

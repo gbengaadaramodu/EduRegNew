@@ -21,7 +21,7 @@ namespace EduReg.Controllers
 
         [HttpPost]
         [Route("CreateAcademicSession")]
-        public async Task<IActionResult> CreateAcademicSessionAsync([FromBody] AcademicSessionsDto model)
+        public async Task<IActionResult> CreateAcademicSessionAsync([FromBody] CreateAcademicSessionDto model)
         {
             var response = await _manager.CreateAcademicSessionAsync(model);
                          
@@ -137,7 +137,7 @@ namespace EduReg.Controllers
         }
         [HttpPut]
         [Route("UpdateAcademicSession/{Id}")]
-        public async Task<IActionResult> UpdateAcademicSessionAsync(int Id, [FromBody] AcademicSessionsDto model)
+        public async Task<IActionResult> UpdateAcademicSessionAsync(int Id, [FromBody] UpdateAcademicSessionDto model)
         {
             var response = await _manager.UpdateAcademicSessionAsync(Id, model);
             return StatusCode(response.StatusCode, response);

@@ -33,7 +33,8 @@ namespace EduReg.Services.Repositories
                 SemesterName = model.SemesterName,
                 SemesterId = model.SemesterId,
                 StartDate = model.StartDate,
-                EndDate = model.EndDate
+                EndDate = model.EndDate,
+                ActiveStatus = model.ActiveStatus,
             };
 
             await _context.Semesters.AddAsync(entity);
@@ -154,6 +155,7 @@ namespace EduReg.Services.Repositories
             semester.SemesterId = model.SemesterId;
             semester.StartDate = model.StartDate;
             semester.EndDate = model.EndDate;
+            semester.ActiveStatus = model.ActiveStatus;
 
             _context.Semesters.Update(semester);
             await _context.SaveChangesAsync();
