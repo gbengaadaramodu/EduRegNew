@@ -28,6 +28,13 @@ namespace EduReg.Tests.Repositories
             return dbContext;
         }
 
+        private PagingParameters DefaultPaging =>
+        new PagingParameters
+        {
+        PageNumber = 1,
+        PageSize = 10
+        };
+
         [Fact]
         public async Task CreateDepartmentAsync_ShouldReturnSuccess()
         {
@@ -107,18 +114,24 @@ namespace EduReg.Tests.Repositories
                 DepartmentName = "English",
                 FacultyCode = "ART",
                 Duration = 4,
-              //  Programme = "BA",
                 NumberofSemesters = 8,
                 MaximumNumberofSemesters = 10
             });
             await context.SaveChangesAsync();
 
             var repo = new DepartmentsRepository(context);
-            var result = await repo.GetAllDepartmentsAsync();
 
+            // Act
+            var result = await repo.GetAllDepartmentsAsync(DefaultPaging);
+
+            // Assert
             result.StatusCode.Should().Be(200);
-            ((List<Departments>)result.Data!).Count.Should().BeGreaterThan(0);
+
+            var data = result.Data as IEnumerable<Departments>;
+            data.Should().NotBeNull();
+            data!.Count().Should().BeGreaterThan(0);
         }
+
 
         [Fact]
         public async Task UpdateDepartmentAsync_ShouldUpdateDepartment()

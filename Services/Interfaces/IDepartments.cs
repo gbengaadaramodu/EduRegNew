@@ -10,6 +10,6 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> DeleteDepartmentAsync(long Id);
         Task<GeneralResponse> GetDepartmentByIdAsync(long Id);
         Task<GeneralResponse> GetDepartmentByNameAsync(string DepartmentName);
-        Task<GeneralResponse> GetAllDepartmentsAsync();
+        Task<GeneralResponse> GetAllDepartmentsAsync(PagingParameters paging);
     }
 }

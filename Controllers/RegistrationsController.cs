@@ -1,4 +1,5 @@
-﻿using EduReg.Managers;
+﻿using EduReg.Common;
+using EduReg.Managers;
 using EduReg.Models.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -72,16 +73,16 @@ namespace EduReg.Controllers
         }
 
         [HttpGet("DepartmentBySession/{sessionId}")]
-        public async Task<IActionResult> GetDepartmentRegistrationsBySession(string sessionId)
+        public async Task<IActionResult> GetDepartmentRegistrationsBySession(string sessionId, [FromQuery] PagingParameters paging)
         {
-            var response = await _manager.GetDepartmentRegistrationsBySessionIdAsync(sessionId);
+            var response = await _manager.GetDepartmentRegistrationsBySessionIdAsync(sessionId, paging);
             return StatusCode(response.StatusCode, response);
         }
 
         [HttpGet("DepartmentBySemester/{sessionId}")]
-        public async Task<IActionResult> GetDepartmentRegistrationsBySemester(string sessionId)
+        public async Task<IActionResult> GetDepartmentRegistrationsBySemester(string sessionId, [FromQuery] PagingParameters paging)
         {
-            var response = await _manager.GetDepartmentRegistrationsBySemesterIdAsync(sessionId);
+            var response = await _manager.GetDepartmentRegistrationsBySemesterIdAsync(sessionId, paging);
             return StatusCode(response.StatusCode, response);
         }
 
@@ -125,9 +126,9 @@ namespace EduReg.Controllers
         }
 
         [HttpGet("Rules/All")]
-        public async Task<IActionResult> GetAllRegistrationRules()
+        public async Task<IActionResult> GetAllRegistrationRules([FromQuery] PagingParameters paging)
         {
-            var response = await _manager.GetAllRegistrationBusinessRulesAsync();
+            var response = await _manager.GetAllRegistrationBusinessRulesAsync(paging);
             return StatusCode(response.StatusCode, response);
         }
 

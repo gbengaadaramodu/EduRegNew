@@ -257,16 +257,35 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetAllRegistrationBusinessRulesAsync()
+        public async Task<GeneralResponse> GetAllRegistrationBusinessRulesAsync(PagingParameters paging)
         {
             try
             {
-                var list = await _context.RegistrationsBusinessRules.ToListAsync();
+                var query = _context.RegistrationsBusinessRules
+                    .AsNoTracking();
+
+                var totalCount = await query.CountAsync();
+
+                if (totalCount == 0)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 404,
+                        Message = "No business rules found.",
+                        Data = null
+                    };
+                }
+
+                var pagedList = await query
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
+                    .ToListAsync();
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
-                    Message = list.Any() ? "Business rules retrieved successfully." : "No business rules found.",
-                    Data = list
+                    Message = "Business rules retrieved successfully.",
+                    Data = pagedList
                 };
             }
             catch (Exception ex)
@@ -274,10 +293,12 @@ namespace EduReg.Services.Repositories
                 return new GeneralResponse
                 {
                     StatusCode = 500,
-                    Message = $"Internal Server Error: {ex.Message}"
+                    Message = $"Internal Server Error: {ex.Message}",
+                    Data = null
                 };
             }
         }
+
 
         public async Task<GeneralResponse> UpdateRegistrationBusinessRuleAsync(int Id, RegistrationBusinessRulesDto model)
         {

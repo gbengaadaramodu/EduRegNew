@@ -22,10 +22,10 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllFaculties")]
-        public async Task<IActionResult> GetAllFacultiesAsync()
+        public async Task<IActionResult> GetAllFacultiesAsync([FromQuery] PagingParameters paging)
         {
 
-            var response = await _manager.GetAllFacultiesAsync();
+            var response = await _manager.GetAllFacultiesAsync(paging);
             return StatusCode(response.StatusCode, response);
         }
         [HttpPost]
@@ -139,9 +139,9 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllDepartments")]
-        public async Task<IActionResult> GetAllDepartmentsAsync()
+        public async Task<IActionResult> GetAllDepartmentsAsync([FromQuery] PagingParameters paging)
         {
-            var result = await _manager.GetAllDepartmentsAsync();
+            var result = await _manager.GetAllDepartmentsAsync(paging);
             return StatusCode(result.StatusCode, result);
         }
 
@@ -184,11 +184,11 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllProgrammes")]
-        public async Task<IActionResult> GetAllProgrammesAsync()
+        public async Task<IActionResult> GetAllProgrammesAsync([FromQuery] PagingParameters paging)
         {
            // _logger.LogInformation("GET request received to fetch all programmes");
 
-            var response = await _manager.GetAllProgrammesAsync();
+            var response = await _manager.GetAllProgrammesAsync(paging);
 
             //if (response.StatusCode == 200)
             //{

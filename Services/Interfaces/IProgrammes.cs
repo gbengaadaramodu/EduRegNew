@@ -10,6 +10,6 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> DeleteProgrammeAsync(long Id);
         Task<GeneralResponse> GetProgrammeByIdAsync(long Id);
         Task<GeneralResponse> GetProgrammeByNameAsync(string ProgrammeName);
-        Task<GeneralResponse> GetAllProgrammesAsync();
+        Task<GeneralResponse> GetAllProgrammesAsync(PagingParameters paging);
     }
 }

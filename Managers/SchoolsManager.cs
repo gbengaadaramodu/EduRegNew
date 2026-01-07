@@ -43,14 +43,14 @@ namespace EduReg.Managers
             return await _faculties.DeleteFacultyAsync(Id);
         }
 
-        public async Task<GeneralResponse> GetAllDepartmentsAsync()
+        public async Task<GeneralResponse> GetAllDepartmentsAsync(PagingParameters paging)
         {
-            return await _departments.GetAllDepartmentsAsync();
+            return await _departments.GetAllDepartmentsAsync(paging);
         }
 
-        public async Task<GeneralResponse> GetAllFacultiesAsync()
+        public async Task<GeneralResponse> GetAllFacultiesAsync(PagingParameters paging)
         {
-            return await _faculties.GetAllFacultiesAsync();
+            return await _faculties.GetAllFacultiesAsync(paging);
         }
 
         public async Task<GeneralResponse> GetDepartmentByIdAsync(long Id)
@@ -88,9 +88,9 @@ namespace EduReg.Managers
             return await _programmes.DeleteProgrammeAsync(Id);
         }
 
-        public async Task<GeneralResponse> GetAllProgrammesAsync()
+        public async Task<GeneralResponse> GetAllProgrammesAsync(PagingParameters paging)
         {
-            return await _programmes.GetAllProgrammesAsync();
+            return await _programmes.GetAllProgrammesAsync(paging);
         }
 
         public async Task<GeneralResponse> GetProgrammeByIdAsync(long Id)

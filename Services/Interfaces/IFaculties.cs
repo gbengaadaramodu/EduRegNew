@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EduReg.Services.Interfaces
 {
@@ -10,6 +11,6 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> DeleteFacultyAsync(long Id);
         Task<GeneralResponse> GetFacultyByIdAsync(long Id);
         Task<GeneralResponse> GetFacultyByCodeAsync(string facultyCode);
-        Task<GeneralResponse> GetAllFacultiesAsync();
+        Task<GeneralResponse> GetAllFacultiesAsync(PagingParameters paging);
     }
 }
