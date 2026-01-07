@@ -299,8 +299,8 @@ namespace EduReg.Services.Repositories
             }
         }
 
+        public async Task<GeneralResponse> UpdateRegistrationBusinessRuleAsync(long Id, RegistrationBusinessRulesDto model)
 
-        public async Task<GeneralResponse> UpdateRegistrationBusinessRuleAsync(int Id, RegistrationBusinessRulesDto model)
         {
             try
             {
@@ -350,7 +350,7 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> DeleteRegistrationBusinessRuleAsync(int Id)
+        public async Task<GeneralResponse> DeleteRegistrationBusinessRuleAsync(long Id)
         {
             try
             {

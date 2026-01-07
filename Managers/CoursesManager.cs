@@ -73,7 +73,7 @@ namespace EduReg.Managers
             return _departmentRepo.UploadDepartmentCourseAsync(model);
         }
 
-        public Task<GeneralResponse> UpdateDepartmentCourseAsync(int Id, DepartmentCoursesDto model)
+        public Task<GeneralResponse> UpdateDepartmentCourseAsync(long Id, DepartmentCoursesDto model)
         {
             if (Id <= 0)
             {
@@ -97,7 +97,7 @@ namespace EduReg.Managers
             return _departmentRepo.UpdateDepartmentCourseAsync(Id, model);
         }
 
-        public Task<GeneralResponse> DeleteDepartmentCourseAsync(int Id)
+        public Task<GeneralResponse> DeleteDepartmentCourseAsync(long Id)
         {
             if (Id <= 0)
             {
@@ -112,7 +112,7 @@ namespace EduReg.Managers
             return _departmentRepo.DeleteDepartmentCourseAsync(Id);
         }
 
-        public Task<GeneralResponse> GetDepartmentCoursesByIdAsync(int Id)
+        public Task<GeneralResponse> GetDepartmentCoursesByIdAsync(long Id)
         {
             if (Id <= 0)
             {
@@ -211,7 +211,7 @@ namespace EduReg.Managers
 
          
 
-        public Task<GeneralResponse> UpdateProgramCourseAsync(int Id, ProgramCoursesDto model)
+        public Task<GeneralResponse> UpdateProgramCourseAsync(long Id, ProgramCoursesDto model)
         {
             if (Id <= 0)
             {
@@ -235,7 +235,7 @@ namespace EduReg.Managers
             return _programRepo.UpdateProgramCourseAsync(Id, model);
         }
 
-        public Task<GeneralResponse> DeleteProgramCourseAsync(int Id)
+        public Task<GeneralResponse> DeleteProgramCourseAsync(long Id)
         {
             if (Id <= 0)
             {
@@ -250,7 +250,7 @@ namespace EduReg.Managers
             return _programRepo.DeleteProgramCourseAsync(Id);
         }
 
-        public Task<GeneralResponse> GetProgramCoursesByIdAsync(int Id)
+        public Task<GeneralResponse> GetProgramCoursesByIdAsync(long Id)
         {
             if (Id <= 0)
             {

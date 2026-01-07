@@ -46,6 +46,8 @@ namespace EduReg.Data
             
             modelBuilder.Entity<AdmissionBatches>()
                 .HasKey(x => new { x.Id, x.BatchShortName });
+
+
             
             modelBuilder.Entity<Institutions>()
                 .HasKey(x => new { x.Id, x.InstitutionShortName });

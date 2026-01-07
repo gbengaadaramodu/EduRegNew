@@ -95,7 +95,7 @@ namespace EduReg.Services.Repositories
 
 
         // ✅ Get Fee Item by Id
-        public async Task<GeneralResponse> GetFeeItemByIdAsync(int Id)
+        public async Task<GeneralResponse> GetFeeItemByIdAsync(long Id)
         {
             var item = await _context.FeeItem
                 .Include(x => x.FeeRules)
@@ -120,7 +120,7 @@ namespace EduReg.Services.Repositories
 
 
         // ✅ Update Fee Item
-        public async Task<GeneralResponse> UpdateFeeItemAsync(int Id, FeeItemDto model)
+        public async Task<GeneralResponse> UpdateFeeItemAsync(long Id, FeeItemDto model)
         {
             var existingItem = await _context.FeeItem.FindAsync(Id);
 
@@ -166,7 +166,7 @@ namespace EduReg.Services.Repositories
 
 
         // ✅ Delete Fee Item
-        public async Task<GeneralResponse> DeleteFeeItemAsync(int Id)
+        public async Task<GeneralResponse> DeleteFeeItemAsync(long Id)
         {
             var item = await _context.FeeItem.FindAsync(Id);
 

@@ -29,7 +29,7 @@ namespace EduReg.Managers
             return _registrationRules.CreateRegistrationBusinessRuleAsync(model);
         }
 
-        public Task<GeneralResponse> DeleteRegistrationBusinessRuleAsync(int Id)
+        public Task<GeneralResponse> DeleteRegistrationBusinessRuleAsync(long Id)
         {
             return _registrationRules.DeleteRegistrationBusinessRuleAsync(Id);
         }
@@ -44,7 +44,7 @@ namespace EduReg.Managers
             return _registrationRules.GetRegistrationBusinessRulesByDepartmentAsync(DepartmentCode, model);
         }
 
-        public Task<GeneralResponse> UpdateRegistrationBusinessRuleAsync(int Id, RegistrationBusinessRulesDto model)
+        public Task<GeneralResponse> UpdateRegistrationBusinessRuleAsync(long Id, RegistrationBusinessRulesDto model)
         {
             return _registrationRules.UpdateRegistrationBusinessRuleAsync(Id, model);
         }
@@ -76,7 +76,7 @@ namespace EduReg.Managers
             return _registrations.CreateStudentRegistrationAsync(model);
         }
 
-        public Task<GeneralResponse> DropStudentRegistrationAsync(int Id)
+        public Task<GeneralResponse> DropStudentRegistrationAsync(long Id)
         {
             return _registrations.DropStudentRegistrationAsync(Id);
         }

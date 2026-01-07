@@ -29,7 +29,7 @@ namespace EduReg.Managers
             return await _courseRegistrationRepository.GetCourseRegistration(model);
         }
 
-        public async Task<GeneralResponse> GetCourseRegistrationById(int id)
+        public async Task<GeneralResponse> GetCourseRegistrationById(long id)
         {
             return await _courseRegistrationRepository.GetCourseRegistrationById(id);
         }

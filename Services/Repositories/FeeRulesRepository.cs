@@ -86,7 +86,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetFeeRuleByIdAsync(int id, string institutionShortName)
+        public async Task<GeneralResponse> GetFeeRuleByIdAsync( long id, string institutionShortName)
         {
             var rule = await _context.FeeRule
                 .Include(r => r.FeeItem)
@@ -104,7 +104,7 @@ namespace EduReg.Services.Repositories
 
         }
 
-        public async Task<GeneralResponse> UpdateFeeRuleAsync(int id, FeeRuleDto model, string institutionShortName)
+        public async Task<GeneralResponse> UpdateFeeRuleAsync(long id, FeeRuleDto model, string institutionShortName)
         {
             var rule = await _context.FeeRule
                 .FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == institutionShortName);
@@ -130,7 +130,7 @@ namespace EduReg.Services.Repositories
 
         }
 
-        public async Task<GeneralResponse> DeleteFeeRuleAsync(int id, string institutionShortName)
+        public async Task<GeneralResponse> DeleteFeeRuleAsync(long id, string institutionShortName)
         {
             var rule = await _context.FeeRule
                 .FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == institutionShortName);

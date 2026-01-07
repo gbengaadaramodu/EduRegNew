@@ -7,6 +7,6 @@ namespace EduReg.Services.Interfaces
     {
         Task<GeneralResponse> CreateCourseRegistrationAsync(CreateCourseRegistrationDto model);
         Task<GeneralResponse> GetCourseRegistration(CourseRegistrationRequestDto model);
-        Task<GeneralResponse> GetCourseRegistrationById(int id);
+        Task<GeneralResponse> GetCourseRegistrationById(long id);
     }
 }
