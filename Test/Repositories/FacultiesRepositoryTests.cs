@@ -1,12 +1,13 @@
 ﻿// File: EduReg.Tests/FacultiesRepositoryTests.cs
-using System;
-using System.Threading.Tasks;
+using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
 using EduReg.Models.Entities;
 using EduReg.Services.Repositories;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 using Xunit;
 
 public class FacultiesRepositoryTests
@@ -19,6 +20,13 @@ public class FacultiesRepositoryTests
 
         return new ApplicationDbContext(options);
     }
+
+    private PagingParameters DefaultPaging =>
+    new PagingParameters
+    {
+        PageNumber = 1,
+        PageSize = 10
+    };
 
     [Fact]
     public async Task UpdateFacultyAsync_Should_Return200_And_UpdateFields_When_FacultyExists()
@@ -81,7 +89,8 @@ public class FacultiesRepositoryTests
     }
 
     [Fact]
-    public async Task GetAllFacultiesAsync_Should_Return200_With_List()
+    
+    public async Task GetAllFacultiesAsync_Should_Return200_With_Paged_List()
     {
         using var ctx = BuildContext();
         var repo = new FacultiesRepository(ctx);
@@ -90,11 +99,18 @@ public class FacultiesRepositoryTests
         ctx.Faculties.Add(new Faculties { FacultyName = "Eng", FacultyCode = "ENG" });
         await ctx.SaveChangesAsync();
 
-        var result = await repo.GetAllFacultiesAsync();
+        // Act
+        var result = await repo.GetAllFacultiesAsync(DefaultPaging);
 
+        // Assert
         result.StatusCode.Should().Be(200);
         result.Data.Should().NotBeNull();
+
+        var data = result.Data as IEnumerable<Faculties>;
+        data.Should().NotBeNull();
+        data!.Count().Should().Be(2);
     }
+
 
     [Fact]
     public async Task DeleteFacultyAsync_Should_Return200_When_Deleted()

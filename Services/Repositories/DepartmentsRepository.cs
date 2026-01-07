@@ -102,16 +102,46 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetAllDepartmentsAsync()
+        public async Task<GeneralResponse> GetAllDepartmentsAsync(PagingParameters paging)
         {
-            var departments = await _context.Departments.ToListAsync();
-
-            return new GeneralResponse
+            try
             {
-                StatusCode = 200,
-                Message = "Success",
-                Data = departments
-            };
+                var query = _context.Departments
+                    .AsNoTracking();
+
+                var totalCount = await query.CountAsync();
+
+                if (totalCount == 0)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 404,
+                        Message = "No departments found.",
+                        Data = null
+                    };
+                }
+
+                var pagedList = await query
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
+                    .ToListAsync();
+
+                return new GeneralResponse
+                {
+                    StatusCode = 200,
+                    Message = "Departments retrieved successfully.",
+                    Data = pagedList
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 500,
+                    Message = $"Internal Server Error: {ex.Message}",
+                    Data = null
+                };
+            }
         }
 
         public async Task<GeneralResponse> GetDepartmentByIdAsync(long Id)
