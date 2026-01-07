@@ -73,7 +73,7 @@ namespace EduReg.Services.Repositories
         {
             try
             {
-                var institution = await _context.Institutions.FindAsync(id);
+                var institution = await _context.Institutions.FirstOrDefaultAsync(x => x.Id == id);
                 if (institution == null)
                 {
                     return new GeneralResponse
@@ -144,7 +144,7 @@ namespace EduReg.Services.Repositories
         {
             try
             {
-                var institution = await _context.Institutions.FindAsync(id);
+                var institution = await _context.Institutions.FirstOrDefaultAsync(x => x.Id == id);
                 if (institution == null)
                 {
                     return new GeneralResponse
@@ -204,11 +204,11 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> UpdateInstitutionAsync(int id, InstitutionsDto model)
+        public async Task<GeneralResponse> UpdateInstitutionAsync(int id, UpdateInstitutionsDto model)
         {
             try
             {
-                var institution = await _context.Institutions.FindAsync(id);
+                var institution = await _context.Institutions.FirstOrDefaultAsync(x => x.Id == id);
                 if (institution == null)
                 {
                     return new GeneralResponse
@@ -218,7 +218,6 @@ namespace EduReg.Services.Repositories
                     };
                 }
 
-                institution.InstitutionShortName = model.InstitutionShortName;
                 institution.InstitutionName = model.InstitutionName;
                 institution.Address = model.Address;
                 institution.ContactPerson = model.ContactPerson;

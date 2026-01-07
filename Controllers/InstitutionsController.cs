@@ -27,7 +27,7 @@ namespace EduReg.Controllers
 
         // PUT: api/Institutions/UpdateInstitution/5
         [HttpPut("UpdateInstitution/{id}")]
-        public async Task<IActionResult> UpdateInstitution(int id, [FromBody] InstitutionsDto model)
+        public async Task<IActionResult> UpdateInstitution(int id, [FromBody] UpdateInstitutionsDto model)
         {
             var response = await _manager.UpdateInstitutionAsync(id, model);
             return StatusCode(response.StatusCode, response);

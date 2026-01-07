@@ -39,7 +39,7 @@ namespace EduReg.Managers
             return _institution.GetInstitutionByShortNameAsync(InstitutionShortName);
         }
 
-        public Task<GeneralResponse> UpdateInstitutionAsync(int Id, InstitutionsDto model)
+        public Task<GeneralResponse> UpdateInstitutionAsync(int Id, UpdateInstitutionsDto model)
         {
             return _institution.UpdateInstitutionAsync(Id, model);
         }
