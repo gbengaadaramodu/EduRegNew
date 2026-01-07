@@ -31,8 +31,9 @@ namespace EduReg.Services.Repositories
                 BatchShortName = model.BatchShortName,
                 InstitutionShortName = model.InstitutionShortName,
                 BatchName = model.BatchName,
-                Description = model.Description
-                
+                Description = model.Description,
+                ActiveStatus = model.ActiveStatus,
+
             };
 
             await _context.AdmissionBatches.AddAsync(entity);
@@ -153,6 +154,7 @@ namespace EduReg.Services.Repositories
             batch.InstitutionShortName = model.InstitutionShortName;
             batch.BatchName = model.BatchName;
             batch.Description = model.Description;
+            batch.ActiveStatus = model.ActiveStatus;
 
             _context.AdmissionBatches.Update(batch);
             await _context.SaveChangesAsync();
