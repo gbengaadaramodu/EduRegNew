@@ -4,6 +4,7 @@ using Azure;
 using EduReg.Common;
 using EduReg.Managers;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -85,9 +86,9 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllDepartmentsByCourses")]
-        public async Task<IActionResult> GetAllDepartmentsByCourses([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllDepartmentsByCourses([FromQuery] PagingParameters paging, [FromQuery] DepartmentCourseFilter filter)
         {
-            var response = await _coursesManager.GetAllDepartmentsByCoursesAsync(paging);
+            var response = await _coursesManager.GetAllDepartmentsByCoursesAsync(paging, filter);
             return StatusCode(response.StatusCode, response);
         }
 
@@ -147,9 +148,9 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllProgramsByCourses")]
-        public async Task<IActionResult> GetAllProgramsByCourses([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllProgramsByCourses([FromQuery] PagingParameters paging, [FromQuery] ProgramCourseFilter filter)
         {
-            var response = await _coursesManager.GetAllProgramsByCoursesAsync(paging);
+            var response = await _coursesManager.GetAllProgramsByCoursesAsync(paging, filter);
             return StatusCode(response.StatusCode, response);
         }
 
@@ -233,9 +234,9 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllCourseSchedules")]
-        public async Task<IActionResult> GetAllCourseSchedules([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllCourseSchedules([FromQuery] PagingParameters paging, [FromQuery] CourseScheduleFilter filter)
         {
-            var response = await _coursesManager.GetAllCourseSchedulesAsync(paging);
+            var response = await _coursesManager.GetAllCourseSchedulesAsync(paging, filter);
             return StatusCode(response.StatusCode, response);
         }
     }

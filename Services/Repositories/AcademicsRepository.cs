@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -51,12 +52,25 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAllAcademicLevelAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllAcademicLevelAsync(PagingParameters paging, AcademicLevelFilter filter)
         {
             var query = _context.AcademicLevels.AsQueryable();
 
+            if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
+            {
+                query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter?.Search))
+            {
+                query = query.Where(x =>
+                    x.LevelName!.Contains(filter.Search));
+            }
+
+            // Total count BEFORE pagination
             var totalRecords = await query.CountAsync();
 
+            //Pagination
             var levels = await query
                 .OrderBy(x => x.LevelName)
                 .Skip((paging.PageNumber - 1) * paging.PageSize)
@@ -69,7 +83,7 @@ namespace EduReg.Services.Repositories
                 Message = totalRecords == 0
                     ? "No academic levels found"
                     : "Academic levels retrieved successfully",
-                Data = levels, // EMPTY LIST if none
+                Data = levels,
                 Meta = new
                 {
                     paging.PageNumber,
@@ -81,6 +95,7 @@ namespace EduReg.Services.Repositories
                 }
             };
         }
+
 
         public async Task<GeneralResponse> GetAcademicLevelByIdAsync(long Id)
         {

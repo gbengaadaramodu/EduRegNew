@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 
 namespace EduReg.Services.Interfaces
 {
@@ -18,7 +19,7 @@ namespace EduReg.Services.Interfaces
 
         Task<GeneralResponse> GetCourseScheduleByIdAsync(long Id);
         Task<GeneralResponse> GetCourseScheduleByCourseCodeAsync(string courseCode);
-        Task<GeneralResponse> GetAllCourseSchedulesAsync(PagingParameters paging);
+        Task<GeneralResponse> GetAllCourseSchedulesAsync(PagingParameters paging, CourseScheduleFilter filter);
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Services.Interfaces;
 
 namespace EduReg.Managers
@@ -29,9 +30,9 @@ namespace EduReg.Managers
             return result;
         }
 
-        public async Task<GeneralResponse> GetAllProgrammeFeeSchedulesAsync(string institutionShortName, PagingParameters paging)
+        public async Task<GeneralResponse> GetAllProgrammeFeeSchedulesAsync(string institutionShortName, PagingParameters paging, ProgrammeFeeScheduleFilter? filter)
         {
-            var result = await _schedule.GetAllProgrammeFeeSchedulesAsync(institutionShortName, paging);
+            var result = await _schedule.GetAllProgrammeFeeSchedulesAsync(institutionShortName, paging, filter);
             return result;
         }
 

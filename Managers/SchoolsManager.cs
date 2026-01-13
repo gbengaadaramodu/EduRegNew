@@ -2,6 +2,7 @@
 using EduReg.Common;
 using EduReg.Managers;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Services.Interfaces;
 using EduReg.Services.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -43,14 +44,14 @@ namespace EduReg.Managers
             return await _faculties.DeleteFacultyAsync(Id);
         }
 
-        public async Task<GeneralResponse> GetAllDepartmentsAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllDepartmentsAsync(PagingParameters paging, DepartmentFilter filter)
         {
-            return await _departments.GetAllDepartmentsAsync(paging);
+            return await _departments.GetAllDepartmentsAsync(paging, filter);
         }
 
-        public async Task<GeneralResponse> GetAllFacultiesAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllFacultiesAsync(PagingParameters paging, FacultyFilter filter)
         {
-            return await _faculties.GetAllFacultiesAsync(paging);
+            return await _faculties.GetAllFacultiesAsync(paging, filter);
         }
 
         public async Task<GeneralResponse> GetDepartmentByIdAsync(long Id)
@@ -88,9 +89,9 @@ namespace EduReg.Managers
             return await _programmes.DeleteProgrammeAsync(Id);
         }
 
-        public async Task<GeneralResponse> GetAllProgrammesAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllProgrammesAsync(PagingParameters paging, ProgrammeFilter filter)
         {
-            return await _programmes.GetAllProgrammesAsync(paging);
+            return await _programmes.GetAllProgrammesAsync(paging, filter);
         }
 
         public async Task<GeneralResponse> GetProgrammeByIdAsync(long Id)

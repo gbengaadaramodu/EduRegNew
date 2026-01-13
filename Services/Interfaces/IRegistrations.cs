@@ -1,12 +1,13 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 
 namespace EduReg.Services.Interfaces
 {
     public interface IRegistrations
     {
-        Task<GeneralResponse> GetDepartmentRegistrationsBySessionIdAsync(string sessionId, PagingParameters paging); // All Students
-        Task<GeneralResponse> GetDepartmentRegistrationsBySemesterIdAsync(string sessionId, PagingParameters paging); // All Students
+        Task<GeneralResponse> GetDepartmentRegistrationsBySessionIdAsync(string sessionId, RegistrationFilter? filter, PagingParameters paging); // All Students
+        Task<GeneralResponse> GetDepartmentRegistrationsBySemesterIdAsync(string semesterId, RegistrationFilter? filter, PagingParameters paging); // All Students
         Task<GeneralResponse> GetAllStudentRegistrationsAync(string matricNumber); //Individual Student
         Task<GeneralResponse> GetStudentRegistrationsBySessionIdAync(RegistrationsDto model); //Individual Student
         Task<GeneralResponse> GetStudentRegistrationsBySemesterIdAync(RegistrationsDto model); //Individual Student

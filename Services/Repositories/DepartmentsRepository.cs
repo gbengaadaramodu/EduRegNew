@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -102,47 +103,48 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetAllDepartmentsAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllDepartmentsAsync(PagingParameters paging,DepartmentFilter filter)
         {
-            try
+            var query = _context.Departments.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
+                query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
+
+            if (!string.IsNullOrWhiteSpace(filter?.FacultyCode))
+                query = query.Where(x => x.FacultyCode == filter.FacultyCode);
+
+            if (!string.IsNullOrWhiteSpace(filter?.Search))
+                query = query.Where(x =>
+                    x.DepartmentName!.Contains(filter.Search) ||
+                    x.DepartmentCode!.Contains(filter.Search));
+
+            var totalRecords = await query.CountAsync();
+
+            var pagedList = await query
+                .OrderBy(x => x.DepartmentName)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
+
+            return new GeneralResponse
             {
-                var query = _context.Departments
-                    .AsNoTracking();
-
-                var totalCount = await query.CountAsync();
-
-                if (totalCount == 0)
+                StatusCode = 200,
+                Message = totalRecords == 0
+                    ? "No departments found."
+                    : "Departments retrieved successfully.",
+                Data = pagedList,
+                Meta = new
                 {
-                    return new GeneralResponse
-                    {
-                        StatusCode = 404,
-                        Message = "No departments found.",
-                        Data = null
-                    };
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
                 }
-
-                var pagedList = await query
-                    .Skip((paging.PageNumber - 1) * paging.PageSize)
-                    .Take(paging.PageSize)
-                    .ToListAsync();
-
-                return new GeneralResponse
-                {
-                    StatusCode = 200,
-                    Message = "Departments retrieved successfully.",
-                    Data = pagedList
-                };
-            }
-            catch (Exception ex)
-            {
-                return new GeneralResponse
-                {
-                    StatusCode = 500,
-                    Message = $"Internal Server Error: {ex.Message}",
-                    Data = null
-                };
-            }
+            };
         }
+
 
         public async Task<GeneralResponse> GetDepartmentByIdAsync(long Id)
         {

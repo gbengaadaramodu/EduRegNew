@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -62,14 +63,48 @@ namespace EduReg.Services.Repositories
 
 
         // ✅ Get all Fee Items
-        public async Task<GeneralResponse> GetAllFeeItemsAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllFeeItemsAsync(PagingParameters paging, FeeItemFilter filter)
         {
             var query = _context.FeeItem.AsQueryable();
 
+           
+            // Apply filters
+            
+            if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
+                query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
+
+            if (filter?.FeeCategory != null)
+                query = query.Where(x => x.FeeCategory == filter.FeeCategory);
+
+            if (filter?.FeeRecurrenceType != null)
+                query = query.Where(x => x.FeeRecurrenceType == filter.FeeRecurrenceType);
+
+            if (filter?.FeeApplicabilityScope != null)
+                query = query.Where(x => x.FeeApplicabilityScope == filter.FeeApplicabilityScope);
+
+            if (filter?.IsSystemDefined != null)
+                query = query.Where(x => x.IsSystemDefined == filter.IsSystemDefined);
+
+            // Amount range filters
+            if (filter?.MinAmount != null)
+                query = query.Where(x => x.Amount >= filter.MinAmount);
+
+            if (filter?.MaxAmount != null)
+                query = query.Where(x => x.Amount <= filter.MaxAmount);
+
+            // Search (Name + Description)
+            if (!string.IsNullOrWhiteSpace(filter?.Search))
+                query = query.Where(x =>
+                    x.Name.Contains(filter.Search) ||
+                    (x.Description != null && x.Description.Contains(filter.Search))
+                );
+
+          
+            // Pagination
             var totalRecords = await query.CountAsync();
 
             var feeItems = await query
-                .OrderBy(x => x.Name) 
+                .OrderBy(x => x.Name)
                 .Skip((paging.PageNumber - 1) * paging.PageSize)
                 .Take(paging.PageSize)
                 .ToListAsync();

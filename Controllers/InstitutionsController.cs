@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Managers;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -33,6 +34,13 @@ namespace EduReg.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [HttpPut("UpdateInstitutionByShortName/{shortName}")]
+        public async Task<IActionResult> UpdateInstitutionByShortName(string shortName, [FromBody] UpdateInstitutionsDto model)
+        {
+            var response = await _manager.UpdateInstitutionByShortNameAsync(shortName, model);
+            return StatusCode(response.StatusCode, response);
+        }
+
         // DELETE: api/Institutions/DeleteInstitution/5
         [HttpDelete("DeleteInstitution/{id}")]
         public async Task<IActionResult> DeleteInstitution(int id)
@@ -59,9 +67,9 @@ namespace EduReg.Controllers
 
         // GET: api/Institutions/GetAllInstitutions
         [HttpGet("GetAllInstitutions")]
-        public async Task<IActionResult> GetAllInstitutions([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllInstitutions([FromQuery] PagingParameters paging, [FromQuery] InstitutionFilter filter)
         {
-            var response = await _manager.GetAllInstitutionAsync(paging);
+            var response = await _manager.GetAllInstitutionAsync(paging, filter);
             return StatusCode(response.StatusCode, response);
         }
     }

@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -73,36 +74,81 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAllSemestersAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllSemestersAsync(PagingParameters paging, SemesterFilter? filter)
         {
-            var query = _context.Semesters.AsQueryable();
-
-            var totalRecords = await query.CountAsync();
-
-            var semesters = await query
-                .OrderBy(x => x.SemesterName)
-                .Skip((paging.PageNumber - 1) * paging.PageSize)
-                .Take(paging.PageSize)
-                .ToListAsync();
-
-            return new GeneralResponse
+            try
             {
-                StatusCode = 200,
-                Message = totalRecords == 0
-                    ? "No semesters found"
-                    : "Semesters retrieved successfully",
-                Data = semesters, // EMPTY LIST if none
-                Meta = new
+                var query = _context.Semesters.AsQueryable();
+
+                // Apply optional filters
+                if (filter != null)
                 {
-                    paging.PageNumber,
-                    paging.PageSize,
-                    TotalRecords = totalRecords,
-                    TotalPages = totalRecords == 0
-                        ? 0
-                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                    if (!string.IsNullOrWhiteSpace(filter.InstitutionShortName))
+                        query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
+
+                    if (filter.SessionId.HasValue)
+                        query = query.Where(x => x.SessionId == filter.SessionId.Value);
+
+                    if (filter.SemesterId.HasValue)
+                        query = query.Where(x => x.SemesterId == filter.SemesterId.Value);
+
+                    if (!string.IsNullOrWhiteSpace(filter.SemesterName))
+                        query = query.Where(x => x.SemesterName.Contains(filter.SemesterName));
+
+                    if (filter.StartDateFrom.HasValue)
+                        query = query.Where(x => x.StartDate >= filter.StartDateFrom.Value);
+
+                    if (filter.StartDateTo.HasValue)
+                        query = query.Where(x => x.StartDate <= filter.StartDateTo.Value);
+
+                    if (!string.IsNullOrWhiteSpace(filter.Search))
+                    {
+                        query = query.Where(x =>
+                            (x.SemesterName != null && x.SemesterName.Contains(filter.Search)) ||
+                            (x.InstitutionShortName != null && x.InstitutionShortName.Contains(filter.Search))
+                        );
+                    }
                 }
-            };
+
+                // Count total records after filtering
+                var totalRecords = await query.CountAsync();
+
+                // Apply pagination
+                var semesters = await query
+                    .OrderBy(x => x.SemesterName)
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
+                    .ToListAsync();
+
+                return new GeneralResponse
+                {
+                    StatusCode = 200,
+                    Message = totalRecords == 0
+                        ? "No semesters found"
+                        : "Semesters retrieved successfully",
+                    Data = semesters,
+                    Meta = new
+                    {
+                        paging.PageNumber,
+                        paging.PageSize,
+                        TotalRecords = totalRecords,
+                        TotalPages = totalRecords == 0
+                            ? 0
+                            : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 500,
+                    Message = $"Internal Server Error: {ex.Message}",
+                    Data = null
+                };
+            }
         }
+
 
         public async Task<GeneralResponse> GetSemesterByIdAsync(long Id)
         {

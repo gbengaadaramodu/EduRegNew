@@ -2,6 +2,7 @@
 
 using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 
 namespace EduReg.Services.Interfaces
 {
@@ -12,7 +13,7 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> UpdateProgrammeFeeScheduleAsync(long id, ProgrammeFeeScheduleDto model);
         Task<GeneralResponse> DeleteProgrammeFeeScheduleAsync(long id, string institutionShortName);
         Task<GeneralResponse> GetProgrammeFeeScheduleByIdAsync(long id, string institutionShortName);
-        Task<GeneralResponse> GetAllProgrammeFeeSchedulesAsync(string institutionShortName, PagingParameters paging);
+        Task<GeneralResponse> GetAllProgrammeFeeSchedulesAsync(string institutionShortName, PagingParameters paging, ProgrammeFeeScheduleFilter? filter);
         Task<GeneralResponse> GetProgrammeFeeSchedulesByProgrammeAsync(string institutionShortName, string programmeCode);
         Task<GeneralResponse> GetProgrammeFeeSchedulesByFeeItemAsync(string institutionShortName, int feeItemId);
 

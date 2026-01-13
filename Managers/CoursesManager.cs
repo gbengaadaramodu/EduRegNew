@@ -1,9 +1,10 @@
-﻿using System;
+﻿using EduReg.Common;
+using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
+using EduReg.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EduReg.Common;
-using EduReg.Models.Dto;
-using EduReg.Services.Interfaces;
 
 namespace EduReg.Managers
 {
@@ -142,9 +143,9 @@ namespace EduReg.Managers
             return _departmentRepo.GetDepartmentCoursesByDepartmentNameAsync(shortname);
         }
 
-        public Task<GeneralResponse> GetAllDepartmentsByCoursesAsync(PagingParameters paging)
+        public Task<GeneralResponse> GetAllDepartmentsByCoursesAsync(PagingParameters paging, DepartmentCourseFilter filter)
         {
-            return _departmentRepo.GetAllDepartmentsByCoursesAsync(paging);
+            return _departmentRepo.GetAllDepartmentsByCoursesAsync(paging, filter);
         }
 
         // -----------------------
@@ -280,9 +281,9 @@ namespace EduReg.Managers
             return _programRepo.GetProgramCoursesByProgramNameAsync(programName);
         }
 
-        public Task<GeneralResponse> GetAllProgramsByCoursesAsync(PagingParameters paging)
+        public Task<GeneralResponse> GetAllProgramsByCoursesAsync(PagingParameters paging, ProgramCourseFilter filter)
         {
-            return _programRepo.GetAllProgramsByCoursesAsync(paging);
+            return _programRepo.GetAllProgramsByCoursesAsync(paging, filter);
         }
 
         // -----------------------
@@ -414,9 +415,9 @@ namespace EduReg.Managers
             return _scheduleRepo.GetCourseScheduleByCourseCodeAsync(courseCode);
         }
 
-        public Task<GeneralResponse> GetAllCourseSchedulesAsync(PagingParameters paging)
+        public Task<GeneralResponse> GetAllCourseSchedulesAsync(PagingParameters paging, CourseScheduleFilter filter)
         {
-            return _scheduleRepo.GetAllCourseSchedulesAsync(paging);
+            return _scheduleRepo.GetAllCourseSchedulesAsync(paging, filter);
         }
     }
 }

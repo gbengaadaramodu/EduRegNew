@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -197,9 +198,29 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAllDepartmentsByCoursesAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllDepartmentsByCoursesAsync(PagingParameters paging,DepartmentCourseFilter filter)
         {
             var query = _context.DepartmentCourses.AsQueryable();
+
+            // Apply filters from the filter class
+            if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
+                query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
+
+            if (!string.IsNullOrWhiteSpace(filter?.DepartmentCode))
+                query = query.Where(x => x.DepartmentCode == filter.DepartmentCode);
+
+            if (!string.IsNullOrWhiteSpace(filter?.CourseType))
+                query = query.Where(x => x.CourseType == filter.CourseType);
+
+            if (filter?.Units != null)
+                query = query.Where(x => x.Units == filter.Units);
+
+            if (!string.IsNullOrWhiteSpace(filter?.Search))
+                query = query.Where(x =>
+                    (x.Title != null && x.Title.Contains(filter.Search)) ||
+                    (x.CourseCode != null && x.CourseCode.Contains(filter.Search)) ||
+                    (x.Description != null && x.Description.Contains(filter.Search))
+                );
 
             var totalRecords = await query.CountAsync();
 
@@ -215,7 +236,7 @@ namespace EduReg.Services.Repositories
                 Message = totalRecords == 0
                     ? "No department courses found"
                     : "Department courses retrieved successfully",
-                Data = courses, // EMPTY LIST if none
+                Data = courses,
                 Meta = new
                 {
                     paging.PageNumber,
@@ -227,5 +248,6 @@ namespace EduReg.Services.Repositories
                 }
             };
         }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -163,29 +164,62 @@ namespace EduReg.Services.Repositories
             return new GeneralResponse { StatusCode = 200, Message = "Retrieved successfully.", Data = entity };
         }
 
-        public async Task<GeneralResponse> GetAllProgrammeFeeSchedulesAsync(string institutionShortName, PagingParameters paging)
+        public async Task<GeneralResponse> GetAllProgrammeFeeSchedulesAsync(string institutionShortName,PagingParameters paging,ProgrammeFeeScheduleFilter? filter)
         {
             try
             {
                 var query = _context.ProgrammeFeeSchedule
-                    .Where(p => p.InstitutionShortName == institutionShortName)
                     .Include(p => p.FeeItem)
                     .Include(p => p.FeeRule)
-                    .AsNoTracking();
+                    .AsNoTracking()
+                    .AsQueryable();
 
-                var totalCount = await query.CountAsync();
+                // Mandatory InstitutionShortName filter
+                query = query.Where(x => x.InstitutionShortName == institutionShortName);
 
-                if (totalCount == 0)
+                // Apply optional filters from the filter object
+                if (filter != null)
                 {
-                    return new GeneralResponse
+                    if (!string.IsNullOrWhiteSpace(filter.DepartmentCode))
+                        query = query.Where(x => x.DepartmentCode == filter.DepartmentCode);
+
+                    if (!string.IsNullOrWhiteSpace(filter.ProgrammeCode))
+                        query = query.Where(x => x.ProgrammeCode == filter.ProgrammeCode);
+
+                    if (filter.SessionId.HasValue)
+                        query = query.Where(x => x.SessionId == filter.SessionId.Value);
+
+                    if (filter.SemesterId.HasValue)
+                        query = query.Where(x => x.SemesterId == filter.SemesterId.Value);
+
+                    if (!string.IsNullOrWhiteSpace(filter.CourseCode))
+                        query = query.Where(x => x.CourseCode == filter.CourseCode);
+
+                    if (filter.FeeItemId.HasValue)
+                        query = query.Where(x => x.FeeItemId == filter.FeeItemId.Value);
+
+                    if (filter.MinAmount.HasValue)
+                        query = query.Where(x => x.Amount >= filter.MinAmount.Value);
+
+                    if (filter.MaxAmount.HasValue)
+                        query = query.Where(x => x.Amount <= filter.MaxAmount.Value);
+
+                    // Generic Search 
+                    if (!string.IsNullOrWhiteSpace(filter.Search))
                     {
-                        StatusCode = 404,
-                        Message = "No programme fee schedules found.",
-                        Data = null
-                    };
+                        query = query.Where(x =>
+                            (x.DepartmentCode != null && x.DepartmentCode.Contains(filter.Search)) ||
+                            (x.ProgrammeCode != null && x.ProgrammeCode.Contains(filter.Search)) ||
+                            (x.CourseCode != null && x.CourseCode.Contains(filter.Search))
+                        );
+                    }
                 }
 
+                // Pagination
+                var totalRecords = await query.CountAsync();
+
                 var pagedData = await query
+                    .OrderByDescending(x => x.Created)
                     .Skip((paging.PageNumber - 1) * paging.PageSize)
                     .Take(paging.PageSize)
                     .ToListAsync();
@@ -193,8 +227,19 @@ namespace EduReg.Services.Repositories
                 return new GeneralResponse
                 {
                     StatusCode = 200,
-                    Message = "Programme fee schedules retrieved successfully.",
-                    Data = pagedData
+                    Message = totalRecords == 0
+                        ? "No programme fee schedules found."
+                        : "Programme fee schedules retrieved successfully.",
+                    Data = pagedData,
+                    Meta = new
+                    {
+                        paging.PageNumber,
+                        paging.PageSize,
+                        TotalRecords = totalRecords,
+                        TotalPages = totalRecords == 0
+                            ? 0
+                            : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                    }
                 };
             }
             catch (Exception ex)
@@ -207,6 +252,8 @@ namespace EduReg.Services.Repositories
                 };
             }
         }
+
+
 
         public async Task<GeneralResponse> GetProgrammeFeeSchedulesByProgrammeAsync(string institutionShortName, string programmeCode)
         {

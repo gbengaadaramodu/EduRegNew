@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 
 namespace EduReg.Services.Interfaces
 {
@@ -10,7 +11,7 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> UpdateFeeItemAsync(long Id, FeeItemDto model); 
         Task<GeneralResponse> DeleteFeeItemAsync(long Id);
         Task<GeneralResponse> GetFeeItemByIdAsync(long Id);
-        Task<GeneralResponse> GetAllFeeItemsAsync(PagingParameters paging);
+       Task<GeneralResponse> GetAllFeeItemsAsync(PagingParameters paging, FeeItemFilter filter);
 
     }
 }
