@@ -2,6 +2,7 @@
 using EduReg.Common;
 using EduReg.Managers;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Services.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -99,14 +100,15 @@ namespace EduReg.Controllers
         }
         [HttpGet]
         [Route("GetAllAcademicSessions")]
-        public async Task<IActionResult> GetAllAcademicSessionsAsync([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllAcademicSessionsAsync([FromQuery] PagingParameters paging, [FromQuery] AcademicSessionFilter filter)
         {
-            var response = await _manager.GetAllAcademicSessionsAsync(paging);
+            var response = await _manager.GetAllAcademicSessionsAsync(paging, filter);
             return StatusCode(response.StatusCode, response);
         }
+
         [HttpGet]
         [Route("GetAllAdmissionBatch")]
-        public async Task<IActionResult> GetAllAdmissionBatchAsync([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllAdmissionBatchAsync([FromQuery] PagingParameters paging, [FromQuery] AcademicSessionFilter filter)
         {
             var response = await _manager.GetAllAdmissionBatchAsync(paging);
             return StatusCode(response.StatusCode, response);
@@ -115,17 +117,17 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllAcademicLevel")]
-        public async Task<IActionResult> GetAllAcademicLevelsAsync([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllAcademicLevelsAsync([FromQuery] PagingParameters paging, [FromQuery] AcademicLevelFilter filter)
         {
 
-            var response = await _manager.GetAllAcademicLevelsAsync(paging);
+            var response = await _manager.GetAllAcademicLevelsAsync(paging, filter);
             return StatusCode(response.StatusCode, response);
         }
         [HttpGet]
         [Route("GetAllSemesters")]
-        public async Task<IActionResult> GetAllSemestersAsync([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllSemestersAsync([FromQuery] PagingParameters paging, [FromQuery] SemesterFilter filter)
         {
-            var response = await _manager.GetAllSemestersAsync(paging);
+            var response = await _manager.GetAllSemestersAsync(paging, filter);
             return StatusCode(response.StatusCode, response);
         }
         [HttpGet]
@@ -148,6 +150,13 @@ namespace EduReg.Controllers
         public async Task<IActionResult> UpdateAdmissionBatchAsync(int Id, [FromBody] UpdateAdmissionBatchesDto model)
         {
             var response = await _manager.UpdateAdmissionBatchAsync(Id, model);
+            return StatusCode(response.StatusCode, response);
+        }
+        [HttpPut]
+        [Route("UpdateAdmissionBatchByShortName/{shortName}")]
+        public async Task<IActionResult> UpdateAdmissionBatchByShortNameAsync(string shortName, [FromBody] UpdateAdmissionBatchesDto model)
+        {
+            var response = await _manager.UpdateAdmissionBatchByShortNameAsync(shortName, model);
             return StatusCode(response.StatusCode, response);
         }
 

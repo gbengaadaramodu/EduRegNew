@@ -134,10 +134,36 @@ namespace EduReg.Services.Repositories
         }
 
         public async Task<GeneralResponse> UpdateAdmissionBatchAsync(long Id, UpdateAdmissionBatchesDto model)
-
-
         {
             var batch = await _context.AdmissionBatches.FirstOrDefaultAsync(x => x.Id == Id);
+
+            if (batch == null)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 404,
+                    Message = "Admission batch not found",
+                    Data = null
+                };
+            }
+
+            batch.BatchName = model.BatchName;
+            batch.Description = model.Description;
+
+            _context.AdmissionBatches.Update(batch);
+            await _context.SaveChangesAsync();
+
+            return new GeneralResponse
+            {
+                StatusCode = 200,
+                Message = "Admission batch updated successfully",
+                Data = batch
+            };
+        }
+
+        public async Task<GeneralResponse> UpdateAdmissionBatchByShortNameAsync(string shortName, UpdateAdmissionBatchesDto model)
+        {
+            var batch = await _context.AdmissionBatches.FirstOrDefaultAsync(x => x.BatchShortName == shortName);
 
             if (batch == null)
             {

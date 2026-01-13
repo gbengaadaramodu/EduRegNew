@@ -1,13 +1,14 @@
-﻿using System;
+﻿using EduReg.Common;
+using EduReg.Data;
+using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
+using EduReg.Models.Entities;
+using EduReg.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using EduReg.Common;
-using EduReg.Data;
-using EduReg.Models.Dto;
-using EduReg.Models.Entities;
-using EduReg.Services.Interfaces;
 
 namespace EduReg.Services.Repositories
 {
@@ -334,48 +335,77 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetAllCourseSchedulesAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllCourseSchedulesAsync(PagingParameters paging,CourseScheduleFilter filter)
         {
-            try
+            var query = _context.CourseSchedules.AsQueryable();
+
+            // Tenant
+            if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
             {
-                var query = _context.CourseSchedules.AsQueryable();
-
-                var totalRecords = await query.CountAsync();
-
-                var schedules = await query
-                    .OrderBy(x => x.CourseCode) // or another meaningful column
-                    .Skip((paging.PageNumber - 1) * paging.PageSize)
-                    .Take(paging.PageSize)
-                    .ToListAsync();
-
-                return new GeneralResponse
-                {
-                    StatusCode = 200,
-                    Message = totalRecords == 0
-                        ? "No course schedules found"
-                        : "Course schedules retrieved successfully",
-                    Data = schedules, // empty list if none
-                    Meta = new
-                    {
-                        paging.PageNumber,
-                        paging.PageSize,
-                        TotalRecords = totalRecords,
-                        TotalPages = totalRecords == 0
-                            ? 0
-                            : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
-                    }
-                };
+                query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
             }
-            catch (Exception ex)
+
+            // Academic context
+            if (filter?.SessionId != null)
             {
-                return new GeneralResponse
-                {
-                    StatusCode = 500,
-                    Message = $"Error retrieving all course schedules: {ex.Message}",
-                    Data = null
-                };
+                query = query.Where(x => x.SessionId == filter.SessionId);
             }
+
+            if (filter?.SemesterId != null)
+            {
+                query = query.Where(x => x.SemesterId == filter.SemesterId);
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter?.ProgrammeCode))
+            {
+                query = query.Where(x => x.ProgrammeCode == filter.ProgrammeCode);
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter?.DepartmentCode))
+            {
+                query = query.Where(x => x.DepartmentCode == filter.DepartmentCode);
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter?.CourseCode))
+            {
+                query = query.Where(x => x.CourseCode == filter.CourseCode);
+            }
+
+            // Search
+            if (!string.IsNullOrWhiteSpace(filter?.Search))
+            {
+                query = query.Where(x =>
+                    x.CourseCode!.Contains(filter.Search) ||
+                    x.Title!.Contains(filter.Search));
+            }
+
+            var totalRecords = await query.CountAsync();
+
+            var schedules = await query
+                .OrderBy(x => x.CourseCode)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
+
+            return new GeneralResponse
+            {
+                StatusCode = 200,
+                Message = totalRecords == 0
+                    ? "No course schedules found"
+                    : "Course schedules retrieved successfully",
+                Data = schedules,
+                Meta = new
+                {
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
+            };
         }
+
 
 
         // Private helper to map DTO → Entity

@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -100,11 +101,36 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAllAcademicSessionsAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllAcademicSessionsAsync(PagingParameters paging,AcademicSessionFilter filter)
         {
             var query = _context.AcademicSessions
-            .Where(x => !x.IsDeleted)
-            .AsQueryable();
+                .Where(x => !x.IsDeleted)
+                .AsQueryable();
+
+            // Tenant filter
+            if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
+            {
+                query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
+            }
+
+            // Search (SessionName, BatchShortName)
+            if (!string.IsNullOrWhiteSpace(filter?.Search))
+            {
+                query = query.Where(x =>
+                    x.SessionName!.Contains(filter.Search) ||
+                    x.BatchShortName!.Contains(filter.Search));
+            }
+
+            // Date range
+            if (filter?.StartDateFrom != null)
+            {
+                query = query.Where(x => x.StartDate >= filter.StartDateFrom);
+            }
+
+            if (filter?.StartDateTo != null)
+            {
+                query = query.Where(x => x.EndDate <= filter.StartDateTo);
+            }
 
             var totalRecords = await query.CountAsync();
 
@@ -118,8 +144,8 @@ namespace EduReg.Services.Repositories
             {
                 StatusCode = 200,
                 Message = totalRecords == 0
-              ? "No academic sessions found"
-              : "Academic sessions retrieved successfully",
+                    ? "No academic sessions found"
+                    : "Academic sessions retrieved successfully",
                 Data = sessions,
                 Meta = new
                 {
@@ -127,11 +153,13 @@ namespace EduReg.Services.Repositories
                     paging.PageSize,
                     TotalRecords = totalRecords,
                     TotalPages = totalRecords == 0
-                ? 0
-                : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
                 }
             };
         }
+
+
 
 
         public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model)

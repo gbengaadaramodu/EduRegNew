@@ -2,6 +2,7 @@
 using EduReg.Common;
 using EduReg.Managers;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Services.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +23,10 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllFaculties")]
-        public async Task<IActionResult> GetAllFacultiesAsync([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllFacultiesAsync([FromQuery] PagingParameters paging, [FromQuery] FacultyFilter filter)
         {
 
-            var response = await _manager.GetAllFacultiesAsync(paging);
+            var response = await _manager.GetAllFacultiesAsync(paging, filter);
             return StatusCode(response.StatusCode, response);
         }
         [HttpPost]
@@ -139,9 +140,9 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllDepartments")]
-        public async Task<IActionResult> GetAllDepartmentsAsync([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllDepartmentsAsync([FromQuery] PagingParameters paging, [FromQuery]DepartmentFilter filter)
         {
-            var result = await _manager.GetAllDepartmentsAsync(paging);
+            var result = await _manager.GetAllDepartmentsAsync(paging, filter);
             return StatusCode(result.StatusCode, result);
         }
 
@@ -184,11 +185,11 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllProgrammes")]
-        public async Task<IActionResult> GetAllProgrammesAsync([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllProgrammesAsync([FromQuery] PagingParameters paging, [FromQuery] ProgrammeFilter filter)
         {
            // _logger.LogInformation("GET request received to fetch all programmes");
 
-            var response = await _manager.GetAllProgrammesAsync(paging);
+            var response = await _manager.GetAllProgrammesAsync(paging, filter);
 
             //if (response.StatusCode == 200)
             //{

@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -34,9 +35,9 @@ namespace EduReg.Managers
             return _registrationRules.DeleteRegistrationBusinessRuleAsync(Id);
         }
 
-        public Task<GeneralResponse> GetAllRegistrationBusinessRulesAsync(PagingParameters paging)
+        public Task<GeneralResponse> GetAllRegistrationBusinessRulesAsync(RegistrationBusinessRuleFilter filter, PagingParameters paging)
         {
-            return _registrationRules.GetAllRegistrationBusinessRulesAsync(paging);
+            return _registrationRules.GetAllRegistrationBusinessRulesAsync(filter, paging);
         }
 
         public Task<GeneralResponse> GetRegistrationBusinessRulesByDepartmentAsync(string DepartmentCode, RegistrationBusinessRulesDto model)
@@ -86,14 +87,14 @@ namespace EduReg.Managers
             return _registrations.GetAllStudentRegistrationsAync(matricNumber);
         }
 
-        public Task<GeneralResponse> GetDepartmentRegistrationsBySemesterIdAsync(string sessionId, PagingParameters paging)
+        public Task<GeneralResponse> GetDepartmentRegistrationsBySemesterIdAsync(string semesterId, RegistrationFilter? filter, PagingParameters paging)
         {
-            return _registrations.GetDepartmentRegistrationsBySemesterIdAsync(sessionId, paging);
+            return _registrations.GetDepartmentRegistrationsBySemesterIdAsync(semesterId, filter, paging);
         }
 
-        public Task<GeneralResponse> GetDepartmentRegistrationsBySessionIdAsync(string sessionId, PagingParameters paging)
+        public Task<GeneralResponse> GetDepartmentRegistrationsBySessionIdAsync(string sessionId, RegistrationFilter? filter, PagingParameters paging)
         {
-            return _registrations.GetDepartmentRegistrationsBySessionIdAsync(sessionId, paging);
+            return _registrations.GetDepartmentRegistrationsBySessionIdAsync(sessionId,filter, paging);
         }
 
         public Task<GeneralResponse> GetStudentRegistrationsBySemesterIdAync(RegistrationsDto model)

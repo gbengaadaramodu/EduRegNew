@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -257,26 +258,81 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetAllRegistrationBusinessRulesAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllRegistrationBusinessRulesAsync(RegistrationBusinessRuleFilter filter,PagingParameters paging)
         {
             try
             {
                 var query = _context.RegistrationsBusinessRules
-                    .AsNoTracking();
+                    .AsNoTracking()
+                    .AsQueryable();
 
-                var totalCount = await query.CountAsync();
+                // APPLY FILTERS
 
-                if (totalCount == 0)
+                if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
                 {
-                    return new GeneralResponse
-                    {
-                        StatusCode = 404,
-                        Message = "No business rules found.",
-                        Data = null
-                    };
+                    query = query.Where(x =>
+                        x.InstitutionShortName == filter.InstitutionShortName);
                 }
 
-                var pagedList = await query
+                if (!string.IsNullOrWhiteSpace(filter?.DepartmentCode))
+                {
+                    query = query.Where(x =>
+                        x.DepartmentCode == filter.DepartmentCode);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter?.ProgrammeCode))
+                {
+                    query = query.Where(x =>
+                        x.ProgrammeCode == filter.ProgrammeCode);
+                }
+
+                if (filter?.SemesterId != null)
+                {
+                    query = query.Where(x =>
+                        x.SemesterId == filter.SemesterId);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter?.LevelName))
+                {
+                    query = query.Where(x =>
+                        x.LevelName == filter.LevelName);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter?.ClassCode))
+                {
+                    query = query.Where(x =>
+                        x.ClassCode == filter.ClassCode);
+                }
+
+                // Units range
+                if (filter?.MinTotalUnits != null)
+                {
+                    query = query.Where(x =>
+                        x.TotalMinimumCreditUnits >= filter.MinTotalUnits);
+                }
+
+                if (filter?.MaxTotalUnits != null)
+                {
+                    query = query.Where(x =>
+                        x.TotalMaximumCreditUnits <= filter.MaxTotalUnits);
+                }
+
+                // Generic search 
+                if (!string.IsNullOrWhiteSpace(filter?.Search))
+                {
+                    query = query.Where(x =>
+                        (x.Name != null && x.Name.Contains(filter.Search)) ||
+                        (x.Description != null && x.Description.Contains(filter.Search)) ||
+                        (x.Remarks != null && x.Remarks.Contains(filter.Search))
+                    );
+                }
+
+                // PAGINATION
+
+                var totalRecords = await query.CountAsync();
+
+                var rules = await query
+                    .OrderBy(x => x.Name)
                     .Skip((paging.PageNumber - 1) * paging.PageSize)
                     .Take(paging.PageSize)
                     .ToListAsync();
@@ -284,8 +340,19 @@ namespace EduReg.Services.Repositories
                 return new GeneralResponse
                 {
                     StatusCode = 200,
-                    Message = "Business rules retrieved successfully.",
-                    Data = pagedList
+                    Message = totalRecords == 0
+                        ? "No business rules found."
+                        : "Business rules retrieved successfully.",
+                    Data = rules,
+                    Meta = new
+                    {
+                        paging.PageNumber,
+                        paging.PageSize,
+                        TotalRecords = totalRecords,
+                        TotalPages = totalRecords == 0
+                            ? 0
+                            : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                    }
                 };
             }
             catch (Exception ex)
@@ -298,6 +365,7 @@ namespace EduReg.Services.Repositories
                 };
             }
         }
+
 
         public async Task<GeneralResponse> UpdateRegistrationBusinessRuleAsync(long Id, RegistrationBusinessRulesDto model)
 

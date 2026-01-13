@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -204,14 +205,59 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAllProgramsByCoursesAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllProgramsByCoursesAsync(PagingParameters paging,ProgramCourseFilter filter)
         {
             var query = _context.ProgramCourses.AsQueryable();
 
+           
+            // Filters
+            
+
+            if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
+                query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
+
+            if (!string.IsNullOrWhiteSpace(filter?.DepartmentCode))
+                query = query.Where(x => x.DepartmentCode == filter.DepartmentCode);
+
+            if (!string.IsNullOrWhiteSpace(filter?.ProgrammeCode))
+                query = query.Where(x => x.ProgrammeCode == filter.ProgrammeCode);
+
+            if (!string.IsNullOrWhiteSpace(filter?.CourseCode))
+                query = query.Where(x => x.CourseCode == filter.CourseCode);
+
+            if (!string.IsNullOrWhiteSpace(filter?.ClassCode))
+                query = query.Where(x => x.ClassCode == filter.ClassCode);
+
+            if (!string.IsNullOrWhiteSpace(filter?.LevelName))
+                query = query.Where(x => x.LevelName == filter.LevelName);
+
+            if (!string.IsNullOrWhiteSpace(filter?.CourseType))
+                query = query.Where(x => x.CourseType == filter.CourseType);
+
+            if (filter?.MinUnits.HasValue == true)
+                query = query.Where(x => x.Units >= filter.MinUnits.Value);
+
+            if (filter?.MaxUnits.HasValue == true)
+                query = query.Where(x => x.Units <= filter.MaxUnits.Value);
+
+            // Generic Search
+            if (!string.IsNullOrWhiteSpace(filter?.Search))
+            {
+                query = query.Where(x =>
+                    (x.Title != null && x.Title.Contains(filter.Search)) ||
+                    (x.CourseCode != null && x.CourseCode.Contains(filter.Search)) ||
+                    (x.ProgrammeCode != null && x.ProgrammeCode.Contains(filter.Search)) ||
+                    (x.DepartmentCode != null && x.DepartmentCode.Contains(filter.Search)) ||
+                    (x.LevelName != null && x.LevelName.Contains(filter.Search)) ||
+                    (x.ClassCode != null && x.ClassCode.Contains(filter.Search))
+                );
+            }
+
+            // Pagination
             var totalRecords = await query.CountAsync();
 
             var courses = await query
-                .OrderBy(x => x.Title) // Use Title as the ordering column
+                .OrderBy(x => x.Title)
                 .Skip((paging.PageNumber - 1) * paging.PageSize)
                 .Take(paging.PageSize)
                 .ToListAsync();
@@ -222,7 +268,7 @@ namespace EduReg.Services.Repositories
                 Message = totalRecords == 0
                     ? "No program courses found"
                     : "Program courses retrieved successfully",
-                Data = courses, // EMPTY LIST if none
+                Data = courses,
                 Meta = new
                 {
                     paging.PageNumber,
@@ -234,6 +280,7 @@ namespace EduReg.Services.Repositories
                 }
             };
         }
+
 
         // Helper method
         private ProgramCourses MapDtoToEntity(ProgramCoursesDto model)

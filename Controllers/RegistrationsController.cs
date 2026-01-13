@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Managers;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -73,16 +74,16 @@ namespace EduReg.Controllers
         }
 
         [HttpGet("DepartmentBySession/{sessionId}")]
-        public async Task<IActionResult> GetDepartmentRegistrationsBySession(string sessionId, [FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetDepartmentRegistrationsBySession(string sessionId, [FromQuery] RegistrationFilter filter, [FromQuery] PagingParameters paging)
         {
-            var response = await _manager.GetDepartmentRegistrationsBySessionIdAsync(sessionId, paging);
+            var response = await _manager.GetDepartmentRegistrationsBySessionIdAsync(sessionId, filter ,paging);
             return StatusCode(response.StatusCode, response);
         }
 
         [HttpGet("DepartmentBySemester/{sessionId}")]
-        public async Task<IActionResult> GetDepartmentRegistrationsBySemester(string sessionId, [FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetDepartmentRegistrationsBySemester(string sessionId, [FromQuery]RegistrationFilter filter, [FromQuery] PagingParameters paging)
         {
-            var response = await _manager.GetDepartmentRegistrationsBySemesterIdAsync(sessionId, paging);
+            var response = await _manager.GetDepartmentRegistrationsBySemesterIdAsync(sessionId,filter, paging);
             return StatusCode(response.StatusCode, response);
         }
 
@@ -126,9 +127,9 @@ namespace EduReg.Controllers
         }
 
         [HttpGet("Rules/All")]
-        public async Task<IActionResult> GetAllRegistrationRules([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllRegistrationRules([FromQuery] RegistrationBusinessRuleFilter filter, [FromQuery] PagingParameters paging)
         {
-            var response = await _manager.GetAllRegistrationBusinessRulesAsync(paging);
+            var response = await _manager.GetAllRegistrationBusinessRulesAsync(filter, paging);
             return StatusCode(response.StatusCode, response);
         }
 

@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -255,27 +256,73 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetDepartmentRegistrationsBySessionIdAsync(string sessionId,PagingParameters paging)
+        public async Task<GeneralResponse> GetDepartmentRegistrationsBySessionIdAsync(string sessionId,RegistrationFilter? filter,PagingParameters paging)
         {
             try
             {
                 var query = _context.Registrations
-                    .Where(r => r.SessionId == sessionId)
-                    .AsNoTracking();
+                    .AsNoTracking()
+                    .Where(r => r.SessionId == sessionId) 
+                    .AsQueryable();
 
-                var totalCount = await query.CountAsync();
-
-                if (totalCount == 0)
+                // Apply optional filters from filter object
+                if (filter != null)
                 {
-                    return new GeneralResponse
+                    if (!string.IsNullOrWhiteSpace(filter.InstitutionShortName))
+                        query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
+
+                    if (!string.IsNullOrWhiteSpace(filter.MatricNumber))
+                        query = query.Where(x => x.MatricNumber == filter.MatricNumber);
+
+                    if (!string.IsNullOrWhiteSpace(filter.ProgrammeCode))
+                        query = query.Where(x => x.ProgrammeCode == filter.ProgrammeCode);
+
+                    if (!string.IsNullOrWhiteSpace(filter.DepartmentId))
+                        query = query.Where(x => x.DepartmentId == filter.DepartmentId);
+
+                    if (!string.IsNullOrWhiteSpace(filter.SemesterId))
+                        query = query.Where(x => x.SemesterId == filter.SemesterId);
+
+                    if (!string.IsNullOrWhiteSpace(filter.ClassCode))
+                        query = query.Where(x => x.ClassCode == filter.ClassCode);
+
+                    if (!string.IsNullOrWhiteSpace(filter.LevelName))
+                        query = query.Where(x => x.LevelName == filter.LevelName);
+
+                    if (!string.IsNullOrWhiteSpace(filter.CourseCode))
+                        query = query.Where(x => x.CourseCode == filter.CourseCode);
+
+                    if (filter.IsApproved != null)
+                        query = query.Where(x => x.IsApproved == filter.IsApproved);
+
+                    if (filter.IsPaid != null)
+                        query = query.Where(x => x.IsPaid == filter.IsPaid);
+
+                    if (filter.IsCompleted != null)
+                        query = query.Where(x => x.IsCompleted == filter.IsCompleted);
+
+                    if (filter.RegisteredFrom != null)
+                        query = query.Where(x => x.RegisteredOn >= filter.RegisteredFrom);
+
+                    if (filter.RegisteredTo != null)
+                        query = query.Where(x => x.RegisteredOn <= filter.RegisteredTo);
+
+                    if (!string.IsNullOrWhiteSpace(filter.Search))
                     {
-                        StatusCode = 404,
-                        Message = "No registrations found for this session.",
-                        Data = null
-                    };
+                        query = query.Where(x =>
+                            (x.MatricNumber != null && x.MatricNumber.Contains(filter.Search)) ||
+                            (x.CourseCode != null && x.CourseCode.Contains(filter.Search)) ||
+                            (x.CourseTitle != null && x.CourseTitle.Contains(filter.Search)) ||
+                            (x.Grade != null && x.Grade.Contains(filter.Search))
+                        );
+                    }
                 }
 
-                var pagedList = await query
+                // Pagination
+                var totalRecords = await query.CountAsync();
+
+                var registrations = await query
+                    .OrderByDescending(x => x.RegisteredOn)
                     .Skip((paging.PageNumber - 1) * paging.PageSize)
                     .Take(paging.PageSize)
                     .ToListAsync();
@@ -283,8 +330,19 @@ namespace EduReg.Services.Repositories
                 return new GeneralResponse
                 {
                     StatusCode = 200,
-                    Message = "Department registrations retrieved successfully.",
-                    Data = pagedList
+                    Message = totalRecords == 0
+                        ? "No registrations found for this session."
+                        : "Department registrations retrieved successfully.",
+                    Data = registrations,
+                    Meta = new
+                    {
+                        paging.PageNumber,
+                        paging.PageSize,
+                        TotalRecords = totalRecords,
+                        TotalPages = totalRecords == 0
+                            ? 0
+                            : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                    }
                 };
             }
             catch (Exception ex)
@@ -299,27 +357,74 @@ namespace EduReg.Services.Repositories
         }
 
 
-        public async Task<GeneralResponse> GetDepartmentRegistrationsBySemesterIdAsync(string semesterId,PagingParameters paging)
+
+        public async Task<GeneralResponse> GetDepartmentRegistrationsBySemesterIdAsync(string semesterId, RegistrationFilter? filter,PagingParameters paging)
         {
             try
             {
                 var query = _context.Registrations
+                    .AsNoTracking()
                     .Where(r => r.SemesterId == semesterId)
-                    .AsNoTracking();
+                    .AsQueryable();
 
-                var totalCount = await query.CountAsync();
-
-                if (totalCount == 0)
+                // Apply optional filters from the filter object
+                if (filter != null)
                 {
-                    return new GeneralResponse
+                    if (!string.IsNullOrWhiteSpace(filter.InstitutionShortName))
+                        query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
+
+                    if (!string.IsNullOrWhiteSpace(filter.MatricNumber))
+                        query = query.Where(x => x.MatricNumber == filter.MatricNumber);
+
+                    if (!string.IsNullOrWhiteSpace(filter.ProgrammeCode))
+                        query = query.Where(x => x.ProgrammeCode == filter.ProgrammeCode);
+
+                    if (!string.IsNullOrWhiteSpace(filter.DepartmentId))
+                        query = query.Where(x => x.DepartmentId == filter.DepartmentId);
+
+                    if (!string.IsNullOrWhiteSpace(filter.SessionId))
+                        query = query.Where(x => x.SessionId == filter.SessionId);
+
+                    if (!string.IsNullOrWhiteSpace(filter.ClassCode))
+                        query = query.Where(x => x.ClassCode == filter.ClassCode);
+
+                    if (!string.IsNullOrWhiteSpace(filter.LevelName))
+                        query = query.Where(x => x.LevelName == filter.LevelName);
+
+                    if (!string.IsNullOrWhiteSpace(filter.CourseCode))
+                        query = query.Where(x => x.CourseCode == filter.CourseCode);
+
+                    if (filter.IsApproved != null)
+                        query = query.Where(x => x.IsApproved == filter.IsApproved);
+
+                    if (filter.IsPaid != null)
+                        query = query.Where(x => x.IsPaid == filter.IsPaid);
+
+                    if (filter.IsCompleted != null)
+                        query = query.Where(x => x.IsCompleted == filter.IsCompleted);
+
+                    if (filter.RegisteredFrom != null)
+                        query = query.Where(x => x.RegisteredOn >= filter.RegisteredFrom);
+
+                    if (filter.RegisteredTo != null)
+                        query = query.Where(x => x.RegisteredOn <= filter.RegisteredTo);
+
+                    if (!string.IsNullOrWhiteSpace(filter.Search))
                     {
-                        StatusCode = 404,
-                        Message = "No registrations found for this semester.",
-                        Data = null
-                    };
+                        query = query.Where(x =>
+                            (x.MatricNumber != null && x.MatricNumber.Contains(filter.Search)) ||
+                            (x.CourseCode != null && x.CourseCode.Contains(filter.Search)) ||
+                            (x.CourseTitle != null && x.CourseTitle.Contains(filter.Search)) ||
+                            (x.Grade != null && x.Grade.Contains(filter.Search))
+                        );
+                    }
                 }
 
-                var pagedList = await query
+                // Pagination
+                var totalRecords = await query.CountAsync();
+
+                var registrations = await query
+                    .OrderByDescending(x => x.RegisteredOn)
                     .Skip((paging.PageNumber - 1) * paging.PageSize)
                     .Take(paging.PageSize)
                     .ToListAsync();
@@ -327,8 +432,19 @@ namespace EduReg.Services.Repositories
                 return new GeneralResponse
                 {
                     StatusCode = 200,
-                    Message = "Department registrations retrieved successfully.",
-                    Data = pagedList
+                    Message = totalRecords == 0
+                        ? "No registrations found for this semester."
+                        : "Department registrations retrieved successfully.",
+                    Data = registrations,
+                    Meta = new
+                    {
+                        paging.PageNumber,
+                        paging.PageSize,
+                        TotalRecords = totalRecords,
+                        TotalPages = totalRecords == 0
+                            ? 0
+                            : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                    }
                 };
             }
             catch (Exception ex)
@@ -341,6 +457,7 @@ namespace EduReg.Services.Repositories
                 };
             }
         }
+
 
         public async Task<GeneralResponse> GetStudentRegistrationsBySessionIdAync(RegistrationsDto model)
         {
