@@ -50,7 +50,7 @@ namespace EduReg.Services.Repositories
                 var minimumUnits = 15;
                 var maximumUnits = 21;
 
-                var alreadyRegisteredCourses = await _context.CourseRegistrations.Include(x => x.CourseSchedule).Where(x => x.CourseSchedule.SessionId == studentExists.CurrentSessionId && x.CourseSchedule.SemesterId == studentExists.CurrentSemesterId && x.StudentsId == studentExists.Id).ToListAsync();
+                var alreadyRegisteredCourses = await _context.CourseRegistrationDetails.Include(x => x.CourseSchedule).Where(x => x.CourseSchedule.SessionId == studentExists.CurrentSessionId && x.CourseSchedule.SemesterId == studentExists.CurrentSemesterId && x.StudentsId == studentExists.Id).ToListAsync();
                 var alreadyRegisteredCoursesScheduleIds = alreadyRegisteredCourses.Select(x=> x.CourseSchedule.Id).ToList();
 
                 var commonCourseScheduleIds = model.CourseScheduleIds
@@ -98,10 +98,11 @@ namespace EduReg.Services.Repositories
 
                 var levels = await _context.AcademicLevels.ToListAsync();
                 var currentLevel = levels.FirstOrDefault(x => x.LevelId == studentExists.CurrentLevel && x.InstitutionShortName.ToLower() == model.InstitutionShortName.ToLower());
-                var coursesToRegister = new List<CourseRegistration>();
+                var coursesToRegister = new List<CourseRegistrationDetail>();
+
                 foreach (var item in model.CourseScheduleIds)
                 {
-                    var courseRegistration = new CourseRegistration
+                    var courseRegistrationDetail = new CourseRegistrationDetail
                     {
                         CourseScheduleId = item,
                         StudentsId =  studentExists.Id
@@ -117,11 +118,11 @@ namespace EduReg.Services.Repositories
                         //Work on the above
                     }
 
-                    coursesToRegister.Add(courseRegistration);
+                    coursesToRegister.Add(courseRegistrationDetail);
                 }
 
 
-                await _context.CourseRegistrations.AddRangeAsync(coursesToRegister);
+                await _context.CourseRegistrationDetails.AddRangeAsync(coursesToRegister);
                 await _context.SaveChangesAsync();
 
                 response.StatusCode = 200;
@@ -146,7 +147,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-                var courseRegistrationQuery = _context.CourseRegistrations.Include(x => x.CourseSchedule).AsQueryable();
+                var courseRegistrationQuery = _context.CourseRegistrations/*.Include(x => x.CourseSchedule)*/.AsQueryable();
                 if(!string.IsNullOrWhiteSpace(model.MatricNo))
                 {
                     var studentExists = await _context.Students.FirstOrDefaultAsync(x => x.MatricNumber.ToLower() == model.MatricNo.ToLower() && x.InstitutionShortName.ToLower() == model.InstitutionShortName.ToLower());
@@ -161,20 +162,22 @@ namespace EduReg.Services.Repositories
 
                 if(model.SessionId != null)
                 {
-                    courseRegistrationQuery = courseRegistrationQuery.Where(x => x.CourseSchedule.SessionId == model.SessionId);
+                    //courseRegistrationQuery = courseRegistrationQuery.Where(x => x.CourseSchedule.SessionId == model.SessionId);
+                    courseRegistrationQuery = courseRegistrationQuery.Where(x => x.SessionId == model.SessionId);
                 }
 
                 if (model.SemesterId != null)
                 {
-                    courseRegistrationQuery = courseRegistrationQuery.Where(x => x.CourseSchedule.SemesterId == model.SemesterId);
+                    //courseRegistrationQuery = courseRegistrationQuery.Where(x => x.CourseSchedule.SemesterId == model.SemesterId);
+                    courseRegistrationQuery = courseRegistrationQuery.Where(x => x.SemesterId == model.SemesterId);
                 }
 
                 var courseRegistrations = await courseRegistrationQuery.ToListAsync();
                 var courseRegistrationsDto = new List<CourseRegistrationViewDto>();
                 foreach (var courseRegistration in courseRegistrations)
                 {
-                    var item = MapEntityToDto(courseRegistration);
-                    courseRegistrationsDto.Add(item);
+                    //var item = MapEntityToDto(courseRegistration);
+                    //courseRegistrationsDto.Add(item);
 
                 }
 
@@ -198,7 +201,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-                var courseRegistration = await _context.CourseRegistrations.Include(x => x.CourseSchedule).FirstOrDefaultAsync(x => x.Id == id);
+                var courseRegistration = await _context.CourseRegistrations/*.Include(x => x.CourseSchedule)*/.FirstOrDefaultAsync(x => x.Id == id);
                 if (courseRegistration == null)
                 {
                     response.StatusCode = 400;
@@ -206,8 +209,8 @@ namespace EduReg.Services.Repositories
                     return response;
                 }
                 var courseRegistrationsDto = new CourseRegistrationViewDto();
-                var item = MapEntityToDto(courseRegistration);
-                courseRegistrationsDto = item;
+                //var item = MapEntityToDto(courseRegistration);
+                //courseRegistrationsDto = item;
 
                 response.StatusCode = 200;
                 response.Message = "Course registration returned successfully";
@@ -269,7 +272,7 @@ namespace EduReg.Services.Repositories
 
 
         // Private helper to map DTO → Entity
-        private CourseRegistrationViewDto MapEntityToDto(CourseRegistration entity)
+        private CourseRegistrationViewDto MapEntityToDto(CourseRegistrationDetail entity)
         {
             return new CourseRegistrationViewDto
             {

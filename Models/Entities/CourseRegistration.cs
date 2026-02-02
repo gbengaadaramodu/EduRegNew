@@ -10,8 +10,12 @@
         //public DateTime? ExamRegistrationDate { get; set; }
         //public string? ExamStatus { get; set; } //PENDING, FAILED, PASSED
         //public bool IsCarryOver { get; set; }
-        public long CourseScheduleId { get; set; }
-        public CourseSchedule CourseSchedule { get; set; }
+        //public long CourseScheduleId { get; set; }
+        //public CourseSchedule CourseSchedule { get; set; }
+        public int SemesterId { get; set; }
+        public int SessionId { get; set; }
+        public string? DepartmentCode { get; set; } //FK ->Department
+        public string? ProgrammeCode { get; set; }
     }
 
 
@@ -25,5 +29,9 @@
         public DateTime? ExamRegistrationDate { get; set; }
         public string? ExamStatus { get; set; } //PENDING, FAILED, PASSED
         public bool IsCarryOver { get; set; }
+        public long CourseScheduleId { get; set; }
+        public CourseSchedule CourseSchedule { get; set; }
+        public string StudentsId { get; set; }
+        public Students Students { get; set; }
     }
 }
