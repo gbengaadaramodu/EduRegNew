@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -97,26 +98,61 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetAllProgrammesAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllProgrammesAsync(PagingParameters paging, ProgrammeFilter filter)
         {
             try
             {
                 var query = _context.Programmes
-                    .AsNoTracking();
+                    .AsNoTracking()
+                    .AsQueryable();
 
-                var totalCount = await query.CountAsync();
+                // APPLY FILTERS
 
-                if (totalCount == 0)
+                if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
                 {
-                    return new GeneralResponse
-                    {
-                        StatusCode = 404,
-                        Message = "No programmes found.",
-                        Data = null
-                    };
+                    query = query.Where(x =>
+                        x.InstitutionShortName == filter.InstitutionShortName);
                 }
 
-                var pagedList = await query
+                if (!string.IsNullOrWhiteSpace(filter?.DepartmentCode))
+                {
+                    query = query.Where(x =>
+                        x.DepartmentCode == filter.DepartmentCode);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter?.ProgrammeCode))
+                {
+                    query = query.Where(x =>
+                        x.ProgrammeCode == filter.ProgrammeCode);
+                }
+
+                if (filter?.MinDuration != null)
+                {
+                    query = query.Where(x =>
+                        x.Duration >= filter.MinDuration);
+                }
+
+                if (filter?.MaxDuration != null)
+                {
+                    query = query.Where(x =>
+                        x.Duration <= filter.MaxDuration);
+                }
+
+                // Generic search 
+                if (!string.IsNullOrWhiteSpace(filter?.Search))
+                {
+                    query = query.Where(x =>
+                        (x.ProgrammeCode != null && x.ProgrammeCode.Contains(filter.Search)) ||
+                        (x.ProgrammeName != null && x.ProgrammeName.Contains(filter.Search)) ||
+                        (x.Description != null && x.Description.Contains(filter.Search))
+                    );
+                }
+
+                // PAGINATION
+                var totalRecords = await query.CountAsync();
+
+                var programmes = await query
+                    .OrderBy(x => x.ProgrammeName)
                     .Skip((paging.PageNumber - 1) * paging.PageSize)
                     .Take(paging.PageSize)
                     .Select(p => new ProgrammesDto
@@ -134,8 +170,19 @@ namespace EduReg.Services.Repositories
                 return new GeneralResponse
                 {
                     StatusCode = 200,
-                    Message = "Programmes retrieved successfully",
-                    Data = pagedList
+                    Message = totalRecords == 0
+                        ? "No programmes found."
+                        : "Programmes retrieved successfully.",
+                    Data = programmes,
+                    Meta = new
+                    {
+                        paging.PageNumber,
+                        paging.PageSize,
+                        TotalRecords = totalRecords,
+                        TotalPages = totalRecords == 0
+                            ? 0
+                            : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                    }
                 };
             }
             catch (Exception ex)
@@ -143,11 +190,12 @@ namespace EduReg.Services.Repositories
                 return new GeneralResponse
                 {
                     StatusCode = 500,
-                    Message = $"An error occurred while retrieving Programmes: {ex.Message}",
+                    Message = $"An error occurred while retrieving programmes: {ex.Message}",
                     Data = null
                 };
             }
         }
+
 
         public async Task<GeneralResponse> GetProgrammeByIdAsync(long Id)
         {

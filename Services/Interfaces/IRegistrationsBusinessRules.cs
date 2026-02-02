@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 
 namespace EduReg.Services.Interfaces
 {
@@ -13,8 +14,9 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> UploadRegistrationBusinessRuleAsync(byte[] model); // EXCEL, CSV, Flat file upload - Admin
 
         Task<GeneralResponse> GetRegistrationBusinessRulesByDepartmentAsync(string DepartmentCode, RegistrationBusinessRulesDto model);
-        Task<GeneralResponse> GetAllRegistrationBusinessRulesAsync(PagingParameters paging);
-   
+        Task<GeneralResponse> GetAllRegistrationBusinessRulesAsync(RegistrationBusinessRuleFilter filter, PagingParameters paging);
+
+
         Task<GeneralResponse> UpdateRegistrationBusinessRuleAsync(long Id, RegistrationBusinessRulesDto model);
         Task<GeneralResponse> DeleteRegistrationBusinessRuleAsync(long Id);
 

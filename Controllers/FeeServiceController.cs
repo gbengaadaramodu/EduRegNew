@@ -4,6 +4,7 @@ using EduReg.Managers;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EduReg.Models.Dto.Request;
 
 namespace EduReg.Api.Controllers
 {
@@ -32,9 +33,9 @@ namespace EduReg.Api.Controllers
 
         [HttpGet]
         [Route("GetAllFeeItems")]
-        public async Task<IActionResult> GetAllFeeItemsAsync([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllFeeItemsAsync([FromQuery] PagingParameters paging, [FromQuery] FeeItemFilter filter)
         {
-            var result = await _manager.GetAllFeeItemsAsync(paging);
+            var result = await _manager.GetAllFeeItemsAsync(paging, filter);
             return StatusCode(result.StatusCode, result);
         }
 
@@ -84,9 +85,9 @@ namespace EduReg.Api.Controllers
 
         [HttpGet]
         [Route("GetAllFeeRules/{institutionShortName}")]
-        public async Task<IActionResult> GetAllFeeRulesAsync(string institutionShortName, [FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllFeeRulesAsync(string institutionShortName, [FromQuery] PagingParameters paging, [FromQuery] FeeRuleFilter filter)
         {
-            var result = await _manager.GetAllFeeRuleAsync(institutionShortName, paging);
+            var result = await _manager.GetAllFeeRuleAsync(institutionShortName, paging, filter);
             return StatusCode(result.StatusCode, result);
         }
 

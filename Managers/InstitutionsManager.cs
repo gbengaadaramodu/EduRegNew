@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Services.Interfaces;
 using System.Threading.Tasks;
 
@@ -24,9 +25,9 @@ namespace EduReg.Managers
             return _institution.DeleteInstitutionAsync(Id);
         }
 
-        public Task<GeneralResponse> GetAllInstitutionAsync(PagingParameters paging)
+        public Task<GeneralResponse> GetAllInstitutionAsync(PagingParameters paging, InstitutionFilter filter)
         {
-            return _institution.GetAllInstitutionAsync(paging);
+            return _institution.GetAllInstitutionAsync(paging, filter);
         }
 
         public Task<GeneralResponse> GetInstitutionByIdAsync(int Id)
@@ -42,6 +43,11 @@ namespace EduReg.Managers
         public Task<GeneralResponse> UpdateInstitutionAsync(int Id, UpdateInstitutionsDto model)
         {
             return _institution.UpdateInstitutionAsync(Id, model);
+        }
+
+        public Task<GeneralResponse> UpdateInstitutionByShortNameAsync(string shortName, UpdateInstitutionsDto model)
+        {
+            return _institution.UpdateInstitutionByShortNameAsync(shortName, model);
         }
     }
 }

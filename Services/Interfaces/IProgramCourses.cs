@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 
 namespace EduReg.Services.Interfaces
 {
@@ -13,6 +14,6 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> DeleteProgramCourseAsync(long Id);
         Task<GeneralResponse> GetProgramCoursesByIdAsync(long Id);
         Task<GeneralResponse> GetProgramCoursesByProgramNameAsync(string programName);//Shortname
-        Task<GeneralResponse> GetAllProgramsByCoursesAsync(PagingParameters paging);
+        Task<GeneralResponse> GetAllProgramsByCoursesAsync(PagingParameters paging, ProgramCourseFilter filter);
     }
 }

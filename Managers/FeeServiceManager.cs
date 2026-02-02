@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Services.Interfaces;
 
 namespace EduReg.Managers
@@ -50,16 +51,16 @@ namespace EduReg.Managers
             return result;
         }
 
-        public async Task<GeneralResponse> GetAllFeeItemsAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllFeeItemsAsync(PagingParameters paging, FeeItemFilter filter)
         {
-            var result = await _feeItems.GetAllFeeItemsAsync(paging);
+            var result = await _feeItems.GetAllFeeItemsAsync(paging, filter);
 
            return result;
         }
 
-        public async Task<GeneralResponse> GetAllFeeRuleAsync(string institutionShortName, PagingParameters paging)
+        public async Task<GeneralResponse> GetAllFeeRuleAsync(string institutionShortName, PagingParameters paging, FeeRuleFilter? filter)
         {
-            var result = await _feeRules.GetAllFeeRuleAsync(institutionShortName, paging);
+            var result = await _feeRules.GetAllFeeRuleAsync(institutionShortName, paging, filter);
             return result;
         }
 

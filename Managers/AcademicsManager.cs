@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Services.Interfaces;
 
 
@@ -77,9 +78,9 @@ namespace EduReg.Managers
         }
 
 
-        public async Task<GeneralResponse> GetAllAcademicSessionsAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllAcademicSessionsAsync(PagingParameters paging, AcademicSessionFilter filter)
         {
-            return await _sessions.GetAllAcademicSessionsAsync(paging);
+            return await _sessions.GetAllAcademicSessionsAsync(paging, filter);
         }
 
         public async Task<GeneralResponse> GetAllAdmissionBatchAsync(PagingParameters paging)
@@ -87,14 +88,14 @@ namespace EduReg.Managers
             return await _batches.GetAllAdmissionBatchAsync(paging);
         }
 
-        public async Task<GeneralResponse> GetAllAcademicLevelsAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllAcademicLevelsAsync(PagingParameters paging, AcademicLevelFilter filter)
         {
-            return await _levels.GetAllAcademicLevelAsync(paging);
+            return await _levels.GetAllAcademicLevelAsync(paging, filter);
         }
 
-        public async Task<GeneralResponse> GetAllSemestersAsync(PagingParameters paging)
+        public async Task<GeneralResponse> GetAllSemestersAsync(PagingParameters paging, SemesterFilter filter)
         {
-            return await _semesters.GetAllSemestersAsync(paging);
+            return await _semesters.GetAllSemestersAsync(paging, filter);
         }
 
         public async Task<GeneralResponse> GetSemesterByIdAsync(long Id)
@@ -107,9 +108,15 @@ namespace EduReg.Managers
             return await _sessions.UpdateAcademicSessionAsync(Id, model);
         }
 
+
         public async Task<GeneralResponse> UpdateAdmissionBatchAsync(long Id, UpdateAdmissionBatchesDto model)
         {
             return await _batches.UpdateAdmissionBatchAsync(Id, model);
+        }
+
+        public async Task<GeneralResponse> UpdateAdmissionBatchByShortNameAsync(string shortName, UpdateAdmissionBatchesDto model)
+        {
+            return await _batches.UpdateAdmissionBatchByShortNameAsync(shortName, model);
         }
 
         public async Task<GeneralResponse> UpdateAcademicLevelAsync(long Id, AcademicLevelsDto model)

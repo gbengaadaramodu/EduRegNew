@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Managers;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -46,9 +47,9 @@ namespace EduReg.Api.Controllers
 
         [HttpGet]
         [Route("GetAllProgrammeFeeSchedules/{institutionShortName}")]
-        public async Task<IActionResult> GetAllProgrammeFeeSchedulesAsync(string institutionShortName, [FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllProgrammeFeeSchedulesAsync(string institutionShortName, [FromQuery] PagingParameters paging, [FromQuery] ProgrammeFeeScheduleFilter filter)
         {
-            var result = await _manager.GetAllProgrammeFeeSchedulesAsync(institutionShortName,paging);
+            var result = await _manager.GetAllProgrammeFeeSchedulesAsync(institutionShortName,paging, filter);
             return StatusCode(result.StatusCode, result);
         }
 
