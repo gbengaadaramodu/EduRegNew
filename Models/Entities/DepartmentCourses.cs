@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace EduReg.Models.Entities
 {
+    [Index(nameof(InstitutionShortName))]
     public class DepartmentCourses: CommonBase
     {
         //id
@@ -17,7 +19,6 @@ namespace EduReg.Models.Entities
         public string? Description { get; set; } //FK -> Departments
 
         //ActiveStatus = 1, 2, InactiveStatus = 0, DeletedStatus = -1
-
 
     }
 }

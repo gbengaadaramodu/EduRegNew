@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,9 @@ namespace EduReg.Services.Repositories
         public AcademicsRepository(ApplicationDbContext context)
         {
             _context = context;
+             
+             
+            
         }
 
 
@@ -24,7 +28,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid academic level data",
                     Data = null
                 };
@@ -33,7 +37,8 @@ namespace EduReg.Services.Repositories
             var entity = new AcademicLevel
             {
                 LevelName = model.LevelName,
-                Description = model.Description
+                Description = model.Description,
+                InstitutionShortName = model.InstitutionShortName
             };
 
             await _context.AcademicLevels.AddAsync(entity);
@@ -41,41 +46,64 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 201,
+                StatusCode = 201,
                 Message = "Academic level created successfully",
                 Data = entity
             };
         }
 
-        public async Task<GeneralResponse> GetAllAcademicLevelAsync()
+        public async Task<GeneralResponse> GetAllAcademicLevelAsync(PagingParameters paging, AcademicLevelFilter filter)
         {
-            var levels = await _context.AcademicLevels.ToListAsync();
+            var query = _context.AcademicLevels.AsQueryable();
 
-            if (!levels.Any())
+            if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
             {
-                return new GeneralResponse
-                {
-                    StatusCore = 404,
-                    Message = "No academic levels found",
-                    Data = null
-                };
+                query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
             }
+
+            if (!string.IsNullOrWhiteSpace(filter?.Search))
+            {
+                query = query.Where(x =>
+                    x.LevelName!.Contains(filter.Search));
+            }
+
+            // Total count BEFORE pagination
+            var totalRecords = await query.CountAsync();
+
+            //Pagination
+            var levels = await query
+                .OrderBy(x => x.LevelName)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
 
             return new GeneralResponse
             {
-                StatusCore = 200,
-                Message = "Academic levels retrieved successfully",
-                Data = levels
+                StatusCode = 200,
+                Message = totalRecords == 0
+                    ? "No academic levels found"
+                    : "Academic levels retrieved successfully",
+                Data = levels,
+                Meta = new
+                {
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
             };
         }
 
-        public async Task<GeneralResponse> GetAcademicLevelByIdAsync(int Id)
+
+        public async Task<GeneralResponse> GetAcademicLevelByIdAsync(long Id)
         {
             if (Id <= 0)
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 400,
+                    StatusCode = 400,
                     Message = "Invalid ID",
                     Data = null
                 };
@@ -86,7 +114,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Academic level not found",
                     Data = null
                 };
@@ -94,14 +122,14 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Academic level retrieved successfully",
                 Data = level
             };
         }
 
 
-        public async Task<GeneralResponse> UpdateAcademicLevelAsync(int Id, AcademicLevelsDto model)
+        public async Task<GeneralResponse> UpdateAcademicLevelAsync(long Id, AcademicLevelsDto model)
         {
              
             
@@ -111,7 +139,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Academic level not found",
                     Data = null
                 };
@@ -125,14 +153,14 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Academic level updated successfully",
                 Data = level
             };
         }
 
 
-        public async Task<GeneralResponse> DeleteAcademicLevelAsync(int Id)
+        public async Task<GeneralResponse> DeleteAcademicLevelAsync(long Id)
         {
             var level = await _context.AcademicLevels.FindAsync(Id);
 
@@ -140,7 +168,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Academic level not found",
                     Data = null
                 };
@@ -151,7 +179,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Academic level deleted successfully",
                 Data = null
             };

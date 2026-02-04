@@ -6,10 +6,12 @@ namespace EduReg.Services.Interfaces
     public interface IAdmissionBatches
     {
         Task<GeneralResponse> CreateAdmissionBatchAsync(AdmissionBatchesDto model);
-        Task<GeneralResponse> UpdateAdmissionBatchAsync(int Id, AdmissionBatchesDto model);
-        Task<GeneralResponse> DeleteAdmissionBatchAsync(int Id);
-        Task<GeneralResponse> GetAdmissionBatchByIdAsync(int Id);
-        Task<GeneralResponse> GetAllAdmissionBatchAsync();
+        Task<GeneralResponse> UpdateAdmissionBatchAsync(long Id, UpdateAdmissionBatchesDto model);
+        Task<GeneralResponse> UpdateAdmissionBatchByShortNameAsync(string shortName, UpdateAdmissionBatchesDto model);
+        Task<GeneralResponse> DeleteAdmissionBatchAsync(long Id);
+        Task<GeneralResponse> GetAdmissionBatchByIdAsync(long Id);
+        Task<GeneralResponse> GetAllAdmissionBatchAsync(PagingParameters paging);
+
 
     }
 }

@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace EduReg.Models.Entities
 {
+    [Index(nameof(InstitutionShortName))]
     public class Programmes : CommonBase
     {
-        
+        public string? InstitutionShortName { get; set; } //FK
         public string? DepartmentCode { get; set; } //FK
         public string? ProgrammeCode { get; set; } 
         public string? ProgrammeName { get; set; }

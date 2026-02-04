@@ -45,7 +45,7 @@ namespace Test.Repositories
             var response = await repo.CreateProgrammeAsync(dto);
 
             
-            Assert.Equal(200, response.StatusCore);
+            Assert.Equal(200, response.StatusCode);
             var saved = await context.Programmes.FirstOrDefaultAsync(p => p.ProgrammeCode == "TEST101");
             Assert.NotNull(saved);
             Assert.Equal("Test Programme", saved.ProgrammeName);
@@ -64,7 +64,7 @@ namespace Test.Repositories
 
             var response = await repo.CreateProgrammeAsync(dto);
 
-            Assert.Equal(403, response.StatusCore);
+            Assert.Equal(403, response.StatusCode);
         }
     }
 }

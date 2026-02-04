@@ -28,6 +28,13 @@ namespace EduReg.Tests.Repositories
             return dbContext;
         }
 
+        private PagingParameters DefaultPaging =>
+        new PagingParameters
+        {
+        PageNumber = 1,
+        PageSize = 10
+        };
+
         [Fact]
         public async Task CreateDepartmentAsync_ShouldReturnSuccess()
         {
@@ -47,7 +54,7 @@ namespace EduReg.Tests.Repositories
 
             var result = await repo.CreateDepartmentAsync(dto);
 
-            result.StatusCore.Should().Be(200);
+            result.StatusCode.Should().Be(200);
         }
 
         [Fact]
@@ -61,7 +68,7 @@ namespace EduReg.Tests.Repositories
                 Description = "CS Dept",
                 Duration = 4,
                 FacultyCode = "SCI",
-                Programme = "BSc",
+               //  Programme = "BSc",
                 NumberofSemesters = 8,
                 MaximumNumberofSemesters = 10
             };
@@ -71,7 +78,7 @@ namespace EduReg.Tests.Repositories
             var repo = new DepartmentsRepository(context);
             var result = await repo.GetDepartmentByIdAsync(department.Id);
 
-            result.StatusCore.Should().Be(200);
+            result.StatusCode.Should().Be(200);
         }
 
         [Fact]
@@ -85,7 +92,7 @@ namespace EduReg.Tests.Repositories
                 Description = "Soft Dept",
                 FacultyCode = "SCI",
                 Duration = 4,
-                Programme = "BSc",
+               // Programme = "BSc",
                 NumberofSemesters = 8,
                 MaximumNumberofSemesters = 10
             });
@@ -94,7 +101,7 @@ namespace EduReg.Tests.Repositories
             var repo = new DepartmentsRepository(context);
             var result = await repo.GetDepartmentByNameAsync("software");
 
-            result.StatusCore.Should().Be(200);
+            result.StatusCode.Should().Be(200);
         }
 
         [Fact]
@@ -107,18 +114,24 @@ namespace EduReg.Tests.Repositories
                 DepartmentName = "English",
                 FacultyCode = "ART",
                 Duration = 4,
-                Programme = "BA",
                 NumberofSemesters = 8,
                 MaximumNumberofSemesters = 10
             });
             await context.SaveChangesAsync();
 
             var repo = new DepartmentsRepository(context);
-            var result = await repo.GetAllDepartmentsAsync();
 
-            result.StatusCore.Should().Be(200);
-            ((List<Departments>)result.Data!).Count.Should().BeGreaterThan(0);
+            // Act
+            var result = await repo.GetAllDepartmentsAsync(DefaultPaging);
+
+            // Assert
+            result.StatusCode.Should().Be(200);
+
+            var data = result.Data as IEnumerable<Departments>;
+            data.Should().NotBeNull();
+            data!.Count().Should().BeGreaterThan(0);
         }
+
 
         [Fact]
         public async Task UpdateDepartmentAsync_ShouldUpdateDepartment()
@@ -130,7 +143,7 @@ namespace EduReg.Tests.Repositories
                 DepartmentName = "Mathematics",
                 Description = "Math Dept",
                 FacultyCode = "SCI",
-                Programme = "BSc",
+               // Programme = "BSc",
                 Duration = 4,
                 NumberofSemesters = 8,
                 MaximumNumberofSemesters = 10
@@ -145,14 +158,14 @@ namespace EduReg.Tests.Repositories
                 DepartmentName = "Pure Math",
                 Description = "Updated Desc",
                 FacultyCode = dept.FacultyCode,
-                Programme = dept.Programme,
+              //  Programme = dept.Programme,
                 Duration = 4,
                 NumberofSemesters = 8,
                 MaximumNumberofSemesters = 10
             };
 
             var result = await repo.UpdateDepartmentAsync(dept.Id, updateDto);
-            result.StatusCore.Should().Be(200);
+            result.StatusCode.Should().Be(200);
         }
 
         [Fact]
@@ -165,7 +178,7 @@ namespace EduReg.Tests.Repositories
                 DepartmentName = "History",
                 FacultyCode = "ART",
                 Duration = 4,
-                Programme = "BA",
+              //  Programme = "BA",
                 NumberofSemesters = 8,
                 MaximumNumberofSemesters = 10
             };
@@ -175,7 +188,7 @@ namespace EduReg.Tests.Repositories
             var repo = new DepartmentsRepository(context);
             var result = await repo.DeleteDepartmentAsync(dept.Id);
 
-            result.StatusCore.Should().Be(200);
+            result.StatusCode.Should().Be(200);
         }
     }
 }

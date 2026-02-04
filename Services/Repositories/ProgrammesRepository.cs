@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 403,
+                        StatusCode = 403,
                         Message = "A Programme with this Programme Code already exists"
                     };
                 }
@@ -45,7 +46,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Programme created successfully",
                     Data = programme
                 };
@@ -56,14 +57,14 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"An error occurred while creating the Programme: {ex.Message}"                    
                 };
             }
 
         }
 
-        public async Task<GeneralResponse> DeleteProgrammeAsync(int Id)
+        public async Task<GeneralResponse> DeleteProgrammeAsync(long Id)
         {
             try
             {
@@ -72,7 +73,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Programme not found"
                     };
                 }
@@ -82,7 +83,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Programme deleted successfully",
                     Data = programme
                 };
@@ -91,48 +92,112 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"An error occurred while deleting the Programme: {ex.Message}"
                 };
             }
         }
 
-        public async Task<GeneralResponse> GetAllProgrammesAsync()
+        public async Task<GeneralResponse> GetAllProgrammesAsync(PagingParameters paging, ProgrammeFilter filter)
         {
             try
             {
-                var programmes = await _context.Programmes.ToListAsync();
+                var query = _context.Programmes
+                    .AsNoTracking()
+                    .AsQueryable();
 
-                var programmesDto = programmes.Select(p => new ProgrammesDto
+                // APPLY FILTERS
+
+                if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
                 {
-                    DepartmentCode = p.DepartmentCode,
-                    ProgrammeCode = p.ProgrammeCode,
-                    ProgrammeName = p.ProgrammeName,
-                    Description = p.Description,
-                    Duration = p.Duration,
-                    NumberOfSemesters = p.NumberOfSemesters,
-                    MaximumNumberOfSemesters = p.MaximumNumberOfSemesters
-                }).ToList();
+                    query = query.Where(x =>
+                        x.InstitutionShortName == filter.InstitutionShortName);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter?.DepartmentCode))
+                {
+                    query = query.Where(x =>
+                        x.DepartmentCode == filter.DepartmentCode);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter?.ProgrammeCode))
+                {
+                    query = query.Where(x =>
+                        x.ProgrammeCode == filter.ProgrammeCode);
+                }
+
+                if (filter?.MinDuration != null)
+                {
+                    query = query.Where(x =>
+                        x.Duration >= filter.MinDuration);
+                }
+
+                if (filter?.MaxDuration != null)
+                {
+                    query = query.Where(x =>
+                        x.Duration <= filter.MaxDuration);
+                }
+
+                // Generic search 
+                if (!string.IsNullOrWhiteSpace(filter?.Search))
+                {
+                    query = query.Where(x =>
+                        (x.ProgrammeCode != null && x.ProgrammeCode.Contains(filter.Search)) ||
+                        (x.ProgrammeName != null && x.ProgrammeName.Contains(filter.Search)) ||
+                        (x.Description != null && x.Description.Contains(filter.Search))
+                    );
+                }
+
+                // PAGINATION
+                var totalRecords = await query.CountAsync();
+
+                var programmes = await query
+                    .OrderBy(x => x.ProgrammeName)
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
+                    .Select(p => new ProgrammesDto
+                    {
+                        DepartmentCode = p.DepartmentCode,
+                        ProgrammeCode = p.ProgrammeCode,
+                        ProgrammeName = p.ProgrammeName,
+                        Description = p.Description,
+                        Duration = p.Duration,
+                        NumberOfSemesters = p.NumberOfSemesters,
+                        MaximumNumberOfSemesters = p.MaximumNumberOfSemesters
+                    })
+                    .ToListAsync();
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
-                    Message = "Programmes retrieved successfully",
-                    Data = programmesDto
+                    StatusCode = 200,
+                    Message = totalRecords == 0
+                        ? "No programmes found."
+                        : "Programmes retrieved successfully.",
+                    Data = programmes,
+                    Meta = new
+                    {
+                        paging.PageNumber,
+                        paging.PageSize,
+                        TotalRecords = totalRecords,
+                        TotalPages = totalRecords == 0
+                            ? 0
+                            : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                    }
                 };
             }
-
             catch (Exception ex)
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
-                    Message = $"An error occurred while retrieving Programmes: {ex.Message}"
+                    StatusCode = 500,
+                    Message = $"An error occurred while retrieving programmes: {ex.Message}",
+                    Data = null
                 };
             }
         }
 
-        public async Task<GeneralResponse> GetProgrammeByIdAsync(int Id)
+
+        public async Task<GeneralResponse> GetProgrammeByIdAsync(long Id)
         {
             try
             {
@@ -142,7 +207,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Programme not found"
                     };
                 }
@@ -160,7 +225,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse 
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Programme retrieved successfully",
                     Data = programmeDto
                 };
@@ -169,7 +234,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"An error occurred while retrieving the Programme: {ex.Message}"
                 };
             }
@@ -185,7 +250,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Programme not found"
                     };
                 }
@@ -203,7 +268,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Programme retrieved successfully",
                     Data = programmeDto
                 };
@@ -212,13 +277,13 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"An error occurred while retrieving the Programme: {ex.Message}"
                 };
             }
         }
 
-        public async Task<GeneralResponse> UpdateProgrammeAsync(int Id, ProgrammesDto model)
+        public async Task<GeneralResponse> UpdateProgrammeAsync(long Id, ProgrammesDto model)
         {
             try
             {
@@ -228,7 +293,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Programme not found"
                     };
                 }
@@ -246,7 +311,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Programme updated successfully",
                     Data = programme
                 };
@@ -255,7 +320,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = $"An error occurred while updating the Programme: {ex.Message}"
                 };
             }

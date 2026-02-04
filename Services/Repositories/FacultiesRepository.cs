@@ -2,6 +2,7 @@
 using EduReg.Controllers;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -30,13 +31,13 @@ namespace EduReg.Services.Repositories
                 _context.Faculties.Add(faculties);
                 await _context.SaveChangesAsync();
 
-                response.StatusCore = 200;
+                response.StatusCode = 200;
                 response.Message = "New Faculty created successfully";
                 response.Data = faculties;
             }
             catch (Exception ex)
             {
-                response.StatusCore = 500;
+                response.StatusCode = 500;
                 response.Message = "An error occurred, Try again later";
                 response.Data = null;
             }
@@ -44,7 +45,7 @@ namespace EduReg.Services.Repositories
             return response;
         }
 
-        public async Task<GeneralResponse> UpdateFacultyAsync(int Id, FacultiesDto model)
+        public async Task<GeneralResponse> UpdateFacultyAsync(long Id, FacultiesDto model)
         {
             try
             {
@@ -53,7 +54,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Faculty not found",
                         Data = null
                     };
@@ -68,7 +69,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Faculty updated successfully",
                     Data = faculty
                 };
@@ -77,14 +78,14 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = "An error occurred while updating faculty",
                     Data = ex.Message 
                 };
             }
         }
 
-        public async Task<GeneralResponse> DeleteFacultyAsync(int Id)
+        public async Task<GeneralResponse> DeleteFacultyAsync(long Id)
         {
             try
             {
@@ -93,7 +94,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Faculty not found",
                         Data = null
                     };
@@ -103,7 +104,7 @@ namespace EduReg.Services.Repositories
                 await _context.SaveChangesAsync();
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Faculty deleted successfully",
                     Data = Faculty
                 };
@@ -113,7 +114,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = "An error occurred while deleting faculty",
                     Data = ex.Message
                 };
@@ -124,39 +125,46 @@ namespace EduReg.Services.Repositories
         }
 
 
-        public async Task<GeneralResponse> GetAllFacultiesAsync()
+        public async Task<GeneralResponse> GetAllFacultiesAsync(PagingParameters paging,FacultyFilter filter)
         {
-            try
-            {
-                var faculties = await _context.Faculties.ToListAsync();
-                if (faculties == null || !faculties.Any())
-                {
-                    return new GeneralResponse
-                    {
-                        StatusCore = 404,
-                        Message = "No faculties found",
-                        Data = null,
-                    };
-                }
+            var query = _context.Faculties.AsNoTracking();
 
-                return new GeneralResponse
-                {
-                    StatusCore = 200,
-                    Message = "Faculties retrieved successfully",
-                    Data = faculties
-                };
-            }
-            catch (Exception ex)
+            if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
+                query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
+
+            if (!string.IsNullOrWhiteSpace(filter?.Search))
+                query = query.Where(x =>
+                    x.FacultyName!.Contains(filter.Search) ||
+                    x.FacultyCode!.Contains(filter.Search));
+
+            var totalRecords = await query.CountAsync();
+
+            var pagedList = await query
+                .OrderBy(x => x.FacultyName)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
+
+            return new GeneralResponse
             {
-                return new GeneralResponse
+                StatusCode = 200,
+                Message = totalRecords == 0
+                    ? "No faculties found."
+                    : "Faculties retrieved successfully.",
+                Data = pagedList,
+                Meta = new
                 {
-                    StatusCore = 500,
-                    Message = "An error occurred while retrieving faculty",
-                    Data = ex.Message
-                };
-            }
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
+            };
         }
-        public async Task<GeneralResponse> GetFacultyByIdAsync(int Id)
+
+        public async Task<GeneralResponse> GetFacultyByIdAsync(long Id)
         {
             try
             {
@@ -165,14 +173,14 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Faculty not found",
                         Data = null
                     };
                 }
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = $"Faculty with ID {Id} retrieved successfully",
                     Data = faculty
                 };
@@ -181,8 +189,50 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = "An error occurred while retrieving faculty id",
+                    Data = ex.Message
+                };
+            }
+        }
+
+        public async Task<GeneralResponse> GetFacultyByCodeAsync(string facultyCode)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(facultyCode))
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = "Invalid faculty code",
+                        Data = null
+                    };
+                }
+
+                var faculty = await _context.Faculties.FirstOrDefaultAsync(f => f.FacultyCode == facultyCode);
+                if (faculty == null)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 404,
+                        Message = "Faculty not found",
+                        Data = null
+                    };
+                }
+                return new GeneralResponse
+                {
+                    StatusCode = 200,
+                    Message = $"Faculty with code {facultyCode} retrieved successfully",
+                    Data = faculty
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 500,
+                    Message = "An error occurred while retrieving faculty by code",
                     Data = ex.Message
                 };
             }
