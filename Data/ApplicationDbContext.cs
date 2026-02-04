@@ -19,10 +19,12 @@ namespace EduReg.Data
         public DbSet<Faculties> Faculties { get; set; }
         public DbSet<CourseSchedule> CourseSchedules { get; set; }
         public DbSet<Semesters> Semesters { get; set; }
+        public DbSet<SessionSemester> SessionSemesters { get; set; } 
         public DbSet<AdmissionBatches> AdmissionBatches { get; set; }
         public DbSet<ProgramCourses> ProgramCourses { get; set; }
         public DbSet<DepartmentCourses> DepartmentCourses { get; set; }
         public DbSet<CourseSchedule> CourseSchedule { get; set; }
+        public DbSet<CourseMaxMin> CourseMaxMin { get; set; }
 
         public DbSet<Registrations> Registrations { get; set; }
 

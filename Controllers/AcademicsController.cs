@@ -49,7 +49,15 @@ namespace EduReg.Controllers
             var response = await _manager.CreateSemesterAsync(model);
             return StatusCode(response.StatusCode, response);
         }
-        [HttpDelete]
+
+        [HttpPost]
+        [Route("CreateSessionSemester")]
+        public async Task<IActionResult> CreateSessionSemesterAsync([FromBody]SessionSemesterDto dto)
+        {
+            var response = await _manager.CreateSessionSemesterAsync(dto);
+            return StatusCode(response.StatusCode, response);
+        }
+       [HttpDelete]
         [Route("DeleteAcademicSession/{Id}")]
         public async Task<IActionResult> DeleteAcademicSessionAsync(int Id)
         {
@@ -77,6 +85,16 @@ namespace EduReg.Controllers
             var response = await _manager.DeleteSemesterAsync(Id);
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpDelete]
+        [Route("DeleteSessionSemester/{id}")]
+        public async Task<IActionResult> DeleteSessionSemesterAsync(int id)
+        {
+            var response = await _manager.DeleteSessionSemesterAsync(id);
+                return StatusCode(response.StatusCode, response);
+        }
+
+
         [HttpGet]
         [Route("GetAcademicSessionById/{Id}")]
         public async Task<IActionResult> GetAcademicSessionByIdAsync(int Id)
@@ -131,13 +149,31 @@ namespace EduReg.Controllers
             return StatusCode(response.StatusCode, response);
         }
         [HttpGet]
+        [Route("GetAllSessionSemesters")]
+        public async Task<IActionResult> GetAllSessionSemesterAsync(string institutionShortName)
+        {
+            var response = await _manager.GetAllSessionSemesterAsync(institutionShortName);
+            return StatusCode(response.StatusCode, response);
+        }
+        
+
+       [HttpGet]
         [Route("GetSemesterById/{Id}")]
         public async Task<IActionResult> GetSemesterByIdAsync(int Id)
         {
             var response = await _manager.GetSemesterByIdAsync(Id);
             return StatusCode(response.StatusCode, response);
         }
-        [HttpPut]
+        [HttpGet]
+        [Route("GetSessionSemesterById/{Id}")]
+        public async Task<IActionResult> GetSessionSemesterByIdAsync(int Id)
+        {
+            var response = await _manager.GetSessionSemesterByIdAsync(Id);
+            return StatusCode(response.StatusCode, response);
+        }
+
+
+       [HttpPut]
         [Route("UpdateAcademicSession/{Id}")]
         public async Task<IActionResult> UpdateAcademicSessionAsync(int Id, [FromBody] UpdateAcademicSessionDto model)
         {
@@ -176,6 +212,13 @@ namespace EduReg.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [HttpPut]
+        [Route("UpdateSessionSemesterAsync/{Id}")]
+        public async Task<IActionResult> UpdateSessionSemesterAsync(int Id, [FromBody] UpdateSessionSemesterDto dto) 
+        {
+            var response = await _manager.UpdateSessionSemesterAsync(Id, dto);
+            return StatusCode(response.StatusCode, response);
+        }
 
     }
 }

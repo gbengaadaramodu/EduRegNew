@@ -239,5 +239,49 @@ namespace EduReg.Controllers
             var response = await _coursesManager.GetAllCourseSchedulesAsync(paging, filter);
             return StatusCode(response.StatusCode, response);
         }
+
+        //===========
+        //COURSEMAXMIN
+        //============
+
+        [HttpPost]
+        [Route("CreateCourseMaxMin")]
+        public async Task<IActionResult> CreateCourseMaxMinAsync([FromBody] CourseMaxMinDto dto)
+        {
+            var response = await _coursesManager.CreateCourseMaxMinAsync(dto);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetCourseMaxMinById")]
+        public async Task<IActionResult> GetCourseMaxMinByIdAsync(int id)
+        {
+            var response = await _coursesManager.GetCourseMaxMinByIdAsync(id);
+                return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetAllCourseMaxMin")]
+        public async Task<IActionResult> GetAllCourseMaxMinAsync(string institutionShortName)
+        {
+            var response = await _coursesManager.GetAllCourseMaxMinAsync(institutionShortName);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPut]
+        [Route("UpdateCourseMaxMin/{id}")]
+        public async Task<IActionResult> UpdateCourseMaxMinAsync(long id, [FromBody]UpdateCourseMaxMinDto dto)
+        {
+            var response = await _coursesManager.UpdateCourseMaxMinAsync(id, dto);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpDelete]
+        [Route("DeleteCourseMaxMin/{id}")]
+        public async Task<IActionResult> DeleteCourseMaxMinAsync(int id)
+        {
+            var response = await _coursesManager.DeleteCourseMaxMinAsync(id);
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }

@@ -8,20 +8,23 @@ using System.Threading.Tasks;
 
 namespace EduReg.Managers
 {
-    public class CoursesManager : IDepartmentCourses, IProgramCourses, ICourseSchedule
+    public class CoursesManager : IDepartmentCourses, IProgramCourses, ICourseSchedule, ICourseMaxMin
     {
         private readonly IDepartmentCourses _departmentRepo;
         private readonly IProgramCourses _programRepo;
         private readonly ICourseSchedule _scheduleRepo;
+        private readonly ICourseMaxMin _maxMin;
 
         public CoursesManager(
             IDepartmentCourses departmentcourses,
             IProgramCourses programcourses,
-            ICourseSchedule courseScheduleRepo)
+            ICourseSchedule courseScheduleRepo,
+            ICourseMaxMin maxMin)
         {
             _departmentRepo = departmentcourses;
             _programRepo = programcourses;
             _scheduleRepo = courseScheduleRepo;
+            _maxMin = maxMin;
         }
 
         // -----------------------
@@ -418,6 +421,65 @@ namespace EduReg.Managers
         public Task<GeneralResponse> GetAllCourseSchedulesAsync(PagingParameters paging, CourseScheduleFilter filter)
         {
             return _scheduleRepo.GetAllCourseSchedulesAsync(paging, filter);
+        }
+
+
+        //************
+        //CourseMaxMin
+        //************
+        public Task<GeneralResponse> CreateCourseMaxMinAsync(CourseMaxMinDto dto)
+        {
+            return _maxMin.CreateCourseMaxMinAsync(dto);
+        }
+
+        public Task<GeneralResponse> GetCourseMaxMinByIdAsync(long id)
+        {
+
+            if (id <= 0)
+            {
+                return Task.FromResult(new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = "Invalid Id",
+                    Data = null
+                });
+            }
+            return _maxMin.GetCourseMaxMinByIdAsync(id);
+        }
+
+        public Task<GeneralResponse> GetAllCourseMaxMinAsync(string institutionShortName)
+        {
+            return _maxMin.GetAllCourseMaxMinAsync(institutionShortName);
+        }
+
+        public Task<GeneralResponse> UpdateCourseMaxMinAsync(long id, UpdateCourseMaxMinDto dto)
+        {
+
+            if (id <= 0)
+            {
+                return Task.FromResult(new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = "Invalid Id",
+                    Data = null
+                });
+            }
+            return _maxMin.UpdateCourseMaxMinAsync(id, dto);
+        }
+
+        public Task<GeneralResponse> DeleteCourseMaxMinAsync(long id)
+        {
+
+            if (id<= 0)
+            {
+                return Task.FromResult(new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = "Invalid Id",
+                    Data = null
+                });
+            }
+            return _maxMin.DeleteCourseMaxMinAsync(id);
         }
     }
 }
