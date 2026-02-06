@@ -304,7 +304,7 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllCourseTypes")]
-        public async Task<IActionResult> GetAllCourseTypesAsync(string institutionShortName, CourseTypeFilter filter, PagingParameters paging)
+        public async Task<IActionResult> GetAllCourseTypesAsync(string institutionShortName, [FromQuery]CourseTypeFilter filter, [FromQuery]PagingParameters paging)
         {
             var response = await _coursesManager.GetAllCourseTypesAsync(institutionShortName,filter, paging);
             return StatusCode(response.StatusCode, response);
