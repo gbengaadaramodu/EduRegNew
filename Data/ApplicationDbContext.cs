@@ -40,6 +40,11 @@ namespace EduReg.Data
         public DbSet<CourseRegistrationDetail> CourseRegistrationDetails { get; set; }
 
 
+        public DbSet<Permission> PermissionTables { get; set; }
+        public DbSet<Privilege> Privileges { get; set;}
+      //  public DbSet<Roles>Roles { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

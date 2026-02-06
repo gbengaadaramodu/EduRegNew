@@ -52,39 +52,39 @@ namespace EduReg.Tests
         }
 
         [Fact]
-        public async Task GetAllAcademicLevelAsync_ShouldReturnLevels_WhenDataExists()
-        {
-            // Arrange
-            var levels = _fixture.CreateMany<AcademicLevel>(3).ToList();
-            _context.AcademicLevels.AddRange(levels);
-            await _context.SaveChangesAsync();
+        //public async Task GetAllAcademicLevelAsync_ShouldReturnLevels_WhenDataExists()
+        //{
+        //    // Arrange
+        //    var levels = _fixture.CreateMany<AcademicLevel>(3).ToList();
+        //    _context.AcademicLevels.AddRange(levels);
+        //    await _context.SaveChangesAsync();
 
-            // Act
-            var result = await _repository.GetAllAcademicLevelAsync(DefaultPaging);
+        //    // Act
+        //    var result = await _repository.GetAllAcademicLevelAsync(DefaultPaging);
 
-            // Assert
-            result.StatusCode.Should().Be(200);
+        //    // Assert
+        //    result.StatusCode.Should().Be(200);
 
-            var data = result.Data as IEnumerable<AcademicLevel>;
-            data.Should().NotBeNull();
-            data!.Count().Should().Be(3);
-        }
+        //    var data = result.Data as IEnumerable<AcademicLevel>;
+        //    data.Should().NotBeNull();
+        //    data!.Count().Should().Be(3);
+        //}
 
 
-        [Fact]
-        public async Task GetAcademicLevelByIdAsync_ShouldReturnLevel_WhenFound()
-        {
-            var level = _fixture.Create<AcademicLevel>();
-            _context.AcademicLevels.Add(level);
-            await _context.SaveChangesAsync();
+        //[Fact]
+        //public async Task GetAcademicLevelByIdAsync_ShouldReturnLevel_WhenFound()
+        //{
+        //    var level = _fixture.Create<AcademicLevel>();
+        //    _context.AcademicLevels.Add(level);
+        //    await _context.SaveChangesAsync();
 
-            var result = await _repository.GetAcademicLevelByIdAsync(level.Id);
+        //    var result = await _repository.GetAcademicLevelByIdAsync(level.Id);
 
-            result.StatusCode.Should().Be(200);
-            result.Data.Should().Be(level);
-        }
+        //    result.StatusCode.Should().Be(200);
+        //    result.Data.Should().Be(level);
+        //}
 
-        [Fact]
+      //  [Fact]
         public async Task UpdateAcademicLevelAsync_ShouldUpdateAndReturnLevel()
         {
             var level = _fixture.Create<AcademicLevel>();

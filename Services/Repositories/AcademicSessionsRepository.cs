@@ -233,35 +233,35 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model)
+        //public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model)
 
-        {
-            var session = await _context.AcademicSessions.FindAsync(Id);
+        //{
+        //    var session = await _context.AcademicSessions.FindAsync(Id);
 
-            if (session == null)
-            {
-                return new GeneralResponse
-                {
-                    StatusCode = 404,
-                    Message = "Academic session not found",
-                    Data = null
-                };
-            }
+        //    if (session == null)
+        //    {
+        //        return new GeneralResponse
+        //        {
+        //            StatusCode = 404,
+        //            Message = "Academic session not found",
+        //            Data = null
+        //        };
+        //    }
 
-            session.BatchShortName = model.BatchShortName;
-            session.SessionName = model.SessionName;
-            session.IsDeleted = model.IsDeleted;
+        //    session.BatchShortName = model.BatchShortName;
+        //    session.SessionName = model.SessionName;
+        //    session.IsDeleted = model.IsDeleted;
 
-            _context.AcademicSessions.Update(session);
-            await _context.SaveChangesAsync();
+        //    _context.AcademicSessions.Update(session);
+        //    await _context.SaveChangesAsync();
 
-            return new GeneralResponse
-            {
-                StatusCode = 200,
-                Message = "Academic session updated successfully",
-                Data = session
-            };
-        }
+        //    return new GeneralResponse
+        //    {
+        //        StatusCode = 200,
+        //        Message = "Academic session updated successfully",
+        //        Data = session
+        //    };
+        //}
 
     }
 }
