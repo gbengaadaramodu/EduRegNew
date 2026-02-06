@@ -5,6 +5,7 @@ using EduReg.Common;
 using EduReg.Managers;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
+using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -237,6 +238,91 @@ namespace EduReg.Controllers
         public async Task<IActionResult> GetAllCourseSchedules([FromQuery] PagingParameters paging, [FromQuery] CourseScheduleFilter filter)
         {
             var response = await _coursesManager.GetAllCourseSchedulesAsync(paging, filter);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        //===========
+        //COURSEMAXMIN
+        //============
+
+        [HttpPost]
+        [Route("CreateCourseMaxMin")]
+        public async Task<IActionResult> CreateCourseMaxMinAsync(string institutionShortName, [FromBody] CourseMaxMinDto dto)
+        {
+            var response = await _coursesManager.CreateCourseMaxMinAsync(institutionShortName ,dto);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetCourseMaxMinById")]
+        public async Task<IActionResult> GetCourseMaxMinByIdAsync(int id)
+        {
+            var response = await _coursesManager.GetCourseMaxMinByIdAsync(id);
+                return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetAllCourseMaxMin")]
+        public async Task<IActionResult> GetAllCourseMaxMinAsync(string institutionShortName,[FromQuery] CourseMaxMinFilter filter, [FromQuery] PagingParameters paging)
+        {
+            var response = await _coursesManager.GetAllCourseMaxMinAsync(institutionShortName, filter, paging);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPut]
+        [Route("UpdateCourseMaxMin/{id}")]
+        public async Task<IActionResult> UpdateCourseMaxMinAsync(long id, [FromBody]UpdateCourseMaxMinDto dto)
+        {
+            var response = await _coursesManager.UpdateCourseMaxMinAsync(id, dto);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpDelete]
+        [Route("DeleteCourseMaxMin/{id}")]
+        public async Task<IActionResult> DeleteCourseMaxMinAsync(int id)
+        {
+            var response = await _coursesManager.DeleteCourseMaxMinAsync(id);
+            return StatusCode(response.StatusCode, response);
+        }
+
+
+        [HttpPost]
+        [Route("CreateCourseType")]
+        public async Task<IActionResult> CreateCourseTypeAsync(string institutionShortName, [FromBody]CourseTypeDto dto)
+        {
+            var response = await _coursesManager.CreateCourseTypeAsync(institutionShortName, dto);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetCourseTypeById")]
+        public async Task<IActionResult> GetCourseTypeByIdAsync(long id)
+        {
+            var response = await _coursesManager.GetCourseTypeByIdAsync(id);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetAllCourseTypes")]
+        public async Task<IActionResult> GetAllCourseTypesAsync(string institutionShortName, [FromQuery]CourseTypeFilter filter, [FromQuery]PagingParameters paging)
+        {
+            var response = await _coursesManager.GetAllCourseTypesAsync(institutionShortName,filter, paging);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPut]
+        [Route("UpdateCourseType/{id}")]
+        public async Task<IActionResult> UpdateCourseTypeAsync(long id,[FromBody] UpdateCourseTypeDto dto)
+        {
+            var response = await _coursesManager.UpdateCourseTypeAsync(id, dto);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpDelete]
+        [Route("DeleteCourseType/{id}")]
+        public async Task<IActionResult> DeleteCourseTypeAsync(long id)
+        {
+            var response = await _coursesManager.DeleteCourseTypeAsync(id);
             return StatusCode(response.StatusCode, response);
         }
     }
