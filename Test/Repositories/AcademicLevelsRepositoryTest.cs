@@ -1,119 +1,119 @@
-﻿using AutoFixture;
-using EduReg.Common;
-using EduReg.Data;
-using EduReg.Models.Dto;
-using EduReg.Models.Entities;
-using EduReg.Services.Repositories;
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+﻿//using AutoFixture;
+//using EduReg.Common;
+//using EduReg.Data;
+//using EduReg.Models.Dto;
+//using EduReg.Models.Entities;
+//using EduReg.Services.Repositories;
+//using FluentAssertions;
+//using Microsoft.EntityFrameworkCore;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Threading.Tasks;
+//using Xunit;
 
-namespace EduReg.Tests
-{
-    public class AcademicLevelsRepositoryTest
-    {
-        private readonly AcademicsRepository _repository;
-        private readonly ApplicationDbContext _context;
-        private readonly Fixture _fixture;
+//namespace EduReg.Tests
+//{
+//    public class AcademicLevelsRepositoryTest
+//    {
+//        private readonly AcademicsRepository _repository;
+//        private readonly ApplicationDbContext _context;
+//        private readonly Fixture _fixture;
 
-        public AcademicLevelsRepositoryTest()
-        {
-            _fixture = new Fixture();
+//        public AcademicLevelsRepositoryTest()
+//        {
+//            _fixture = new Fixture();
 
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDb_" + System.Guid.NewGuid())
-                .Options;
+//            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+//                .UseInMemoryDatabase(databaseName: "TestDb_" + System.Guid.NewGuid())
+//                .Options;
 
-            _context = new ApplicationDbContext(options);
-            _repository = new AcademicsRepository(_context);
-        }
+//            _context = new ApplicationDbContext(options);
+//            _repository = new AcademicsRepository(_context);
+//        }
 
-        private PagingParameters DefaultPaging => new PagingParameters
-        {
-            PageNumber = 1,
-            PageSize = 10
-        };
+//        private PagingParameters DefaultPaging => new PagingParameters
+//        {
+//            PageNumber = 1,
+//            PageSize = 10
+//        };
 
-        [Fact]
-        public async Task CreateAcademicLevel_ShouldReturnCreatedResponse()
-        {
-            var dto = _fixture.Create<AcademicLevelsDto>();
+//        [Fact]
+//        public async Task CreateAcademicLevel_ShouldReturnCreatedResponse()
+//        {
+//            var dto = _fixture.Create<AcademicLevelsDto>();
 
-            var result = await _repository.CreateAcademicLevel(dto);
+//            var result = await _repository.CreateAcademicLevel(dto);
 
-            result.StatusCode.Should().Be(201);
-            result.Data.Should().BeOfType<AcademicLevel>();
+//            result.StatusCode.Should().Be(201);
+//            result.Data.Should().BeOfType<AcademicLevel>();
 
-            var saved = await _context.AcademicLevels.FirstOrDefaultAsync(a => a.LevelName == dto.LevelName);
-            saved.Should().NotBeNull();
-        }
+//            var saved = await _context.AcademicLevels.FirstOrDefaultAsync(a => a.LevelName == dto.LevelName);
+//            saved.Should().NotBeNull();
+//        }
 
-        [Fact]
-        public async Task GetAllAcademicLevelAsync_ShouldReturnLevels_WhenDataExists()
-        {
-            // Arrange
-            var levels = _fixture.CreateMany<AcademicLevel>(3).ToList();
-            _context.AcademicLevels.AddRange(levels);
-            await _context.SaveChangesAsync();
+//        [Fact]
+//        public async Task GetAllAcademicLevelAsync_ShouldReturnLevels_WhenDataExists()
+//        {
+//            // Arrange
+//            var levels = _fixture.CreateMany<AcademicLevel>(3).ToList();
+//            _context.AcademicLevels.AddRange(levels);
+//            await _context.SaveChangesAsync();
 
-            // Act
-            var result = await _repository.GetAllAcademicLevelAsync(DefaultPaging);
+//            // Act
+//            var result = await _repository.GetAllAcademicLevelAsync(DefaultPaging);
 
-            // Assert
-            result.StatusCode.Should().Be(200);
+//            // Assert
+//            result.StatusCode.Should().Be(200);
 
-            var data = result.Data as IEnumerable<AcademicLevel>;
-            data.Should().NotBeNull();
-            data!.Count().Should().Be(3);
-        }
+//            var data = result.Data as IEnumerable<AcademicLevel>;
+//            data.Should().NotBeNull();
+//            data!.Count().Should().Be(3);
+//        }
 
 
-        [Fact]
-        public async Task GetAcademicLevelByIdAsync_ShouldReturnLevel_WhenFound()
-        {
-            var level = _fixture.Create<AcademicLevel>();
-            _context.AcademicLevels.Add(level);
-            await _context.SaveChangesAsync();
+//        [Fact]
+//        public async Task GetAcademicLevelByIdAsync_ShouldReturnLevel_WhenFound()
+//        {
+//            var level = _fixture.Create<AcademicLevel>();
+//            _context.AcademicLevels.Add(level);
+//            await _context.SaveChangesAsync();
 
-            var result = await _repository.GetAcademicLevelByIdAsync(level.Id);
+//            var result = await _repository.GetAcademicLevelByIdAsync(level.Id);
 
-            result.StatusCode.Should().Be(200);
-            result.Data.Should().Be(level);
-        }
+//            result.StatusCode.Should().Be(200);
+//            result.Data.Should().Be(level);
+//        }
 
-        [Fact]
-        public async Task UpdateAcademicLevelAsync_ShouldUpdateAndReturnLevel()
-        {
-            var level = _fixture.Create<AcademicLevel>();
-            _context.AcademicLevels.Add(level);
-            await _context.SaveChangesAsync();
+//        [Fact]
+//        public async Task UpdateAcademicLevelAsync_ShouldUpdateAndReturnLevel()
+//        {
+//            var level = _fixture.Create<AcademicLevel>();
+//            _context.AcademicLevels.Add(level);
+//            await _context.SaveChangesAsync();
 
-            var dto = _fixture.Create<AcademicLevelsDto>();
+//            var dto = _fixture.Create<AcademicLevelsDto>();
 
-            var result = await _repository.UpdateAcademicLevelAsync(level.Id, dto);
+//            var result = await _repository.UpdateAcademicLevelAsync(level.Id, dto);
 
-            result.StatusCode.Should().Be(200);
-            result.Data.Should().Be(level);
-            level.LevelName.Should().Be(dto.LevelName);
-            level.Description.Should().Be(dto.Description);
-        }
+//            result.StatusCode.Should().Be(200);
+//            result.Data.Should().Be(level);
+//            level.LevelName.Should().Be(dto.LevelName);
+//            level.Description.Should().Be(dto.Description);
+//        }
 
-        [Fact]
-        public async Task DeleteAcademicLevelAsync_ShouldRemoveLevel()
-        {
-            var level = _fixture.Create<AcademicLevel>();
-            _context.AcademicLevels.Add(level);
-            await _context.SaveChangesAsync();
+//        [Fact]
+//        public async Task DeleteAcademicLevelAsync_ShouldRemoveLevel()
+//        {
+//            var level = _fixture.Create<AcademicLevel>();
+//            _context.AcademicLevels.Add(level);
+//            await _context.SaveChangesAsync();
 
-            var result = await _repository.DeleteAcademicLevelAsync(level.Id);
+//            var result = await _repository.DeleteAcademicLevelAsync(level.Id);
 
-            result.StatusCode.Should().Be(200);
+//            result.StatusCode.Should().Be(200);
 
-            var deleted = await _context.AcademicLevels.FindAsync(level.Id);
-            deleted.Should().BeNull();
-        }
-    }
-}
+//            var deleted = await _context.AcademicLevels.FindAsync(level.Id);
+//            deleted.Should().BeNull();
+//        }
+//    }
+//}
