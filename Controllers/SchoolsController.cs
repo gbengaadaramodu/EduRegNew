@@ -1,10 +1,10 @@
 ﻿using Azure;
+using EduReg.Common;
 using EduReg.Managers;
 using EduReg.Models.Dto;
-using EduReg.Services.Interfaces;
+using EduReg.Models.Dto.Request;
 using EduReg.Services.Repositories;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduReg.Controllers
@@ -23,11 +23,11 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllFaculties")]
-        public async Task<IActionResult> GetAllFacultiesAsync()
+        public async Task<IActionResult> GetAllFacultiesAsync([FromQuery] PagingParameters paging, [FromQuery] FacultyFilter filter)
         {
 
-            var response = await _manager.GetAllFacultiesAsync();
-            return StatusCode(response.StatusCore, response);
+            var response = await _manager.GetAllFacultiesAsync(paging, filter);
+            return StatusCode(response.StatusCode, response);
         }
         [HttpPost]
         [Route("CreateFaculty")]
@@ -35,7 +35,7 @@ namespace EduReg.Controllers
         {
 
             var response = await _manager.CreateFacultyAsync(model);
-            return StatusCode(response.StatusCore, response);
+            return StatusCode(response.StatusCode, response);
 
         }
 
@@ -45,7 +45,7 @@ namespace EduReg.Controllers
         {
 
             var response = await _manager.UpdateFacultyAsync(id, model);
-            return StatusCode(response.StatusCore, response);
+            return StatusCode(response.StatusCode, response);
 
         }
 
@@ -57,7 +57,7 @@ namespace EduReg.Controllers
         {
 
             var response = await _manager.DeleteFacultyAsync(id);
-            return StatusCode(response.StatusCore, response);
+            return StatusCode(response.StatusCode, response);
 
         }
 
@@ -68,7 +68,7 @@ namespace EduReg.Controllers
         {
 
             var response = await _manager.GetFacultyByIdAsync(id);
-            return StatusCode(response.StatusCore, response);
+            return StatusCode(response.StatusCode, response);
 
 
         }
@@ -79,27 +79,27 @@ namespace EduReg.Controllers
         {
             var result = await _manager.CreateDepartmentAsync(model);
 
-            // return StatusCode(result.StatusCore, result);
+            // return StatusCode(result.StatusCode, result);
 
-            if (result.StatusCore == 500)
+            if (result.StatusCode == 500)
             {
                 _logger.LogError($"Error Creating Department: {result.Message}");
             }
 
-            return StatusCode(result.StatusCore, result);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpGet]
-        [Route("GetdepartmentbyId/{id}")]
+        [Route("GetDepartmentbyId/{id}")]
         public async Task<IActionResult> GetDepartmentByIdAsync(int id)
         {
             var result = await _manager.GetDepartmentByIdAsync(id);
 
-            if (result.StatusCore == 500)
+            if (result.StatusCode == 500)
             {
                 _logger.LogError($"Error Getting Department: {result.Message}");
             }
-            return StatusCode(result.StatusCore, result);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpGet]
@@ -108,11 +108,11 @@ namespace EduReg.Controllers
         {
             var result = await _manager.GetDepartmentByNameAsync(name);
 
-            if (result.StatusCore == 500)
+            if (result.StatusCode == 500)
             {
                 _logger.LogError($"Error Getting Department: {result.Message}");
             }
-            return StatusCode(result.StatusCore, result);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpPut]
@@ -121,11 +121,11 @@ namespace EduReg.Controllers
         {
             var result = await _manager.UpdateDepartmentAsync(id, model);
 
-            if (result.StatusCore == 500)
+            if (result.StatusCode == 500)
             {
                 _logger.LogError($"Error Updating Department: {result.Message}");
             }
-            return StatusCode(result.StatusCore, result);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpDelete]
@@ -133,17 +133,17 @@ namespace EduReg.Controllers
         public async Task<IActionResult> DeleteDepartmentAsync(int id)
         {
             var result = await _manager.DeleteDepartmentAsync(id);
-                        
-            return StatusCode(result.StatusCore, result);
+
+            return StatusCode(result.StatusCode, result);
 
         }
 
         [HttpGet]
         [Route("GetAllDepartments")]
-        public async Task<IActionResult> GetAllDepartmentsAsync()
+        public async Task<IActionResult> GetAllDepartmentsAsync([FromQuery] PagingParameters paging, [FromQuery]DepartmentFilter filter)
         {
-            var result = await _manager.GetAllDepartmentsAsync();
-            return StatusCode(result.StatusCore, result);
+            var result = await _manager.GetAllDepartmentsAsync(paging, filter);
+            return StatusCode(result.StatusCode, result);
         }
 
 
@@ -163,17 +163,17 @@ namespace EduReg.Controllers
         [Route("DeleteProgramme/{id}")]
         public async Task<IActionResult> DeleteProgrammeAsync(int id)
         {
-            _logger.LogInformation($"DELETE request received for programme with ID: {id}");
+           // _logger.LogInformation($"DELETE request received for programme with ID: {id}");
             var response = await _manager.DeleteProgrammeAsync(id);
 
-            _logger.LogInformation($"{response.Message}");
-            return StatusCode(response.StatusCore, response);
+          //  _logger.LogInformation($"{response.Message}");
+            return StatusCode(response.StatusCode, response);
         }
 
 
         [HttpGet]
         [Route("GetAllProgrammes")]
-        public async Task<IActionResult> GetAllProgrammesAsync()
+        public async Task<IActionResult> GetAllProgrammesAsync([FromQuery] PagingParameters paging, [FromQuery] ProgrammeFilter filter)
         {
             _logger.LogInformation("GET request received to fetch all programmes");
             var response = await _manager.GetAllProgrammesAsync();
@@ -187,7 +187,7 @@ namespace EduReg.Controllers
         [Route("GetProgrammeById/{id}")]
         public async Task<IActionResult> GetProgrammeByIdAsync(int id)
         {
-            _logger.LogInformation($"GET request received for programme with ID: {id}");
+           // _logger.LogInformation($"GET request received for programme with ID: {id}");
             var response = await _manager.GetProgrammeByIdAsync(id);
 
             _logger.LogInformation($"{response.Message}");
@@ -199,7 +199,7 @@ namespace EduReg.Controllers
         [Route("GetProgrammeByName/{programmeName}")]
         public async Task<IActionResult> GetProgrammeByNameAsync(string programmeName)
         {
-            _logger.LogInformation($"GET request received for programme with Name: {programmeName}");
+           // _logger.LogInformation($"GET request received for programme with Name: {programmeName}");
             var response = await _manager.GetProgrammeByNameAsync(programmeName);
 
             _logger.LogInformation($"{response.Message}");
@@ -218,7 +218,7 @@ namespace EduReg.Controllers
             return StatusCode(response.StatusCore, response);
         }
 
-         
-       
+
+
     }
 }

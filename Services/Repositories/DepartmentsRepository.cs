@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 400,
+                        StatusCode = 400,
                         Message = "Department with this code already exists",
                         Data = null
                     };
@@ -37,7 +38,7 @@ namespace EduReg.Services.Repositories
                     DepartmentName = model.DepartmentName,
                     DepartmentCode = model.DepartmentCode,
                     Description = model.Description,
-                    Programme = model.Programme,
+                   // Programme = model.Programme,
                     Duration = model.Duration,
                     NumberofSemesters = model.NumberofSemesters,
                     MaximumNumberofSemesters = model.MaximumNumberofSemesters
@@ -48,7 +49,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Department Created Successfully",
                     Data = department
                 };
@@ -57,7 +58,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = ex.Message,
                     Data = null
                 };
@@ -65,7 +66,7 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> DeleteDepartmentAsync(int Id)
+        public async Task<GeneralResponse> DeleteDepartmentAsync(long Id)
         {
             try
             {
@@ -75,7 +76,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Department not found",
                         Data = null
                     };
@@ -86,7 +87,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Deleted successfully",
                     Data = null
                 };
@@ -95,26 +96,57 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = ex.Message,
                     Data = null
                 };
             }
         }
 
-        public async Task<GeneralResponse> GetAllDepartmentsAsync()
+        public async Task<GeneralResponse> GetAllDepartmentsAsync(PagingParameters paging,DepartmentFilter filter)
         {
-            var departments = await _context.Departments.ToListAsync();
+            var query = _context.Departments.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
+                query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
+
+            if (!string.IsNullOrWhiteSpace(filter?.FacultyCode))
+                query = query.Where(x => x.FacultyCode == filter.FacultyCode);
+
+            if (!string.IsNullOrWhiteSpace(filter?.Search))
+                query = query.Where(x =>
+                    x.DepartmentName!.Contains(filter.Search) ||
+                    x.DepartmentCode!.Contains(filter.Search));
+
+            var totalRecords = await query.CountAsync();
+
+            var pagedList = await query
+                .OrderBy(x => x.DepartmentName)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
 
             return new GeneralResponse
             {
-                StatusCore = 200,
-                Message = "Success",
-                Data = departments
+                StatusCode = 200,
+                Message = totalRecords == 0
+                    ? "No departments found."
+                    : "Departments retrieved successfully.",
+                Data = pagedList,
+                Meta = new
+                {
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
             };
         }
 
-        public async Task<GeneralResponse> GetDepartmentByIdAsync(int Id)
+
+        public async Task<GeneralResponse> GetDepartmentByIdAsync(long Id)
         {
             var department = await _context.Departments.FindAsync(Id);
 
@@ -122,7 +154,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Department not found",
                     Data = null
                 };
@@ -130,7 +162,7 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Success",
                 Data = department
             };
@@ -145,7 +177,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 404,
+                    StatusCode = 404,
                     Message = "Department not found",
                     Data = null
                 };
@@ -153,14 +185,14 @@ namespace EduReg.Services.Repositories
 
             return new GeneralResponse
             {
-                StatusCore = 200,
+                StatusCode = 200,
                 Message = "Success",
                 Data = department
             };
         }
 
 
-        public async Task<GeneralResponse> UpdateDepartmentAsync(int Id, DepartmentsDto model)
+        public async Task<GeneralResponse> UpdateDepartmentAsync(long Id, DepartmentsDto model)
         {
             try
             {
@@ -170,7 +202,7 @@ namespace EduReg.Services.Repositories
                 {
                     return new GeneralResponse
                     {
-                        StatusCore = 404,
+                        StatusCode = 404,
                         Message = "Department not found",
                         Data = null
                     };
@@ -179,7 +211,7 @@ namespace EduReg.Services.Repositories
                 department.FacultyCode = model.FacultyCode;
                 department.DepartmentName = model.DepartmentName;
                 department.Description = model.Description;
-                department.Programme = model.Programme;
+               // department.Programme = model.Programme;
                 department.Duration = model.Duration;
                 department.NumberofSemesters = model.NumberofSemesters;
                 department.MaximumNumberofSemesters = model.MaximumNumberofSemesters;
@@ -188,7 +220,7 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCore = 200,
+                    StatusCode = 200,
                     Message = "Updated successfully",
                     Data = department
                 };
@@ -197,7 +229,7 @@ namespace EduReg.Services.Repositories
             {
                 return new GeneralResponse
                 {
-                    StatusCore = 500,
+                    StatusCode = 500,
                     Message = ex.Message,
                     Data = null
                 };

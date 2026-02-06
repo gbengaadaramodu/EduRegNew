@@ -24,14 +24,20 @@ namespace EduReg.Migrations
 
             modelBuilder.Entity("EduReg.Models.Entities.AcademicLevel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("ActiveStatus")
                         .HasColumnType("int");
+
+                    b.Property<string>("ClassCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CourseAdviser")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -40,6 +46,9 @@ namespace EduReg.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstitutionShortName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
@@ -54,6 +63,12 @@ namespace EduReg.Migrations
                     b.Property<string>("LevelName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProgrammeCode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("AcademicLevels");
@@ -61,11 +76,11 @@ namespace EduReg.Migrations
 
             modelBuilder.Entity("EduReg.Models.Entities.AcademicSession", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("ActiveStatus")
                         .HasColumnType("int");
@@ -82,8 +97,14 @@ namespace EduReg.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("SemesterName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SessionId")
                         .HasColumnType("int");
@@ -96,112 +117,253 @@ namespace EduReg.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("InstitutionShortName");
+
                     b.ToTable("AcademicSessions");
                 });
 
-            modelBuilder.Entity("EduReg.Models.Entities.ApplicantSignUp", b =>
+            modelBuilder.Entity("EduReg.Models.Entities.AdmissionBatches", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("BatchShortName")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("AccessFailedCount")
+                    b.Property<int>("ActiveStatus")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("AdminUserHasChangePassword")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ApplicationBatchId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
+                    b.Property<string>("BatchName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
 
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FirstName")
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id", "BatchShortName");
+
+                    b.HasIndex("InstitutionShortName");
+
+                    b.ToTable("AdmissionBatches");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.CourseRegistration", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<long>("CourseScheduleId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentsId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsAdminUser")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsLock")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("MiddleName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ProgramTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SelectedCategory")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
+                    b.HasIndex("CourseScheduleId");
 
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                    b.HasIndex("StudentsId");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("CourseRegistrations");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.CourseRegistrationDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("CA")
+                        .HasColumnType("float");
+
+                    b.Property<long>("CourseRegistrationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ExamRegistrationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double?>("ExamScore")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ExamStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasRegisteredForExam")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCarryOver")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseRegistrationId");
+
+                    b.ToTable("CourseRegistrationDetails");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.CourseSchedule", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BatchShortName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClassCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CourseCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("CourseFee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CourseType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepartmentCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsOnLMS")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LMSId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LevelName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Prerequisite")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProgrammeCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SemesterId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SessionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Units")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstitutionShortName");
+
+                    b.ToTable("CourseSchedule");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.DepartmentCourses", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CourseCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CourseType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepartmentCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(8000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Prerequisite")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Units")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstitutionShortName");
+
+                    b.ToTable("DepartmentCourses");
                 });
 
             modelBuilder.Entity("EduReg.Models.Entities.Departments", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("ActiveStatus")
                         .HasColumnType("int");
@@ -227,27 +389,29 @@ namespace EduReg.Migrations
                     b.Property<string>("FacultyCode")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("MaximumNumberofSemesters")
                         .HasColumnType("int");
 
                     b.Property<int>("NumberofSemesters")
                         .HasColumnType("int");
 
-                    b.Property<string>("Programme")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("InstitutionShortName");
 
                     b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("EduReg.Models.Entities.Faculties", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("ActiveStatus")
                         .HasColumnType("int");
@@ -268,23 +432,29 @@ namespace EduReg.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InstitutionShortName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("InstitutionShortName");
 
                     b.ToTable("Faculties");
                 });
 
-            modelBuilder.Entity("EduReg.Models.Entities.Level", b =>
+            modelBuilder.Entity("EduReg.Models.Entities.FeeItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("ActiveStatus")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -292,28 +462,291 @@ namespace EduReg.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                    b.Property<string>("Description")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                    b.Property<int>("FeeApplicabilityScope")
+                        .HasColumnType("int");
 
-                    b.Property<string>("LevelName")
+                    b.Property<int>("FeeCategory")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FeeRecurrenceType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InstitutionShortName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsSystemDefined")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<long?>("ProgrammeFeeScheduleId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.ToTable("AcademicLevels");
+                    b.HasIndex("InstitutionShortName");
+
+                    b.HasIndex("ProgrammeFeeScheduleId");
+
+                    b.HasIndex("Name", "InstitutionShortName")
+                        .IsUnique();
+
+                    b.ToTable("FeeItem");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.FeeRule", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ApplicabilityScope")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClassCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepartmentCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EffectiveFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EffectiveTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("FeeItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsRecurring")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LevelName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProgrammeCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RecurrenceType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SemesterId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SessionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeeItemId");
+
+                    b.HasIndex("InstitutionShortName");
+
+                    b.ToTable("FeeRule");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.Institutions", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactPerson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstitutionKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstitutionName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id", "InstitutionShortName");
+
+                    b.HasIndex("InstitutionShortName");
+
+                    b.ToTable("Institutions");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.ProgramCourses", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClassCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CourseCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CourseType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepartmentCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(8000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LevelName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Prerequisite")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProgrammeCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Units")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstitutionShortName");
+
+                    b.ToTable("ProgramCourses");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.ProgrammeFeeSchedule", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CourseCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepartmentCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FeeItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("FeeRuleId")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("FeeRuleId1")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProgrammeCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SemesterId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SessionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeeRuleId1");
+
+                    b.HasIndex("InstitutionShortName");
+
+                    b.ToTable("ProgrammeFeeSchedule");
                 });
 
             modelBuilder.Entity("EduReg.Models.Entities.Programmes", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("ActiveStatus")
                         .HasColumnType("int");
@@ -333,6 +766,9 @@ namespace EduReg.Migrations
                     b.Property<int>("Duration")
                         .HasColumnType("int");
 
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("MaximumNumberOfSemesters")
                         .HasColumnType("int");
 
@@ -347,22 +783,274 @@ namespace EduReg.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("InstitutionShortName");
+
                     b.ToTable("Programmes");
                 });
 
-
-            modelBuilder.Entity("EduReg.Models.Entities.StudentSignUp", b =>
+            modelBuilder.Entity("EduReg.Models.Entities.Registrations", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AcademicLevelId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApprovedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ApprovedDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClassCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CourseCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("CourseFee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CourseTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepartmentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepartmentShortName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Grade")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEnrolledOnLMS")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LMSId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LevelName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MatricNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProgrammeCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("RawScore")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("RegisteredOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SemesterId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SessionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Units")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstitutionShortName");
+
+                    b.ToTable("Registrations");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.RegistrationsBusinessRules", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClassCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepartmentCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LevelName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProgrammeCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SemesterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SemesterName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalCompulsoryUnits")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalElectiveUnits")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalMaximumCreditUnits")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalMinimumCreditUnits")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstitutionShortName");
+
+                    b.ToTable("RegistrationsBusinessRules");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.Semesters", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("SemesterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SemesterName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SessionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SessionName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstitutionShortName");
+
+                    b.ToTable("Semesters");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.StudentFeeSchedule", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("AmountPaid")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("FeeItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("InstitutionShortName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MatricNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProgrammeCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SessionId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeeItemId");
+
+                    b.HasIndex("InstitutionShortName");
+
+                    b.ToTable("StudentFeeSchedule");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.Students", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
                     b.Property<int>("AdmittedLevelId")
@@ -372,62 +1060,98 @@ namespace EduReg.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ApplicantId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ApplicationBatchId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
+                    b.Property<string>("BatchShortName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CurrentAcademicSessionId")
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CurrentLevel")
                         .HasColumnType("int");
+
+                    b.Property<int?>("CurrentSemesterId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CurrentSessionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DepartmentCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsLock")
-                        .HasColumnType("bit");
+                    b.Property<string>("InstitutionShortName")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("MatricNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MiddleName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ProgramId")
-                        .HasColumnType("int");
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("ProgramTypeId")
-                        .HasColumnType("int");
+                    b.Property<string>("ProgrammeCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("StudentSignUps");
+                    b.HasIndex("InstitutionShortName");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -563,6 +1287,115 @@ namespace EduReg.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("StudentFeeItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FeeItemName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("StudentFeeScheduleId")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("StudentFeeScheduleId1")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentFeeScheduleId1");
+
+                    b.ToTable("StudentFeeItem");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.CourseRegistration", b =>
+                {
+                    b.HasOne("EduReg.Models.Entities.CourseSchedule", "CourseSchedule")
+                        .WithMany()
+                        .HasForeignKey("CourseScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EduReg.Models.Entities.Students", "Students")
+                        .WithMany()
+                        .HasForeignKey("StudentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CourseSchedule");
+
+                    b.Navigation("Students");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.CourseRegistrationDetail", b =>
+                {
+                    b.HasOne("EduReg.Models.Entities.CourseRegistration", "CourseRegistration")
+                        .WithMany()
+                        .HasForeignKey("CourseRegistrationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CourseRegistration");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.FeeItem", b =>
+                {
+                    b.HasOne("EduReg.Models.Entities.ProgrammeFeeSchedule", null)
+                        .WithMany("FeeItem")
+                        .HasForeignKey("ProgrammeFeeScheduleId");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.FeeRule", b =>
+                {
+                    b.HasOne("EduReg.Models.Entities.FeeItem", "FeeItem")
+                        .WithMany("FeeRules")
+                        .HasForeignKey("FeeItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FeeItem");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.ProgrammeFeeSchedule", b =>
+                {
+                    b.HasOne("EduReg.Models.Entities.FeeRule", "FeeRule")
+                        .WithMany()
+                        .HasForeignKey("FeeRuleId1");
+
+                    b.Navigation("FeeRule");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.StudentFeeSchedule", b =>
+                {
+                    b.HasOne("EduReg.Models.Entities.FeeItem", "FeeItem")
+                        .WithMany()
+                        .HasForeignKey("FeeItemId");
+
+                    b.Navigation("FeeItem");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -574,7 +1407,7 @@ namespace EduReg.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("EduReg.Models.Entities.ApplicantSignUp", null)
+                    b.HasOne("EduReg.Models.Entities.Students", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -583,7 +1416,7 @@ namespace EduReg.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("EduReg.Models.Entities.ApplicantSignUp", null)
+                    b.HasOne("EduReg.Models.Entities.Students", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -598,7 +1431,7 @@ namespace EduReg.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EduReg.Models.Entities.ApplicantSignUp", null)
+                    b.HasOne("EduReg.Models.Entities.Students", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -607,11 +1440,35 @@ namespace EduReg.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("EduReg.Models.Entities.ApplicantSignUp", null)
+                    b.HasOne("EduReg.Models.Entities.Students", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("StudentFeeItem", b =>
+                {
+                    b.HasOne("EduReg.Models.Entities.StudentFeeSchedule", "StudentFeeSchedule")
+                        .WithMany("StudentFeeItems")
+                        .HasForeignKey("StudentFeeScheduleId1");
+
+                    b.Navigation("StudentFeeSchedule");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.FeeItem", b =>
+                {
+                    b.Navigation("FeeRules");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.ProgrammeFeeSchedule", b =>
+                {
+                    b.Navigation("FeeItem");
+                });
+
+            modelBuilder.Entity("EduReg.Models.Entities.StudentFeeSchedule", b =>
+                {
+                    b.Navigation("StudentFeeItems");
                 });
 #pragma warning restore 612, 618
         }

@@ -12,7 +12,6 @@ namespace EduReg.Controllers
     {
         // This controller is responsible for handling student-related requests.
         private readonly StudentManager _studentRepository;
-        private readonly IConfiguration _config;
         public StudentsController(StudentManager studentManager)
         {
             // Initialize any dependencies here if needed
@@ -41,10 +40,33 @@ namespace EduReg.Controllers
             }
             catch (Exception ex)
             {
-
                 return BadRequest(new { Status = 500, Message = ex.Message });
             }
-            
+        }
+
+
+        [HttpPost]
+        [Route("CreateCourseRegistration")]
+        public async Task<IActionResult> CreateDepartmentCourse([FromBody] CreateCourseRegistrationDto model)
+        {
+            var response = await _studentRepository.CreateCourseRegistrationAsync(model);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetCourseRegistration")]
+        public async Task<IActionResult> GetCourseRegistration([FromQuery] CourseRegistrationRequestDto model)
+        {
+            var response = await _studentRepository.GetCourseRegistration(model);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetCourseRegistrationById/{id}")]
+        public async Task<IActionResult> GetCourseRegistrationById(int id)
+        {
+            var response = await _studentRepository.GetCourseRegistrationById(id);
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

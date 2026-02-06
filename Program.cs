@@ -19,7 +19,7 @@ namespace EduReg
 
             // Add services to the container.
             builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("connectionstring")));
-            builder.Services.AddIdentity<ApplicantSignUp, IdentityRole>(options =>
+            builder.Services.AddIdentity<Students, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 8;
                 options.Password.RequireUppercase = true;
@@ -40,12 +40,8 @@ namespace EduReg
             builder.Services.Configure<BaseUrlConfiguration>(builder.Configuration.GetSection("BaseUrlConfiguration"));
 
             //  builder.Services.AddAutoMapper(typeof(MappingProfile));
-            builder.Services.AddScoped<StudentManager>();
-         
 
-
-
-            //IOC for Repositories
+            // IOC for Repositories
             builder.Services.AddScoped<IStudent, StudentRepository>();
                        
             builder.Services.AddScoped<IInstitutions, InstitutionsRepository>();
@@ -57,15 +53,35 @@ namespace EduReg
             builder.Services.AddScoped<IFaculties, FacultiesRepository>();
             builder.Services.AddScoped<IDepartments, DepartmentsRepository>();
             builder.Services.AddScoped<IProgrammes, ProgrammesRepository>();
-
+            builder.Services.AddScoped<IRegistrations, RegistrationsRepository>();
+            builder.Services.AddScoped<IRegistrationsBusinessRules, RegistrationsBusinessRulesRepository>();
             builder.Services.AddScoped<IAcademics, AcademicsRepository>();
-            
+
+            //Courses 
+            builder.Services.AddScoped<IDepartmentCourses, DepartmentCoursesRepository>();
+            builder.Services.AddScoped<IProgramCourses, ProgramCoursesRepository>();
+            builder.Services.AddScoped<ICourseSchedule, CourseScheduleRepository>();
+            builder.Services.AddScoped<ICourseRegistration, CourseRegistrationRepository>();
+
+            // Fees
+            builder.Services.AddScoped<IFeeItems, FeeItemsRepository>();
+            builder.Services.AddScoped<IFeeRules, FeeRulesRepository>();
+            builder.Services.AddScoped<IProgrammeFeeSchedule, ProgrammeFeeScheduleRepository>();
+            builder.Services.AddScoped<IStudentFeePaymentService, StudentFeePaymentServiceRepository>();
+
 
             // Managers
+
+            builder.Services.AddScoped<StudentManager>();
+            builder.Services.AddScoped<CoursesManager>();
             builder.Services.AddScoped<InstitutionsManager>();
             builder.Services.AddScoped<AcademicsManager>();
             builder.Services.AddScoped<SchoolsManager>();
-           // builder.Services.AddScoped<ProgrammesManager>();
+            builder.Services.AddScoped<RegistrationsManager>();
+            builder.Services.AddScoped<ProgrammeFeeScheduleManager>();
+            builder.Services.AddScoped<FeeServiceManager>();
+            builder.Services.AddScoped<FeePaymentManager>();
+
 
             builder.Services.AddCors(options =>
             {
@@ -85,13 +101,18 @@ namespace EduReg
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            //if (app.Environment.IsDevelopment())
+            //{
+            //    app.UseSwagger();
+            //    app.UseSwaggerUI();
+            //}
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
+
+            app.UseCors("corspolicy");
 
             app.UseAuthorization();
 

@@ -1,11 +1,14 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace EduReg.Models.Entities
 {
+    [Index(nameof(InstitutionShortName))]
     public class AcademicSession : CommonBase
     {
-        public string? InstittionShortName { get; set; }
+        public string? InstitutionShortName { get; set; }
         public string? BatchShortName { get; set; } //FK from Admission Batches// 
+        public string? SemesterName { get; set; } // FK -> Semesters
         public int SessionId { get; set; } // PK -> Semester
         public string? SessionName { get; set; } // 2023/2024, 2024/2025 etc
         public DateTime StartDate { get; set; }

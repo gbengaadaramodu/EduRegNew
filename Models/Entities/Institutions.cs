@@ -1,14 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace EduReg.Models.Entities
 {
+    [Index(nameof(InstitutionShortName))]
     public class Institutions : CommonBase
     {
        
-
         [Key]
-        public string? InstitutionShortName { get; set; } //FK
-        public string? InstitutionName { get; set; }
+        public string? InstitutionShortName { get; set; } //FK (UNILAG)
+        public string? InstitutionName { get; set; } // University of Lagos
         public string?  Address { get; set; }
         public string? ContactPerson { get; set; }
         public string? Email { get; set; }

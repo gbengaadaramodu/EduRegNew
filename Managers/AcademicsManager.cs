@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Services.Interfaces;
 
 
@@ -21,14 +22,14 @@ namespace EduReg.Managers
             _semesters = semesters;
         }
 
-        public  Task<GeneralResponse> CreateAcademicSessionAsync(AcademicSessionsDto model)
+        public async Task<GeneralResponse> CreateAcademicSessionAsync(CreateAcademicSessionDto model)
         {
-            throw new NotImplementedException();
+            return await _sessions.CreateAcademicSessionAsync(model);
         }
 
-        public Task<GeneralResponse> CreateAdmissionBatchAsync(AdmissionBatchesDto model)
+        public async Task<GeneralResponse> CreateAdmissionBatchAsync(AdmissionBatchesDto model)
         {
-            throw new NotImplementedException();
+            return await _batches.CreateAdmissionBatchAsync(model);
         }
 
         public  async Task<GeneralResponse> CreateAcademicLevelAsync(AcademicLevelsDto model)
@@ -36,90 +37,96 @@ namespace EduReg.Managers
            return await _levels.CreateAcademicLevel(model);
         }
 
-        public Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
+        public async Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
         {
-            throw new NotImplementedException();
+            return await _semesters.CreateSemesterAsync(model);
         }
 
-        public Task<GeneralResponse> DeleteAcademicSessionAsync(int Id)
+        public async Task<GeneralResponse> DeleteAcademicSessionAsync(long Id)
         {
-            throw new NotImplementedException();
+            return await _sessions.DeleteAcademicSessionAsync(Id);
         }
 
-        public Task<GeneralResponse> DeleteAdmissionBatchAsync(int Id)
+        public async Task<GeneralResponse> DeleteAdmissionBatchAsync(long Id)
         {
-            throw new NotImplementedException();
+            return await _batches.DeleteAdmissionBatchAsync(Id);
         }
 
-        public async Task<GeneralResponse> DeleteAcademicLevelAsync(int Id)
+        public async Task<GeneralResponse> DeleteAcademicLevelAsync(long Id)
         {
             return await _levels.DeleteAcademicLevelAsync(Id);
         }
 
-        public Task<GeneralResponse> DeleteSemesterAsync(int Id)
+        public async Task<GeneralResponse> DeleteSemesterAsync(long Id)
         {
-            throw new NotImplementedException();
+            return await _semesters.DeleteSemesterAsync(Id);
         }
 
-        public Task<GeneralResponse> GetAcademicSessionByIdAsync(int Id)
+        public async Task<GeneralResponse> GetAcademicSessionByIdAsync(long Id)
         {
-            throw new NotImplementedException();
+            return await _sessions.GetAcademicSessionByIdAsync(Id);
         }
 
-        public Task<GeneralResponse> GetAdmissionBatchByIdAsync(int Id)
+        public async Task<GeneralResponse> GetAdmissionBatchByIdAsync(long Id)
         {
-            throw new NotImplementedException();
+            return await _batches.GetAdmissionBatchByIdAsync(Id);
         }
 
-        public async Task<GeneralResponse> GetAcademicLevelByIdAsync(int Id)
+        public async Task<GeneralResponse> GetAcademicLevelByIdAsync(long Id)
         {
           return  await _levels.GetAcademicLevelByIdAsync(Id);
         }
 
 
-        public Task<GeneralResponse> GetAllAcademicSessionsAsync()
+        public async Task<GeneralResponse> GetAllAcademicSessionsAsync(PagingParameters paging, AcademicSessionFilter filter)
         {
-            throw new NotImplementedException();
+            return await _sessions.GetAllAcademicSessionsAsync(paging, filter);
         }
 
-        public Task<GeneralResponse> GetAllAdmissionBatchAsync()
+        public async Task<GeneralResponse> GetAllAdmissionBatchAsync(PagingParameters paging)
         {
-            throw new NotImplementedException();
+            return await _batches.GetAllAdmissionBatchAsync(paging);
         }
 
-        public async Task<GeneralResponse> GetAllAcademicLevelsAsync()
+        public async Task<GeneralResponse> GetAllAcademicLevelsAsync(PagingParameters paging, AcademicLevelFilter filter)
         {
-            return await _levels.GetAllAcademicLevelAsync();
+            return await _levels.GetAllAcademicLevelAsync(paging, filter);
         }
 
-        public Task<GeneralResponse> GetAllSemestersAsync()
+        public async Task<GeneralResponse> GetAllSemestersAsync(PagingParameters paging, SemesterFilter filter)
         {
-            throw new NotImplementedException();
+            return await _semesters.GetAllSemestersAsync(paging, filter);
         }
 
-        public Task<GeneralResponse> GetSemesterByIdAsync(int Id)
+        public async Task<GeneralResponse> GetSemesterByIdAsync(long Id)
         {
-            throw new NotImplementedException();
+            return await _semesters.GetSemesterByIdAsync(Id);
         }
 
-        public Task<GeneralResponse> UpdateAcademicSessionAsync(int Id, AcademicSessionsDto model)
+        public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, UpdateAcademicSessionDto model)
         {
-            throw new NotImplementedException();
+            return await _sessions.UpdateAcademicSessionAsync(Id, model);
         }
 
-        public Task<GeneralResponse> UpdateAdmissionBatchAsync(int Id, AdmissionBatchesDto model)
+
+        public async Task<GeneralResponse> UpdateAdmissionBatchAsync(long Id, UpdateAdmissionBatchesDto model)
         {
-            throw new NotImplementedException();
+            return await _batches.UpdateAdmissionBatchAsync(Id, model);
         }
 
-        public async Task<GeneralResponse> UpdateAcademicLevelAsync(int Id, AcademicLevelsDto model)
+        public async Task<GeneralResponse> UpdateAdmissionBatchByShortNameAsync(string shortName, UpdateAdmissionBatchesDto model)
+        {
+            return await _batches.UpdateAdmissionBatchByShortNameAsync(shortName, model);
+        }
+
+        public async Task<GeneralResponse> UpdateAcademicLevelAsync(long Id, AcademicLevelsDto model)
         {
         return await _levels.UpdateAcademicLevelAsync(Id, model);
         }
 
-        public Task<GeneralResponse> UpdateSemesterAsync(int Id, SemestersDto model)
+        public async Task<GeneralResponse> UpdateSemesterAsync(long Id, SemestersDto model)
         {
-            throw new NotImplementedException();
+            return await _semesters.UpdateSemesterAsync(Id, model);
         }
 
         

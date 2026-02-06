@@ -1,5 +1,8 @@
-﻿namespace EduReg.Models.Entities
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace EduReg.Models.Entities
 {
+    [Index(nameof(InstitutionShortName))]
     public class Faculties: CommonBase
     {
         public string? FacultyName { get; set; }
