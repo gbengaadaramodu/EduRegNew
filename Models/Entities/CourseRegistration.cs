@@ -16,6 +16,7 @@
         public int SessionId { get; set; }
         public string? DepartmentCode { get; set; } //FK ->Department
         public string? ProgrammeCode { get; set; }
+        public string? Level { get; set; }
     }
 
 
@@ -33,5 +34,7 @@
         public CourseSchedule CourseSchedule { get; set; }
         public string StudentsId { get; set; }
         public Students Students { get; set; }
+        public string? CourseCode { get; set; }
+        public string? CourseTitle { get; set; }
     }
 }

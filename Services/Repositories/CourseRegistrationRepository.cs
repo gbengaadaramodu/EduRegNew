@@ -57,6 +57,11 @@ namespace EduReg.Services.Repositories
                                                 .Intersect(alreadyRegisteredCoursesScheduleIds)
                                                 .ToList();
                 string errorMessage = "The following courses have already been registered: \n";
+                var courses = await _context.CourseSchedules
+                                        .AsNoTracking()
+                                        .Where(cs => model.CourseScheduleIds.Contains(cs.Id))
+                                        .ToListAsync();
+
                 foreach (var item in commonCourseScheduleIds)
                 {
                     var cs = alreadyRegisteredCourses.FirstOrDefault(x => x.Id == item);
@@ -100,15 +105,44 @@ namespace EduReg.Services.Repositories
                 var currentLevel = levels.FirstOrDefault(x => x.LevelId == studentExists.CurrentLevel && x.InstitutionShortName.ToLower() == model.InstitutionShortName.ToLower());
                 var coursesToRegister = new List<CourseRegistrationDetail>();
 
+                var courseRegistration = new CourseRegistration
+                {
+                    SemesterId = Convert.ToInt32(studentExists.CurrentSemesterId),
+                    SessionId = Convert.ToInt32(studentExists.CurrentSessionId),
+                    StudentsId = studentExists.Id,
+                    DepartmentCode = studentExists.DepartmentCode,
+                    ProgrammeCode = studentExists.ProgrammeCode
+
+                };
+
+                var courseRegistrationExists = await _context.CourseRegistrations.FirstOrDefaultAsync(x => x.StudentsId == studentExists.Id && x.SessionId == studentExists.CurrentSessionId && x.SemesterId == studentExists.CurrentSemesterId);
+                if (courseRegistrationExists != null)
+                {
+                    courseRegistration.Id = courseRegistrationExists.Id;
+                }
+                else
+                {
+
+                    await _context.CourseRegistrations.AddAsync(courseRegistration);
+                    await _context.SaveChangesAsync();
+                }
+
+
                 foreach (var item in model.CourseScheduleIds)
                 {
+                    var cs = courses.FirstOrDefault(x => x.Id == item);
+
                     var courseRegistrationDetail = new CourseRegistrationDetail
                     {
                         CourseScheduleId = item,
-                        StudentsId =  studentExists.Id
+                        StudentsId =  studentExists.Id,
+                        CourseRegistrationId = courseRegistration.Id,
+                        CourseCode = cs?.CourseCode,
+                        CourseTitle = cs?.Title,
+                       
                     };
 
-                    var cs = await _context.CourseSchedules.FirstOrDefaultAsync(x => x.Id == item);
+                    //var cs = await _context.CourseSchedules.FirstOrDefaultAsync(x => x.Id == item);
                     var courseLevel = levels.FirstOrDefault(x => x.ClassCode == cs.ClassCode  && x.InstitutionShortName.ToLower() == model.InstitutionShortName.ToLower());
 
 
@@ -116,6 +150,7 @@ namespace EduReg.Services.Repositories
                     {
                         //courseRegistration.IsCarryOver = true;
                         //Work on the above
+                        courseRegistrationDetail.IsCarryOver = true;
                     }
 
                     coursesToRegister.Add(courseRegistrationDetail);
@@ -176,8 +211,15 @@ namespace EduReg.Services.Repositories
                 var courseRegistrationsDto = new List<CourseRegistrationViewDto>();
                 foreach (var courseRegistration in courseRegistrations)
                 {
-                    //var item = MapEntityToDto(courseRegistration);
-                    //courseRegistrationsDto.Add(item);
+                    var item = MapEntityToDto(courseRegistration);
+                    item.CourseRegistrationDetails = new List<CourseRegistrationDetailViewDto>();
+                    var courseRegistrationDetails = await _context.CourseRegistrationDetails.AsNoTracking().Include(x => x.CourseSchedule).Where(x => x.CourseRegistrationId == courseRegistration.Id).ToListAsync();
+                    foreach (var courseRegistrationDetailDto in courseRegistrationDetails)
+                    {
+                        var courseRegistrationDetail = MapEntityToDto(courseRegistrationDetailDto);
+                        item.CourseRegistrationDetails.Add(courseRegistrationDetail);
+                    }
+                    courseRegistrationsDto.Add(item);
 
                 }
 
@@ -272,9 +314,9 @@ namespace EduReg.Services.Repositories
 
 
         // Private helper to map DTO → Entity
-        private CourseRegistrationViewDto MapEntityToDto(CourseRegistrationDetail entity)
+        private CourseRegistrationDetailViewDto MapEntityToDto(CourseRegistrationDetail entity)
         {
-            return new CourseRegistrationViewDto
+            return new CourseRegistrationDetailViewDto
             {
                 CourseCategory = entity.CourseSchedule?.CourseType,
                 CourseCode = entity.CourseSchedule?.CourseCode,
@@ -287,6 +329,28 @@ namespace EduReg.Services.Repositories
                 
 
                 
+                // If you have Created, CreatedBy, ActiveStatus in entity
+                //Created = dto.Created,
+                //CreatedBy = dto.CreatedBy,
+                //ActiveStatus = dto.ActiveStatus
+            };
+        }
+
+        private CourseRegistrationViewDto MapEntityToDto(CourseRegistration entity)
+        {
+            return new CourseRegistrationViewDto
+            {
+                DepartmentCode = entity.DepartmentCode,
+                Level = entity.Level,
+                ProgrammeCode = entity.ProgrammeCode,
+                SemesterId = entity.SemesterId,
+                SessionId = entity.SessionId,
+                StudentsId = entity.StudentsId,
+                RegistrationDate = entity.Created,
+                Id = entity.Id,
+
+
+
                 // If you have Created, CreatedBy, ActiveStatus in entity
                 //Created = dto.Created,
                 //CreatedBy = dto.CreatedBy,
