@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,17 +18,31 @@ namespace EduReg.Services.Repositories
         }
 
         // POST: Create
-        public async Task<GeneralResponse> CreateCourseMaxMinAsync(CourseMaxMinDto dto)
+        public async Task<GeneralResponse> CreateCourseMaxMinAsync(string institutionShortName, CourseMaxMinDto dto)
         {
-            // Business Rule: Ensure Min isn't higher than Max
+            // 1. Validation
             if (dto.MinimumUnits > dto.MaximumUnits)
             {
                 return new GeneralResponse { StatusCode = 400, Message = "Minimum units cannot be greater than maximum units." };
             }
 
+            // 2. Multi-tenant Validation: Ensure the record doesn't already exist for this specific context
+            var alreadyExists = await _context.CourseMaxMin.AnyAsync(x =>
+                x.InstitutionShortName == institutionShortName &&
+                x.ProgramId == dto.ProgramId &&
+                x.LevelId == dto.LevelId &&
+                x.SemesterId == dto.SemesterId &&
+                x.CourseType == dto.CourseType);
+
+            if (alreadyExists)
+            {
+                return new GeneralResponse { StatusCode = 409, Message = "A unit policy already exists for this program, level, and semester." };
+            }
+
+          
             var entity = new CourseMaxMin
             {
-                InstitutionShortName = dto.InstitutionShortName,
+                InstitutionShortName = institutionShortName,
                 ProgramId = dto.ProgramId,
                 LevelId = dto.LevelId,
                 SemesterId = dto.SemesterId,
@@ -57,14 +72,44 @@ namespace EduReg.Services.Repositories
             return new GeneralResponse { StatusCode = 200, Message = "Success", Data = record };
         }
 
-        // GET: All (Filtered by School)
-        public async Task<GeneralResponse> GetAllCourseMaxMinAsync(string institutionShortName)
+
+        public async Task<GeneralResponse> GetAllCourseMaxMinAsync(string institutionShortName, CourseMaxMinFilter filter, PagingParameters paging)
         {
-            var list = await _context.CourseMaxMin
+            // 1. Base Query (Tenant Isolation)
+            var query = _context.CourseMaxMin
                 .Where(x => x.InstitutionShortName == institutionShortName)
+                .AsNoTracking() 
+                .AsQueryable();
+
+            // 2. Apply Filters 
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
+                string search = filter.Search.ToLower();
+                query = query.Where(x =>
+                    x.CourseType.ToLower().Contains(search) ||
+                    x.ProgramId.ToString().Contains(search));
+            }
+
+            if (filter.ProgramId.HasValue)
+                query = query.Where(x => x.ProgramId == filter.ProgramId);
+
+           
+
+            // 3. Pagination Logic
+            var pagedData = await query
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
                 .ToListAsync();
 
-            return new GeneralResponse { StatusCode = 200, Message = "Data retrieved successfully", Data = list };
+            // 4. (Optional) Get Total Count for UI progress bars
+            var totalCount = await query.CountAsync();
+
+            return new GeneralResponse
+            {
+                StatusCode = 200,
+                Message = pagedData.Any() ? "Data retrieved successfully" : "No records found matching criteria",
+                Data = new { TotalCount = totalCount, Items = pagedData } 
+            };
         }
 
         // PUT: Update by ID
@@ -75,14 +120,14 @@ namespace EduReg.Services.Repositories
             if (found == null)
                 return new GeneralResponse { StatusCode = 404, Message = "Policy not found" };
 
-            // Logic check for the update
+            // Logic check 
             if (dto.MinimumUnits > dto.MaximumUnits)
                 return new GeneralResponse { StatusCode = 400, Message = "Validation failed: Min units > Max units" };
 
             found.MinimumUnits = dto.MinimumUnits;
             found.MaximumUnits = dto.MaximumUnits;
             found.ActiveStatus = dto.ActiveStatus;
-            // Note: We don't change ProgramId or LevelId usually in an update
+            
 
             await _context.SaveChangesAsync();
             return new GeneralResponse { StatusCode = 200, Message = "Policy updated successfully", Data = found };

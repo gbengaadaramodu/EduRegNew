@@ -2,7 +2,6 @@
 {
     public class CourseMaxMinDto : CommonBaseDto
     {
-        public string InstitutionShortName { get; set; }
 
         // Logic Links
         public int ProgramId { get; set; }  // The Department/Faculty

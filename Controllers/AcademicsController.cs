@@ -52,9 +52,9 @@ namespace EduReg.Controllers
 
         [HttpPost]
         [Route("CreateSessionSemester")]
-        public async Task<IActionResult> CreateSessionSemesterAsync([FromBody]SessionSemesterDto dto)
+        public async Task<IActionResult> CreateSessionSemesterAsync(string institutionShortName,[FromBody]SessionSemesterDto dto)
         {
-            var response = await _manager.CreateSessionSemesterAsync(dto);
+            var response = await _manager.CreateSessionSemesterAsync(institutionShortName, dto);
             return StatusCode(response.StatusCode, response);
         }
        [HttpDelete]
@@ -126,7 +126,7 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllAdmissionBatch")]
-        public async Task<IActionResult> GetAllAdmissionBatchAsync([FromQuery] PagingParameters paging, [FromQuery] AcademicSessionFilter filter)
+        public async Task<IActionResult> GetAllAdmissionBatchAsync([FromQuery] PagingParameters paging, [FromQuery] AdmissionBatchFilter filter)
         {
             var response = await _manager.GetAllAdmissionBatchAsync(paging);
             return StatusCode(response.StatusCode, response);
@@ -150,9 +150,9 @@ namespace EduReg.Controllers
         }
         [HttpGet]
         [Route("GetAllSessionSemesters")]
-        public async Task<IActionResult> GetAllSessionSemesterAsync(string institutionShortName)
+        public async Task<IActionResult> GetAllSessionSemesterAsync(string institutionShortName, [FromQuery]SessionSemesterFilter filter,[FromQuery] PagingParameters paging)
         {
-            var response = await _manager.GetAllSessionSemesterAsync(institutionShortName);
+            var response = await _manager.GetAllSessionSemesterAsync(institutionShortName, filter, paging);
             return StatusCode(response.StatusCode, response);
         }
         

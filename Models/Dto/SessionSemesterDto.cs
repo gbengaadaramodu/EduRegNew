@@ -2,10 +2,6 @@
 {
     public class SessionSemesterDto : CommonBaseDto
     {
-            public string InstitutionShortName { get; set; }
-
-            
-
         // The foreign keys to link to the parent entities
             public int SessionId { get; set; }
             public int SemesterId { get; set; }

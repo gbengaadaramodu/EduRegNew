@@ -44,9 +44,9 @@ namespace EduReg.Managers
         {
             return await _semesters.CreateSemesterAsync(model);
         }
-        public async Task<GeneralResponse> CreateSessionSemesterAsync(SessionSemesterDto dto)
+        public async Task<GeneralResponse> CreateSessionSemesterAsync(string institutionShortName, SessionSemesterDto dto)
         {
-            return await _sessionSemester.CreateSessionSemesterAsync(dto);
+            return await _sessionSemester.CreateSessionSemesterAsync(institutionShortName, dto);
         }
 
         public async Task<GeneralResponse> DeleteAcademicSessionAsync(long Id)
@@ -107,9 +107,9 @@ namespace EduReg.Managers
         {
             return await _semesters.GetAllSemestersAsync(paging, filter);
         }
-        public async Task<GeneralResponse> GetAllSessionSemesterAsync(string institutionShortName)
+        public async Task<GeneralResponse> GetAllSessionSemesterAsync(string institutionShortName, SessionSemesterFilter filter, PagingParameters paging)
         {
-            return await _sessionSemester.GetAllSessionSemesterAsync(institutionShortName);
+            return await _sessionSemester.GetAllSessionSemesterAsync(institutionShortName, filter, paging);
         }
 
         public async Task<GeneralResponse> GetSemesterByIdAsync(long Id)

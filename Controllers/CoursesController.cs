@@ -5,6 +5,7 @@ using EduReg.Common;
 using EduReg.Managers;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
+using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -246,9 +247,9 @@ namespace EduReg.Controllers
 
         [HttpPost]
         [Route("CreateCourseMaxMin")]
-        public async Task<IActionResult> CreateCourseMaxMinAsync([FromBody] CourseMaxMinDto dto)
+        public async Task<IActionResult> CreateCourseMaxMinAsync(string institutionShortName, [FromBody] CourseMaxMinDto dto)
         {
-            var response = await _coursesManager.CreateCourseMaxMinAsync(dto);
+            var response = await _coursesManager.CreateCourseMaxMinAsync(institutionShortName ,dto);
             return StatusCode(response.StatusCode, response);
         }
 
@@ -262,9 +263,9 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllCourseMaxMin")]
-        public async Task<IActionResult> GetAllCourseMaxMinAsync(string institutionShortName)
+        public async Task<IActionResult> GetAllCourseMaxMinAsync(string institutionShortName,[FromQuery] CourseMaxMinFilter filter, [FromQuery] PagingParameters paging)
         {
-            var response = await _coursesManager.GetAllCourseMaxMinAsync(institutionShortName);
+            var response = await _coursesManager.GetAllCourseMaxMinAsync(institutionShortName, filter, paging);
             return StatusCode(response.StatusCode, response);
         }
 
@@ -281,6 +282,47 @@ namespace EduReg.Controllers
         public async Task<IActionResult> DeleteCourseMaxMinAsync(int id)
         {
             var response = await _coursesManager.DeleteCourseMaxMinAsync(id);
+            return StatusCode(response.StatusCode, response);
+        }
+
+
+        [HttpPost]
+        [Route("CreateCourseType")]
+        public async Task<IActionResult> CreateCourseTypeAsync(string institutionShortName, [FromBody]CourseTypeDto dto)
+        {
+            var response = await _coursesManager.CreateCourseTypeAsync(institutionShortName, dto);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetCourseTypeById")]
+        public async Task<IActionResult> GetCourseTypeByIdAsync(long id)
+        {
+            var response = await _coursesManager.GetCourseTypeByIdAsync(id);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetAllCourseTypes")]
+        public async Task<IActionResult> GetAllCourseTypesAsync(string institutionShortName, CourseTypeFilter filter, PagingParameters paging)
+        {
+            var response = await _coursesManager.GetAllCourseTypesAsync(institutionShortName,filter, paging);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPut]
+        [Route("UpdateCourseType/{id}")]
+        public async Task<IActionResult> UpdateCourseTypeAsync(long id,[FromBody] UpdateCourseTypeDto dto)
+        {
+            var response = await _coursesManager.UpdateCourseTypeAsync(id, dto);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpDelete]
+        [Route("DeleteCourseType/{id}")]
+        public async Task<IActionResult> DeleteCourseTypeAsync(long id)
+        {
+            var response = await _coursesManager.DeleteCourseTypeAsync(id);
             return StatusCode(response.StatusCode, response);
         }
     }

@@ -25,6 +25,7 @@ namespace EduReg.Data
         public DbSet<DepartmentCourses> DepartmentCourses { get; set; }
         public DbSet<CourseSchedule> CourseSchedule { get; set; }
         public DbSet<CourseMaxMin> CourseMaxMin { get; set; }
+        public DbSet<CourseType> CourseTypes { get; set; }
 
         public DbSet<Registrations> Registrations { get; set; }
 

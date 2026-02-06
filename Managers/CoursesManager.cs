@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
+using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -8,23 +9,26 @@ using System.Threading.Tasks;
 
 namespace EduReg.Managers
 {
-    public class CoursesManager : IDepartmentCourses, IProgramCourses, ICourseSchedule, ICourseMaxMin
+    public class CoursesManager : IDepartmentCourses, IProgramCourses, ICourseSchedule, ICourseMaxMin, ICourseType
     {
         private readonly IDepartmentCourses _departmentRepo;
         private readonly IProgramCourses _programRepo;
         private readonly ICourseSchedule _scheduleRepo;
         private readonly ICourseMaxMin _maxMin;
+        private readonly ICourseType _courseType;
 
         public CoursesManager(
             IDepartmentCourses departmentcourses,
             IProgramCourses programcourses,
             ICourseSchedule courseScheduleRepo,
-            ICourseMaxMin maxMin)
+            ICourseMaxMin maxMin,
+            ICourseType courseType)
         {
             _departmentRepo = departmentcourses;
             _programRepo = programcourses;
             _scheduleRepo = courseScheduleRepo;
             _maxMin = maxMin;
+            _courseType = courseType;
         }
 
         // -----------------------
@@ -427,9 +431,9 @@ namespace EduReg.Managers
         //************
         //CourseMaxMin
         //************
-        public Task<GeneralResponse> CreateCourseMaxMinAsync(CourseMaxMinDto dto)
+        public Task<GeneralResponse> CreateCourseMaxMinAsync(string institutionShortName, CourseMaxMinDto dto)
         {
-            return _maxMin.CreateCourseMaxMinAsync(dto);
+            return _maxMin.CreateCourseMaxMinAsync(institutionShortName, dto);
         }
 
         public Task<GeneralResponse> GetCourseMaxMinByIdAsync(long id)
@@ -447,9 +451,9 @@ namespace EduReg.Managers
             return _maxMin.GetCourseMaxMinByIdAsync(id);
         }
 
-        public Task<GeneralResponse> GetAllCourseMaxMinAsync(string institutionShortName)
+        public Task<GeneralResponse> GetAllCourseMaxMinAsync(string institutionShortName, CourseMaxMinFilter filter, PagingParameters paging)
         {
-            return _maxMin.GetAllCourseMaxMinAsync(institutionShortName);
+            return _maxMin.GetAllCourseMaxMinAsync(institutionShortName, filter, paging);
         }
 
         public Task<GeneralResponse> UpdateCourseMaxMinAsync(long id, UpdateCourseMaxMinDto dto)
@@ -480,6 +484,36 @@ namespace EduReg.Managers
                 });
             }
             return _maxMin.DeleteCourseMaxMinAsync(id);
+        }
+
+        //==============
+        //CourseType
+        //===============
+
+
+        public Task<GeneralResponse> CreateCourseTypeAsync(string institutionShortName, CourseTypeDto dto)
+        {
+            return _courseType.CreateCourseTypeAsync(institutionShortName, dto);
+        }
+
+        public Task<GeneralResponse> GetCourseTypeByIdAsync(long id)
+        {
+            return _courseType.GetCourseTypeByIdAsync(id);
+        }
+
+        public Task<GeneralResponse> GetAllCourseTypesAsync(string institutionShortName, CourseTypeFilter filter, PagingParameters paging)
+        {
+            return _courseType.GetAllCourseTypesAsync(institutionShortName, filter, paging);
+        }
+
+        public Task<GeneralResponse> UpdateCourseTypeAsync(long id, UpdateCourseTypeDto dto)
+        {
+            return _courseType.UpdateCourseTypeAsync(id, dto);
+        }
+
+        public Task<GeneralResponse> DeleteCourseTypeAsync(long id)
+        {
+            return _courseType.DeleteCourseTypeAsync(id);
         }
     }
 }

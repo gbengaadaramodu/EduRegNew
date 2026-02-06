@@ -1,6 +1,7 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +18,35 @@ namespace EduReg.Services.Repositories
             _context = context;
         }
 
-        public async Task<GeneralResponse> CreateSessionSemesterAsync(SessionSemesterDto dto)
+        public async Task<GeneralResponse> CreateSessionSemesterAsync(string institutionShortName, SessionSemesterDto dto)
         {
+            // 1. Business Logic Validation: Date check
+            if (dto.RegistrationCloseDate <= dto.RegistrationStartDate)
+            {
+                return new GeneralResponse { StatusCode = 400, Message = "Registration close date must be after start date." };
+            }
+
+            if (dto.ExamEndDate <= dto.ExamStartDate)
+            {
+                return new GeneralResponse { StatusCode = 400, Message = "Exam end date must be after start date." };
+            }
+
+            // 2. Duplicate Check: Ensure this school doesn't already have this session/semester record
+            var exists = await _context.SessionSemesters.AnyAsync(x =>
+                x.InstitutionShortName == institutionShortName &&
+                x.SessionId == dto.SessionId &&
+                x.SemesterId == dto.SemesterId &&
+                !x.IsDeleted);
+
+            if (exists)
+            {
+                return new GeneralResponse { StatusCode = 409, Message = "This Session and Semester combination already exists for your institution." };
+            }
+
+            // 3. Mapping: Use 'institutionShortName' from the method parameter for security
             var newSemester = new SessionSemester
             {
-                InstitutionShortName = dto.InstitutionShortName,
+                InstitutionShortName = institutionShortName,
                 SessionId = dto.SessionId,
                 SemesterId = dto.SemesterId,
                 IsActive = dto.IsActive,
@@ -33,7 +58,7 @@ namespace EduReg.Services.Repositories
                 // Base fields
                 ActiveStatus = dto.ActiveStatus,
                 CreatedBy = dto.CreatedBy,
-                Created = dto.Created // From CommonBaseDto
+                Created = DateTime.Now // Use server time, not DTO time
             };
 
             try
@@ -43,17 +68,18 @@ namespace EduReg.Services.Repositories
 
                 return new GeneralResponse
                 {
-                    StatusCode = 201, // Created
+                    StatusCode = 201,
                     Message = "SessionSemester created successfully",
                     Data = newSemester
                 };
             }
             catch (Exception ex)
             {
+                // Log the full exception internally, return a cleaner message to the user
                 return new GeneralResponse
                 {
                     StatusCode = 500,
-                    Message = $"Database Error: {ex.Message}",
+                    Message = "An internal error occurred while saving the record.",
                     Data = null
                 };
             }
@@ -82,18 +108,61 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> GetAllSessionSemesterAsync(string institutionShortName)
+        public async Task<GeneralResponse> GetAllSessionSemesterAsync(string institutionShortName, SessionSemesterFilter filter, PagingParameters paging)
         {
-            var list = await _context.SessionSemesters
+            // 1. Initialize the query with Tenant Isolation and Soft Delete check
+            var query = _context.SessionSemesters
                 .Where(x => x.InstitutionShortName == institutionShortName && !x.IsDeleted)
-                .OrderByDescending(x => x.Created)
+                .AsNoTracking()
+                .AsQueryable();
+
+            // 2.  Filters 
+            if (filter.SessionId.HasValue)
+                query = query.Where(x => x.SessionId == filter.SessionId);
+
+            if (filter.SemesterId.HasValue)
+                query = query.Where(x => x.SemesterId == filter.SemesterId);
+
+            if (filter.IsActive.HasValue)
+                query = query.Where(x => x.IsActive == filter.IsActive);
+
+            // Filter for "Currently Open" Registration
+            if (filter.IsRegistrationOpen.HasValue && filter.IsRegistrationOpen.Value)
+            {
+                var today = DateTime.Now;
+                query = query.Where(x => today >= x.RegistrationStartDate && today <= x.RegistrationCloseDate);
+            }
+
+            // 3. Apply Search (Searching by Reference or specific Title if applicable)
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
+                string search = filter.Search.ToLower();
+                // Assuming you might want to search by a session name or description if joined, 
+                // otherwise searching numeric IDs as strings:
+                query = query.Where(x => x.SessionId.ToString().Contains(search));
+            }
+
+            // 4. Get Total Count before Pagination
+            var totalCount = await query.CountAsync();
+
+            // 5. Apply Sorting and Pagination
+            var items = await query
+                .OrderByDescending(x => x.CreatedDate) // Uses the CreatedDate from your entity
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
                 .ToListAsync();
 
             return new GeneralResponse
             {
                 StatusCode = 200,
-                Message = $"Found {list.Count} records",
-                Data = list
+                Message = $"Retrieved {items.Count} of {totalCount} records",
+                Data = new
+                {
+                    TotalCount = totalCount,
+                    PageNumber = paging.PageNumber,
+                    PageSize = paging.PageSize,
+                    Items = items
+                }
             };
         }
 

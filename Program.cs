@@ -64,6 +64,7 @@ namespace EduReg
             builder.Services.AddScoped<ICourseSchedule, CourseScheduleRepository>();
             builder.Services.AddScoped<ICourseRegistration, CourseRegistrationRepository>();
             builder.Services.AddScoped<ICourseMaxMin, CourseMaxMinRepository>();
+            builder.Services.AddScoped<ICourseType, CourseTypeRepository>();
 
             // Fees
             builder.Services.AddScoped<IFeeItems, FeeItemsRepository>();
