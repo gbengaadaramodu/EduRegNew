@@ -233,6 +233,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
+<<<<<<< HEAD
         //public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model)
 
         //{
@@ -262,6 +263,10 @@ namespace EduReg.Services.Repositories
         //        Data = session
         //    };
         //}
+=======
+      
+        
+>>>>>>> origin/master
 
     }
 }

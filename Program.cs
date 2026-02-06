@@ -86,6 +86,7 @@ namespace EduReg
             builder.Services.AddScoped<IAdmissionBatches, AdmissionBatchesRepository>();
             builder.Services.AddScoped<IAcademicSessions, AcademicSessionsRepository>();
             builder.Services.AddScoped<ISemesters, SemestersRepository>();
+            builder.Services.AddScoped<ISessionSemester, SessionSemesterRepository>();
 
             // School Controller
             builder.Services.AddScoped<IFaculties, FacultiesRepository>();
@@ -100,6 +101,8 @@ namespace EduReg
             builder.Services.AddScoped<IProgramCourses, ProgramCoursesRepository>();
             builder.Services.AddScoped<ICourseSchedule, CourseScheduleRepository>();
             builder.Services.AddScoped<ICourseRegistration, CourseRegistrationRepository>();
+            builder.Services.AddScoped<ICourseMaxMin, CourseMaxMinRepository>();
+            builder.Services.AddScoped<ICourseType, CourseTypeRepository>();
 
             // Fees
             builder.Services.AddScoped<IFeeItems, FeeItemsRepository>();

@@ -1,25 +1,28 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
+using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 
 
 namespace EduReg.Managers
 {
-    
 
-    public class AcademicsManager: IAdmissionBatches, IAcademicSessions, ISemesters
+
+    public class AcademicsManager : IAdmissionBatches, IAcademicSessions, ISemesters, ISessionSemester
     {
         private readonly IAdmissionBatches _batches;
         private readonly IAcademicSessions _sessions;
         private readonly IAcademics _levels;
         private readonly ISemesters _semesters;
-        public AcademicsManager(IAdmissionBatches batches, IAcademicSessions sessions, IAcademics levels, ISemesters semesters)
+        private readonly ISessionSemester _sessionSemester;
+        public AcademicsManager(IAdmissionBatches batches, IAcademicSessions sessions, IAcademics levels, ISemesters semesters, ISessionSemester sessionSemester)
         {
             _batches = batches;
             _sessions = sessions;
-                                     _levels = levels;  
+            _levels = levels;
             _semesters = semesters;
+            _sessionSemester = sessionSemester;
         }
 
         public async Task<GeneralResponse> CreateAcademicSessionAsync(CreateAcademicSessionDto model)
@@ -32,14 +35,18 @@ namespace EduReg.Managers
             return await _batches.CreateAdmissionBatchAsync(model);
         }
 
-        public  async Task<GeneralResponse> CreateAcademicLevelAsync(AcademicLevelsDto model)
+        public async Task<GeneralResponse> CreateAcademicLevelAsync(AcademicLevelsDto model)
         {
-           return await _levels.CreateAcademicLevel(model);
+            return await _levels.CreateAcademicLevel(model);
         }
 
         public async Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
         {
             return await _semesters.CreateSemesterAsync(model);
+        }
+        public async Task<GeneralResponse> CreateSessionSemesterAsync(string institutionShortName, SessionSemesterDto dto)
+        {
+            return await _sessionSemester.CreateSessionSemesterAsync(institutionShortName, dto);
         }
 
         public async Task<GeneralResponse> DeleteAcademicSessionAsync(long Id)
@@ -61,7 +68,10 @@ namespace EduReg.Managers
         {
             return await _semesters.DeleteSemesterAsync(Id);
         }
-
+        public async Task<GeneralResponse> DeleteSessionSemesterAsync(long id)
+        {
+            return await _sessionSemester.DeleteSessionSemesterAsync(id);
+        }
         public async Task<GeneralResponse> GetAcademicSessionByIdAsync(long Id)
         {
             return await _sessions.GetAcademicSessionByIdAsync(Id);
@@ -74,7 +84,7 @@ namespace EduReg.Managers
 
         public async Task<GeneralResponse> GetAcademicLevelByIdAsync(long Id)
         {
-          return  await _levels.GetAcademicLevelByIdAsync(Id);
+            return await _levels.GetAcademicLevelByIdAsync(Id);
         }
 
 
@@ -97,10 +107,19 @@ namespace EduReg.Managers
         {
             return await _semesters.GetAllSemestersAsync(paging, filter);
         }
+        public async Task<GeneralResponse> GetAllSessionSemesterAsync(string institutionShortName, SessionSemesterFilter filter, PagingParameters paging)
+        {
+            return await _sessionSemester.GetAllSessionSemesterAsync(institutionShortName, filter, paging);
+        }
 
         public async Task<GeneralResponse> GetSemesterByIdAsync(long Id)
         {
             return await _semesters.GetSemesterByIdAsync(Id);
+        }
+
+        public async Task<GeneralResponse> GetSessionSemesterByIdAsync(long id)
+        {
+            return await _sessionSemester.GetSessionSemesterByIdAsync(id);
         }
 
         public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, UpdateAcademicSessionDto model)
@@ -121,14 +140,25 @@ namespace EduReg.Managers
 
         public async Task<GeneralResponse> UpdateAcademicLevelAsync(long Id, AcademicLevelsDto model)
         {
-        return await _levels.UpdateAcademicLevelAsync(Id, model);
+            return await _levels.UpdateAcademicLevelAsync(Id, model);
         }
 
         public async Task<GeneralResponse> UpdateSemesterAsync(long Id, SemestersDto model)
         {
             return await _semesters.UpdateSemesterAsync(Id, model);
         }
+        public async Task<GeneralResponse> UpdateSessionSemesterAsync(long id, UpdateSessionSemesterDto dto)
+        {
+            return await _sessionSemester.UpdateSessionSemesterAsync(id, dto);
+        }
+       
+
+       
+
+       
 
         
+
+       
     }
 }
