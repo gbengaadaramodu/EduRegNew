@@ -40,6 +40,7 @@ namespace EduReg.Models.Dto
 
         [DataType(DataType.Date)]
         public DateTime? EndDate { get; set; }
+        public bool IsDeleted { get; internal set; }
     }
 
     

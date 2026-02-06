@@ -233,7 +233,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model)
+        public async Task<GeneralResponse> UpdateAcademicSessionsAsync(long Id, UpdateAcademicSessionDto model)
 
         {
             var session = await _context.AcademicSessions.FindAsync(Id);

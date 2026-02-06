@@ -43,6 +43,7 @@ namespace EduReg
 
             // IOC for Repositories
             builder.Services.AddScoped<IStudent, StudentRepository>();
+            builder.Services.AddScoped<IStudentStatus, StudentStatusRepository>();
                        
             builder.Services.AddScoped<IInstitutions, InstitutionsRepository>();
             builder.Services.AddScoped<IAdmissionBatches, AdmissionBatchesRepository>();
@@ -64,13 +65,19 @@ namespace EduReg
             builder.Services.AddScoped<ICourseRegistration, CourseRegistrationRepository>();
 
             // Fees
+            builder.Services.AddScoped<IFeeTypes, FeeTypeRepository>();
             builder.Services.AddScoped<IFeeItems, FeeItemsRepository>();
             builder.Services.AddScoped<IFeeRules, FeeRulesRepository>();
             builder.Services.AddScoped<IProgrammeFeeSchedule, ProgrammeFeeScheduleRepository>();
             builder.Services.AddScoped<IStudentFeePaymentService, StudentFeePaymentServiceRepository>();
 
+            //Library
+
+            builder.Services.AddScoped<IELibrary, ELibraryRepository>();
+
 
             // Managers
+
 
             builder.Services.AddScoped<StudentManager>();
             builder.Services.AddScoped<CoursesManager>();
@@ -81,6 +88,7 @@ namespace EduReg
             builder.Services.AddScoped<ProgrammeFeeScheduleManager>();
             builder.Services.AddScoped<FeeServiceManager>();
             builder.Services.AddScoped<FeePaymentManager>();
+            builder.Services.AddScoped<LibraryManager>();
 
 
             builder.Services.AddCors(options =>
