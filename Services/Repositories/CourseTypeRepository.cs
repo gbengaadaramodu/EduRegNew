@@ -36,7 +36,6 @@ namespace EduReg.Services.Repositories
                     Message = $"Course Type '{dto.Name}' already exists for this institution."
                 };
             }
-
            
             var entity = new CourseType
             {
