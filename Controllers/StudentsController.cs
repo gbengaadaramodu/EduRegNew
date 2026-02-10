@@ -1,4 +1,5 @@
-﻿using EduReg.Managers;
+﻿using EduReg.Common.Attributes;
+using EduReg.Managers;
 using EduReg.Models.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -8,6 +9,7 @@ namespace EduReg.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [RequireInstitutionShortName]
     public class StudentsController : ControllerBase
     {
         // This controller is responsible for handling student-related requests.
@@ -19,6 +21,7 @@ namespace EduReg.Controllers
         }
 
         [HttpPost]
+        [SkipRequireInstitutionShortName]
         [Route("LoginStudent")]
         [ProducesResponseType(200)]
         [ProducesResponseType(204)]
@@ -47,7 +50,7 @@ namespace EduReg.Controllers
 
         [HttpPost]
         [Route("CreateCourseRegistration")]
-        public async Task<IActionResult> CreateDepartmentCourse([FromBody] CreateCourseRegistrationDto model)
+        public async Task<IActionResult> CreateCourseRegistration([FromBody] CreateCourseRegistrationDto model)
         {
             var response = await _studentRepository.CreateCourseRegistrationAsync(model);
             return StatusCode(response.StatusCode, response);

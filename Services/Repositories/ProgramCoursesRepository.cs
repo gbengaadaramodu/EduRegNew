@@ -11,16 +11,21 @@ namespace EduReg.Services.Repositories
     public class ProgramCoursesRepository : IProgramCourses
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public ProgramCoursesRepository(ApplicationDbContext context)
+        public ProgramCoursesRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
+            _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
         }
 
         public async Task<GeneralResponse> AssignCoursesToProgramsAsync(string departmentShortName, ProgramCoursesDto model)
         {
             try
             {
+                model.InstitutionShortName = _requestContext.InstitutionShortName;
+
                 var course = new ProgramCourses
                 {
                     InstitutionShortName = model.InstitutionShortName,

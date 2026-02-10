@@ -11,15 +11,42 @@ namespace EduReg.Services.Repositories
     public class DepartmentCoursesRepository : IDepartmentCourses
     {
         private readonly ApplicationDbContext _context;
-        public DepartmentCoursesRepository(ApplicationDbContext context)
+        private readonly RequestContext _requestContext;
+        public DepartmentCoursesRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
+            _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
         }
 
         public async Task<GeneralResponse> CreateDepartmentCourseAsync(DepartmentCoursesDto model)
         {
             try
             {
+                model.InstitutionShortName = _requestContext.InstitutionShortName;
+                var departmentExists = await _context.Departments.AnyAsync(x => x.DepartmentCode == model.DepartmentCode && x.InstitutionShortName == model.InstitutionShortName);
+                if (!departmentExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid department code: {model.DepartmentCode}",
+                        Data = null
+                    };
+                }
+
+                var courseExists = await _context.DepartmentCourses.AnyAsync(x => x.InstitutionShortName == model.InstitutionShortName && x.CourseCode == model.CourseCode);
+                if (!courseExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Course code: {model.CourseCode} already exists",
+                        Data = null
+                    };
+                }
+
+
                 var entity = new DepartmentCourses
                 {
                     InstitutionShortName = model.InstitutionShortName,
@@ -121,6 +148,29 @@ namespace EduReg.Services.Repositories
                 };
             }
 
+            model.InstitutionShortName = _requestContext.InstitutionShortName;
+            var departmentExists = await _context.Departments.AnyAsync(x => x.DepartmentCode == model.DepartmentCode && x.InstitutionShortName == model.InstitutionShortName);
+            if (!departmentExists)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = $"Invalid department code: {model.DepartmentCode}",
+                    Data = null
+                };
+            }
+
+            var courseExists = await _context.DepartmentCourses.AnyAsync(x => x.InstitutionShortName == model.InstitutionShortName && x.CourseCode == model.CourseCode);
+            if (!courseExists)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = $"Course code: {model.CourseCode} already exists",
+                    Data = null
+                };
+            }
+
             course.Title = model.Title;
             course.Units = model.Units;
             course.CourseType = model.CourseType;
@@ -201,7 +251,7 @@ namespace EduReg.Services.Repositories
         public async Task<GeneralResponse> GetAllDepartmentsByCoursesAsync(PagingParameters paging,DepartmentCourseFilter filter)
         {
             var query = _context.DepartmentCourses.AsQueryable();
-
+            filter.InstitutionShortName = _requestContext.InstitutionShortName;
             // Apply filters from the filter class
             if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
                 query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);

@@ -2,6 +2,7 @@
 
 using Azure;
 using EduReg.Common;
+using EduReg.Common.Attributes;
 using EduReg.Managers;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
@@ -13,6 +14,7 @@ namespace EduReg.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [RequireInstitutionShortName]
     public class CourseController : ControllerBase
     {
         private readonly CoursesManager _coursesManager;

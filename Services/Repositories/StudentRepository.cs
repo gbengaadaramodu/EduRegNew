@@ -83,6 +83,7 @@ namespace EduReg.Services.Repositories
                     CurrentAcademicSession = "Unknown",
                     CurrentLevelId = 0,
                     CurrentLevel = "Unknown",
+                    InstitutionShortName = stud.InstitutionShortName
                 };
 
                 return (studentDetail, "Successful", true);
