@@ -16,4 +16,13 @@
         public string? MatricNo { get; set; }
 
     }
+
+    public class CoursesStudentCanRegisterRequestDto
+    {
+        public int SessionId { get; set; }
+        public int SemesterId { get; set; }
+        public string InstitutionShortName { get; set; }
+        public string MatricNo { get; set; }
+
+    }
 }

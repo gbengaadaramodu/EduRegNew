@@ -251,8 +251,15 @@ namespace EduReg.Services.Repositories
                     return response;
                 }
                 var courseRegistrationsDto = new CourseRegistrationViewDto();
-                //var item = MapEntityToDto(courseRegistration);
-                //courseRegistrationsDto = item;
+                var item = MapEntityToDto(courseRegistration);
+                item.CourseRegistrationDetails = new List<CourseRegistrationDetailViewDto>();
+                var courseRegistrationDetails = await _context.CourseRegistrationDetails.AsNoTracking().Include(x => x.CourseSchedule).Where(x => x.CourseRegistrationId == courseRegistration.Id).ToListAsync();
+                foreach (var courseRegistrationDetailDto in courseRegistrationDetails)
+                {
+                    var courseRegistrationDetail = MapEntityToDto(courseRegistrationDetailDto);
+                    item.CourseRegistrationDetails.Add(courseRegistrationDetail);
+                }
+                courseRegistrationsDto = item;
 
                 response.StatusCode = 200;
                 response.Message = "Course registration returned successfully";
@@ -262,6 +269,48 @@ namespace EduReg.Services.Repositories
             }
             catch (Exception ex)
             {
+                response.StatusCode = 500;
+                response.Message = $"Sorry, an error occurred: {ex.Message}";
+
+                return response;
+            }
+        }
+
+        public async Task<GeneralResponse> GetCoursesStudentCanRegister(CoursesStudentCanRegisterRequestDto model)
+        {
+            var response = new GeneralResponse();
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(model.MatricNo))
+                {
+                    var studentExists = await _context.Students.FirstOrDefaultAsync(x => x.MatricNumber.ToLower() == model.MatricNo.ToLower() && x.InstitutionShortName.ToLower() == model.InstitutionShortName.ToLower());
+                    if (studentExists == null)
+                    {
+                        response.StatusCode = 400;
+                        response.Message = $"Matric no: {model.MatricNo} in {model.InstitutionShortName} does not exist";
+                        return response;
+                    }
+
+                    var currentSemesterId = studentExists.CurrentSemesterId;
+                    var currentSessionId = studentExists.CurrentSessionId;
+
+                    var allCourseSchedulesForSessionSemester = await _context.CourseSchedules.Where(x => x.SessionId == currentSessionId && x.SemesterId == currentSemesterId && x.InstitutionShortName == model.InstitutionShortName).ToListAsync();
+
+                    
+                    
+                    return response;
+                }
+                else
+                {
+                    response.StatusCode = 400;
+                    response.Message = $"Matric no is required";
+                    return response;
+                }
+
+            }
+            catch (Exception ex)
+            {
+
                 response.StatusCode = 500;
                 response.Message = $"Sorry, an error occurred: {ex.Message}";
 
