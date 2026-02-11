@@ -71,5 +71,13 @@ namespace EduReg.Controllers
             var response = await _studentRepository.GetCourseRegistrationById(id);
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpGet]
+        [Route("GetCoursesForRegistration")]
+        public async Task<IActionResult> GetCoursesForRegistration([FromQuery] CoursesStudentCanRegisterRequestDto model)
+        {
+            var response = await _studentRepository.GetCoursesStudentCanRegister(model);
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }

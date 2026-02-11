@@ -61,7 +61,7 @@ namespace EduReg.Common
             }
 
             // Store in RequestContext for downstream usage
-            requestContext.InstitutionShortName = institutionShortName;
+            requestContext.InstitutionShortName = institutionShortName.ToUpper();
             requestContext.Institution = (Models.Entities.Institutions)institution.Data;
 
             await _next(context);

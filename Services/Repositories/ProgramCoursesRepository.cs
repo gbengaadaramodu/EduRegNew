@@ -26,6 +26,39 @@ namespace EduReg.Services.Repositories
             {
                 model.InstitutionShortName = _requestContext.InstitutionShortName;
 
+                var departmentExists = await _context.Departments.AnyAsync(x => x.DepartmentCode == departmentShortName && x.InstitutionShortName == model.InstitutionShortName);
+                if (!departmentExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid department code: {model.DepartmentCode}",
+                        Data = null
+                    };
+                }
+
+                var programmeExists = await _context.Programmes.AnyAsync(x => x.ProgrammeCode == model.ProgrammeCode && x.InstitutionShortName == model.InstitutionShortName);
+                if (!programmeExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid programme code: {model.ProgrammeCode}",
+                        Data = null
+                    };
+                }
+
+                var courseExists = await _context.DepartmentCourses.AnyAsync(x => x.CourseCode == model.CourseCode && x.InstitutionShortName == model.InstitutionShortName);
+                if (!courseExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid course code: {model.CourseCode}",
+                        Data = null
+                    };
+                }
+
                 var course = new ProgramCourses
                 {
                     InstitutionShortName = model.InstitutionShortName,
@@ -66,6 +99,40 @@ namespace EduReg.Services.Repositories
         {
             try
             {
+                model.InstitutionShortName = _requestContext.InstitutionShortName;
+
+                var departmentExists = await _context.Departments.AnyAsync(x => x.DepartmentCode == model.DepartmentCode && x.InstitutionShortName == model.InstitutionShortName);
+                if (!departmentExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid department code: {model.DepartmentCode}",
+                        Data = null
+                    };
+                }
+
+                var programmeExists = await _context.Programmes.AnyAsync(x => x.ProgrammeCode == model.ProgrammeCode && x.InstitutionShortName == model.InstitutionShortName);
+                if (!departmentExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid programme code: {model.ProgrammeCode}",
+                        Data = null
+                    };
+                }
+
+                var courseExists = await _context.DepartmentCourses.AnyAsync(x => x.CourseCode == model.CourseCode && x.InstitutionShortName == model.InstitutionShortName);
+                if (!courseExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid course code: {model.CourseCode}",
+                        Data = null
+                    };
+                }
                 var course = MapDtoToEntity(model);
 
                 await _context.ProgramCourses.AddAsync(course);

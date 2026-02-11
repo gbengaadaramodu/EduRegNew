@@ -28,6 +28,7 @@
         public double? ExamScore { get; set; }
         public bool HasRegisteredForExam { get; set; }
         public DateTime? ExamRegistrationDate { get; set; }
+        public DateTime? CourseRegistrationDate { get; set; }
         public string? ExamStatus { get; set; } //PENDING, FAILED, PASSED
         public bool IsCarryOver { get; set; }
         public long CourseScheduleId { get; set; }

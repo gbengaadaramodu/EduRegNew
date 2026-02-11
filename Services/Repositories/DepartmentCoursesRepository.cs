@@ -36,7 +36,7 @@ namespace EduReg.Services.Repositories
                 }
 
                 var courseExists = await _context.DepartmentCourses.AnyAsync(x => x.InstitutionShortName == model.InstitutionShortName && x.CourseCode == model.CourseCode);
-                if (!courseExists)
+                if (courseExists)
                 {
                     return new GeneralResponse
                     {

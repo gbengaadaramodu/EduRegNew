@@ -45,7 +45,8 @@ namespace EduReg.Services.Repositories
                 BatchShortName = model.BatchShortName,
                 StartDate = model.StartDate,
                 EndDate = model.EndDate,
-                ActiveStatus = model.ActiveStatus
+                ActiveStatus = model.ActiveStatus,
+                InstitutionShortName = _requestContext.InstitutionShortName
             };
 
             await _context.AcademicSessions.AddAsync(entity);

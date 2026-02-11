@@ -33,5 +33,10 @@ namespace EduReg.Managers
         {
             return await _courseRegistrationRepository.GetCourseRegistrationById(id);
         }
+
+        public async Task<GeneralResponse> GetCoursesStudentCanRegister(CoursesStudentCanRegisterRequestDto model)
+        {
+            return await _courseRegistrationRepository.GetCoursesStudentCanRegister(model);
+        }
     }
 }
