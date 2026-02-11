@@ -9,7 +9,11 @@ using EduReg.Services.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Microsoft.OpenApi.Models;
+
 
 namespace EduReg
 {
@@ -19,6 +23,7 @@ namespace EduReg
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var configuration = builder.Configuration;
 
             // Add services to the container.
             builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("connectionstring")));
@@ -43,6 +48,40 @@ namespace EduReg
             builder.Services.Configure<BaseUrlConfiguration>(builder.Configuration.GetSection("BaseUrlConfiguration"));
 
             //  builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+
+
+            var jwtSettings = configuration.GetSection("JwtSettings");
+            var secretKey = jwtSettings["Secret"];
+            var issuer = jwtSettings["Issuer"];
+            var audience = jwtSettings["Audience"];
+
+            if (string.IsNullOrEmpty(secretKey))
+            {
+                throw new InvalidOperationException("JWT Secret is missing from AppSettings.json.");
+            }
+
+            // ? Add JWT Authentication
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = audience,
+                    ValidIssuer = issuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                };
+            });
+
+
 
             // IOC for Repositories
             builder.Services.AddScoped<IStudent, StudentRepository>();
@@ -85,6 +124,16 @@ namespace EduReg
             builder.Services.AddScoped<IELibrary, ELibraryRepository>();
 
 
+            //Authentication
+            builder.Services.AddScoped<IAuthentication, AuthenticationRepository>();
+            builder.Services.AddScoped<TokenCacheRepositories>();
+            builder.Services.AddMemoryCache();
+
+            //Email Service
+            builder.Services.AddScoped<IEmailService, EmailSenderRepository>();
+
+
+
             // Managers
 
 
@@ -97,6 +146,8 @@ namespace EduReg
             builder.Services.AddScoped<ProgrammeFeeScheduleManager>();
             builder.Services.AddScoped<FeeServiceManager>();
             builder.Services.AddScoped<FeePaymentManager>();
+            builder.Services.AddScoped<AuthenticationManager>();
+
             builder.Services.AddScoped<TicketingManager>();
 
 
@@ -109,6 +160,7 @@ namespace EduReg
 
 
             builder.Services.AddScoped<LibraryManager>();
+
 
 
             builder.Services.AddCors(options =>
@@ -204,5 +256,7 @@ namespace EduReg
 
             app.Run();
         }
+
+
     }
 }

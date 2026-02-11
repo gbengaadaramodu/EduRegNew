@@ -90,6 +90,35 @@
 
 //    [Fact]
     
+<<<<<<< HEAD
+    //public async Task GetAllFacultiesAsync_Should_Return200_With_Paged_List()
+    //{
+    //    using var ctx = BuildContext();
+    //    var repo = new FacultiesRepository(ctx);
+
+    //    ctx.Faculties.Add(new Faculties { FacultyName = "Sci", FacultyCode = "SCI" });
+    //    ctx.Faculties.Add(new Faculties { FacultyName = "Eng", FacultyCode = "ENG" });
+    //    await ctx.SaveChangesAsync();
+
+    //    // Act
+    //    var result = await repo.GetAllFacultiesAsync(DefaultPaging);
+
+    //    // Assert
+    //    result.StatusCode.Should().Be(200);
+    //    result.Data.Should().NotBeNull();
+
+    //    var data = result.Data as IEnumerable<Faculties>;
+    //    data.Should().NotBeNull();
+    //    data!.Count().Should().Be(2);
+    //}
+
+
+    //[Fact]
+    public async Task DeleteFacultyAsync_Should_Return200_When_Deleted()
+    {
+        using var ctx = BuildContext();
+        var repo = new FacultiesRepository(ctx);
+=======
 //    public async Task GetAllFacultiesAsync_Should_Return200_With_Paged_List()
 //    {
 //        using var ctx = BuildContext();
@@ -117,6 +146,7 @@
 //    {
 //        using var ctx = BuildContext();
 //        var repo = new FacultiesRepository(ctx);
+>>>>>>> origin/master
 
 //        ctx.Faculties.Add(new Faculties { Id = 7, FacultyName = "ToDel", FacultyCode = "DEL" });
 //        await ctx.SaveChangesAsync();

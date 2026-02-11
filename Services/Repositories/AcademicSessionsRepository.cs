@@ -246,6 +246,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
+
         //public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model)
 
         //{
@@ -260,6 +261,21 @@ namespace EduReg.Services.Repositories
         //            Data = null
         //        };
         //    }
+
+        //    session.BatchShortName = model.BatchShortName;
+        //    session.SessionName = model.SessionName;
+        //    session.IsDeleted = model.IsDeleted;
+
+        //    _context.AcademicSessions.Update(session);
+        //    await _context.SaveChangesAsync();
+
+        //    return new GeneralResponse
+        //    {
+        //        StatusCode = 200,
+        //        Message = "Academic session updated successfully",
+        //        Data = session
+        //    };
+        //}
 
       
         
