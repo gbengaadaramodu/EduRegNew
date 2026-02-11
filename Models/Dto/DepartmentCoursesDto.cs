@@ -6,8 +6,11 @@ namespace EduReg.Models.Dto
     {
         //id
         public string? InstitutionShortName { get; set; } //Pk -> Institution
+        [Required(ErrorMessage = "DepartmentCode is required")]
         public string? DepartmentCode { get; set; } //FK -> Departments
+        [Required(ErrorMessage = "CourseCode is required")]
         public string? CourseCode { get; set; }
+        [Required(ErrorMessage = "Title is required")]
         public string? Title { get; set; }
         public int Units { get; set; }
         public string? CourseType { get; set; }

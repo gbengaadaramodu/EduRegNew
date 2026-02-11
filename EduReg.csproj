@@ -29,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Attributes\" />
     <Folder Include="Common\PatternGenerator\" />
   </ItemGroup>
 

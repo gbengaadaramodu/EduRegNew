@@ -10,9 +10,12 @@ namespace EduReg.Services.Repositories
     public class AdmissionBatchesRepository : IAdmissionBatches
     {
         private readonly ApplicationDbContext _context;
-        public AdmissionBatchesRepository(ApplicationDbContext context)
+        private readonly RequestContext _requestContext;
+        public AdmissionBatchesRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
+            _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
         }
         public async Task<GeneralResponse> CreateAdmissionBatchAsync(AdmissionBatchesDto model)
         {
@@ -22,6 +25,18 @@ namespace EduReg.Services.Repositories
                 {
                     StatusCode = 400,
                     Message = "Invalid admission batch data",
+                    Data = null
+                };
+            }
+            model.InstitutionShortName = _requestContext.InstitutionShortName;
+
+            var admissionBatchExists = await _context.AdmissionBatches.FirstOrDefaultAsync(x => x.InstitutionShortName == model.InstitutionShortName && x.BatchShortName == model.BatchShortName);
+            if(admissionBatchExists != null) 
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = $"Batch short name: {model.BatchShortName} already exists",
                     Data = null
                 };
             }
@@ -105,7 +120,7 @@ namespace EduReg.Services.Repositories
 
         public async Task<GeneralResponse> GetAllAdmissionBatchAsync(PagingParameters paging)
         {
-            var query = _context.AdmissionBatches.AsQueryable();
+            var query = _context.AdmissionBatches.Where(x => x.InstitutionShortName == _requestContext.InstitutionShortName).AsQueryable();
 
             var totalRecords = await query.CountAsync();
 

@@ -1,5 +1,8 @@
-﻿using EduReg.Managers;
+﻿using EduReg.Common;
+using EduReg.Common.Attributes;
+using EduReg.Managers;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +11,7 @@ namespace EduReg.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [RequireInstitutionShortName]
     public class StudentsController : ControllerBase
     {
         // This controller is responsible for handling student-related requests.
@@ -19,6 +23,7 @@ namespace EduReg.Controllers
         }
 
         [HttpPost]
+        [SkipRequireInstitutionShortName]
         [Route("LoginStudent")]
         [ProducesResponseType(200)]
         [ProducesResponseType(204)]
@@ -47,7 +52,7 @@ namespace EduReg.Controllers
 
         [HttpPost]
         [Route("CreateCourseRegistration")]
-        public async Task<IActionResult> CreateDepartmentCourse([FromBody] CreateCourseRegistrationDto model)
+        public async Task<IActionResult> CreateCourseRegistration([FromBody] CreateCourseRegistrationDto model)
         {
             var response = await _studentRepository.CreateCourseRegistrationAsync(model);
             return StatusCode(response.StatusCode, response);
@@ -66,6 +71,38 @@ namespace EduReg.Controllers
         public async Task<IActionResult> GetCourseRegistrationById(int id)
         {
             var response = await _studentRepository.GetCourseRegistrationById(id);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetAllStudentRecords")]
+        public async Task<IActionResult> GetAllStudentRecords([FromQuery] PagingParameters paging, [FromQuery] StudentRecordsFilter filter)
+        {
+            var response = await _studentRepository.GetAllStudentRecords(paging, filter);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetStudentRecordsById/{id}")]
+        public async Task<IActionResult> GetStudentRecordsById(string id)
+        {
+            var response = await _studentRepository.GetStudentRecordsById(id);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPut] // Using HttpPut for updates
+        [Route("UpdateStudentRecords/{id}")]
+        public async Task<IActionResult> UpdateStudentRecords(string id, [FromBody] UpdateStudentRecordsDto model)
+        {
+            var response = await _studentRepository.UpdateStudentRecords(id, model);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetCoursesForRegistration")]
+        public async Task<IActionResult> GetCoursesForRegistration([FromQuery] CoursesStudentCanRegisterRequestDto model)
+        {
+            var response = await _studentRepository.GetCoursesStudentCanRegister(model);
             return StatusCode(response.StatusCode, response);
         }
     }

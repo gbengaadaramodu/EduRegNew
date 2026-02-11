@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
+using EduReg.Interfaces;
 using EduReg.Models.Dto;
 using EduReg.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
@@ -83,6 +84,7 @@ namespace EduReg.Services.Repositories
                     CurrentAcademicSession = "Unknown",
                     CurrentLevelId = 0,
                     CurrentLevel = "Unknown",
+                    InstitutionShortName = stud.InstitutionShortName
                 };
 
                 return (studentDetail, "Successful", true);

@@ -11,16 +11,54 @@ namespace EduReg.Services.Repositories
     public class ProgramCoursesRepository : IProgramCourses
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public ProgramCoursesRepository(ApplicationDbContext context)
+        public ProgramCoursesRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
+            _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
         }
 
         public async Task<GeneralResponse> AssignCoursesToProgramsAsync(string departmentShortName, ProgramCoursesDto model)
         {
             try
             {
+                model.InstitutionShortName = _requestContext.InstitutionShortName;
+
+                var departmentExists = await _context.Departments.AnyAsync(x => x.DepartmentCode == departmentShortName && x.InstitutionShortName == model.InstitutionShortName);
+                if (!departmentExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid department code: {model.DepartmentCode}",
+                        Data = null
+                    };
+                }
+
+                var programmeExists = await _context.Programmes.AnyAsync(x => x.ProgrammeCode == model.ProgrammeCode && x.InstitutionShortName == model.InstitutionShortName);
+                if (!programmeExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid programme code: {model.ProgrammeCode}",
+                        Data = null
+                    };
+                }
+
+                var courseExists = await _context.DepartmentCourses.AnyAsync(x => x.CourseCode == model.CourseCode && x.InstitutionShortName == model.InstitutionShortName);
+                if (!courseExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid course code: {model.CourseCode}",
+                        Data = null
+                    };
+                }
+
                 var course = new ProgramCourses
                 {
                     InstitutionShortName = model.InstitutionShortName,
@@ -61,6 +99,40 @@ namespace EduReg.Services.Repositories
         {
             try
             {
+                model.InstitutionShortName = _requestContext.InstitutionShortName;
+
+                var departmentExists = await _context.Departments.AnyAsync(x => x.DepartmentCode == model.DepartmentCode && x.InstitutionShortName == model.InstitutionShortName);
+                if (!departmentExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid department code: {model.DepartmentCode}",
+                        Data = null
+                    };
+                }
+
+                var programmeExists = await _context.Programmes.AnyAsync(x => x.ProgrammeCode == model.ProgrammeCode && x.InstitutionShortName == model.InstitutionShortName);
+                if (!departmentExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid programme code: {model.ProgrammeCode}",
+                        Data = null
+                    };
+                }
+
+                var courseExists = await _context.DepartmentCourses.AnyAsync(x => x.CourseCode == model.CourseCode && x.InstitutionShortName == model.InstitutionShortName);
+                if (!courseExists)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid course code: {model.CourseCode}",
+                        Data = null
+                    };
+                }
                 var course = MapDtoToEntity(model);
 
                 await _context.ProgramCourses.AddAsync(course);

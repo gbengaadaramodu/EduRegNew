@@ -1,4 +1,5 @@
 ﻿using EduReg.Common;
+using EduReg.Common.Attributes;
 using EduReg.Managers;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
@@ -10,6 +11,7 @@ namespace EduReg.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [RequireInstitutionShortName]
     public class ProgrammeFeeScheduleController : ControllerBase
     {
         private readonly ProgrammeFeeScheduleManager _manager;

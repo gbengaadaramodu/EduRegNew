@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EduReg.Models.Dto.Request;
+using EduReg.Common.Attributes;
 
 namespace EduReg.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [RequireInstitutionShortName]
     public class FeeServiceController : ControllerBase
     {
         private readonly FeeServiceManager _manager;
