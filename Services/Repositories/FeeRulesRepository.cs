@@ -11,10 +11,12 @@ namespace EduReg.Services.Repositories
     public class FeeRulesRepository : IFeeRules
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public FeeRulesRepository(ApplicationDbContext context)
+        public FeeRulesRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         public async Task<GeneralResponse> CreateFeeRuleAsync(FeeRuleDto model, string institutionShortName)

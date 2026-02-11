@@ -1,4 +1,5 @@
 ﻿using EduReg.Common;
+using EduReg.Common.Attributes;
 using EduReg.Managers;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
@@ -9,6 +10,7 @@ namespace EduReg.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class InstitutionsController : ControllerBase
     {
         private readonly InstitutionsManager _manager;

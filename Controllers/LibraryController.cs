@@ -1,4 +1,5 @@
 ﻿using EduReg.Common;
+using EduReg.Common.Attributes;
 using EduReg.Managers;
 using EduReg.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ namespace EduReg.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [RequireInstitutionShortName]
     public class LibraryController : ControllerBase
     {
         private readonly LibraryManager _manager;

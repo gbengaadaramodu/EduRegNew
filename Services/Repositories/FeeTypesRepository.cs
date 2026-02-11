@@ -11,10 +11,12 @@ namespace EduReg.Services.Repositories
     public class FeeTypeRepository : IFeeTypes
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public FeeTypeRepository(ApplicationDbContext context)
+        public FeeTypeRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         public async Task<GeneralResponse> CreateFeeTypeAsync(FeeTypeDto model)

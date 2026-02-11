@@ -11,10 +11,12 @@ namespace EduReg.Services.Repositories
     public class ProgrammeFeeScheduleRepository : IProgrammeFeeSchedule
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public ProgrammeFeeScheduleRepository(ApplicationDbContext context)
+        public ProgrammeFeeScheduleRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
         public async Task<GeneralResponse> GenerateProgrammeFeeSchedulesAsync(string institutionShortName, AcademicContextDto model)
         {

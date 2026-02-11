@@ -15,10 +15,12 @@ namespace EduReg.Services.Repositories
     public class CourseScheduleRepository : ICourseSchedule
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public CourseScheduleRepository(ApplicationDbContext context)
+        public CourseScheduleRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         public async Task<GeneralResponse> CreateCourseScheduleAsync(CourseScheduleDto model)

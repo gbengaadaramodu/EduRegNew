@@ -14,10 +14,12 @@ namespace EduReg.Services.Repositories
     public class InstitutionsRepository : IInstitutions
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public InstitutionsRepository(ApplicationDbContext context)
+        public InstitutionsRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         public async Task<GeneralResponse> CreateInstitutionAsync(InstitutionsDto model)

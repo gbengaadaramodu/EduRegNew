@@ -14,6 +14,7 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
+
         public StudentRepository(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;

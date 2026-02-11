@@ -11,11 +11,13 @@ namespace EduReg.Services.Repositories
     public class TicketingRepository : ITicketing
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
         // private readonly IEmailService _emailService; // Ill Inject this when ready
 
-        public TicketingRepository(ApplicationDbContext context )
+        public TicketingRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         public async Task<GeneralResponse> CreateTicketAsync(string institutionShortName, TicketDto dto)

@@ -10,10 +10,12 @@ namespace EduReg.Services.Repositories
     public class ELibraryRepository : IELibrary
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public ELibraryRepository(ApplicationDbContext context)
+        public ELibraryRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         public async Task<GeneralResponse> CreateELibraryAsync(ELibraryDto model)

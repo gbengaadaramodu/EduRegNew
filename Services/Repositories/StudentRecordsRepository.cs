@@ -11,10 +11,12 @@ namespace EduReg.Services.Repositories
     public class StudentRecordsRepository : IStudentRecords
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public StudentRecordsRepository(ApplicationDbContext context)
+        public StudentRecordsRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         public async Task<GeneralResponse> GetAllStudentRecords(PagingParameters paging, StudentRecordsFilter filter)

@@ -11,10 +11,12 @@ namespace EduReg.Services.Repositories
     public class StudentStatusRepository : IStudentStatus
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public StudentStatusRepository(ApplicationDbContext context)
+        public StudentStatusRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         public async Task<GeneralResponse> CreateStudentStatusAsync(StudentStatusDto model)

@@ -11,10 +11,12 @@ namespace EduReg.Services.Repositories
     public class RegistrationsBusinessRulesRepository : IRegistrationsBusinessRules
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public RegistrationsBusinessRulesRepository(ApplicationDbContext context)
+        public RegistrationsBusinessRulesRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         public async Task<GeneralResponse> ValidateStudentRegistrationAsync(RegistrationBusinessRulesDto model)

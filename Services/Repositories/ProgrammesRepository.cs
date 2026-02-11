@@ -11,9 +11,11 @@ namespace EduReg.Services.Repositories
     public class ProgrammesRepository : IProgrammes
     {
         private readonly ApplicationDbContext _context;
-        public ProgrammesRepository(ApplicationDbContext context)
+        private readonly RequestContext _requestContext;
+        public ProgrammesRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         public async Task<GeneralResponse> CreateProgrammeAsync(ProgrammesDto model)
