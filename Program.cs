@@ -72,6 +72,9 @@ namespace EduReg
             builder.Services.AddScoped<IProgrammeFeeSchedule, ProgrammeFeeScheduleRepository>();
             builder.Services.AddScoped<IStudentFeePaymentService, StudentFeePaymentServiceRepository>();
 
+            //Ticketing
+            builder.Services.AddScoped<ITicketing, TicketingRepository>();
+
 
             // Managers
 
@@ -84,6 +87,7 @@ namespace EduReg
             builder.Services.AddScoped<ProgrammeFeeScheduleManager>();
             builder.Services.AddScoped<FeeServiceManager>();
             builder.Services.AddScoped<FeePaymentManager>();
+            builder.Services.AddScoped<TicketingManager>();
 
 
             builder.Services.AddCors(options =>

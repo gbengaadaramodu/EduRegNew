@@ -41,6 +41,7 @@ namespace EduReg.Data
         public DbSet<StudentFeeItem> StudentFeeItem { get; set; }
         public DbSet<CourseRegistration> CourseRegistrations { get; set; }
         public DbSet<CourseRegistrationDetail> CourseRegistrationDetails { get; set; }
+        public DbSet<Ticketing> Ticketing { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

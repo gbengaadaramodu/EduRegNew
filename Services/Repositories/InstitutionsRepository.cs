@@ -161,7 +161,7 @@ namespace EduReg.Services.Repositories
                         TotalRecords = totalRecords,
                         TotalPages = totalRecords == 0
                             ? 0
-                            : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                            : Convert.ToInt32(Math.Ceiling(totalRecords / (double)paging.PageSize))
                     }
                 };
             }

@@ -4,23 +4,24 @@ using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduReg.Services.Repositories
 {
     public class TicketingRepository : ITicketing
     {
         private readonly ApplicationDbContext _context;
-        // private readonly IEmailService _emailService; // Inject this when ready
+        // private readonly IEmailService _emailService; // Ill Inject this when ready
 
-        public TicketingRepository(ApplicationDbContext context)
+        public TicketingRepository(ApplicationDbContext context )
         {
             _context = context;
         }
 
         public async Task<GeneralResponse> CreateTicketAsync(string institutionShortName, TicketDto dto)
         {
-           //. 1. Generate the Reference Number
-               string refNumber = $"TIC-{DateTime.Now.Year}-{Guid.NewGuid().ToString().Substring(0, 5).ToUpper()}";
+            //. 1. Generate the Reference Number
+            string refNumber = $"TIC-{DateTime.Now.Year}-{Guid.NewGuid().ToString().Substring(0, 5).ToUpper()}";
 
             // 2. Map DTO to Entity
             var ticket = new Ticketing
@@ -40,11 +41,11 @@ namespace EduReg.Services.Repositories
                 _context.Ticketing.Add(ticket);
                 await _context.SaveChangesAsync();
 
-                 3. TODO: Email Notification to Student
-                string subject = "Ticket Received: " + refNumber;
-                 string body = $"Hello {dto.StudentName}, your ticket '{dto.Title}' has been received. Your Ref is {refNumber}.";
-                 
-                await _emailService.SendEmailAsync(studentEmail, subject, body);
+                // 3. TODO: Email Notification to Student
+                //string subject = "Ticket Received: " + refNumber;
+                //string body = $"Hello {dto.StudentName}, your ticket '{dto.Title}' has been received. Your Ref is {refNumber}.";
+
+                //await _emailService.SendEmailAsync(studentEmail, subject, body);
 
                 return new GeneralResponse
                 {
