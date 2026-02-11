@@ -10,9 +10,13 @@ namespace EduReg.Models.Entities
         public string? SessionName { get; set; } //FK Academic Session
         public int SessionId { get; set; } //FK Academic Session
         public string? SemesterName { get; set; }// First, Second, Third
-        public int SemesterId { get; set; } // 1, 2, 3
+       // public int SemesterId { get; set; } // 1, 2, 3
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-       
+        public string BatchShortName { get; set; }
+        public DateTime? RegistrationStartDate { get; set; }
+        public DateTime? RegistrationEndDate { get; set; }
+        public DateTime? RegistrationCloseDate { get; set; }
+
     }
 }

@@ -1,4 +1,4 @@
-﻿//// File: EduReg.Tests/FacultiesRepositoryTests.cs
+﻿// File: EduReg.Tests/FacultiesRepositoryTests.cs
 //using EduReg.Common;
 //using EduReg.Data;
 //using EduReg.Models.Dto;
@@ -88,28 +88,28 @@
 //        result.Data.Should().BeNull();
 //    }
 
-    //[Fact]
+//    [Fact]
     
-    //public async Task GetAllFacultiesAsync_Should_Return200_With_Paged_List()
-    //{
-    //    using var ctx = BuildContext();
-    //    var repo = new FacultiesRepository(ctx);
+//    public async Task GetAllFacultiesAsync_Should_Return200_With_Paged_List()
+//    {
+//        using var ctx = BuildContext();
+//        var repo = new FacultiesRepository(ctx);
 
-    //    ctx.Faculties.Add(new Faculties { FacultyName = "Sci", FacultyCode = "SCI" });
-    //    ctx.Faculties.Add(new Faculties { FacultyName = "Eng", FacultyCode = "ENG" });
-    //    await ctx.SaveChangesAsync();
+//        ctx.Faculties.Add(new Faculties { FacultyName = "Sci", FacultyCode = "SCI" });
+//        ctx.Faculties.Add(new Faculties { FacultyName = "Eng", FacultyCode = "ENG" });
+//        await ctx.SaveChangesAsync();
 
-    //    // Act
-    //    //var result = await repo.GetAllFacultiesAsync(DefaultPaging);
+//        // Act
+//        var result = await repo.GetAllFacultiesAsync(DefaultPaging);
 
-    //    // Assert
-    //    result.StatusCode.Should().Be(200);
-    //    result.Data.Should().NotBeNull();
+//        // Assert
+//        result.StatusCode.Should().Be(200);
+//        result.Data.Should().NotBeNull();
 
-    //    var data = result.Data as IEnumerable<Faculties>;
-    //    data.Should().NotBeNull();
-    //    data!.Count().Should().Be(2);
-    //}
+//        var data = result.Data as IEnumerable<Faculties>;
+//        data.Should().NotBeNull();
+//        data!.Count().Should().Be(2);
+//    }
 
 
 //    [Fact]

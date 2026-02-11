@@ -11,14 +11,18 @@ namespace EduReg.Services.Repositories
     public class CourseRegistrationRepository: ICourseRegistration
     {
         private readonly ApplicationDbContext _context;
-        public CourseRegistrationRepository(ApplicationDbContext context)
+        private readonly Common.RequestContext _requestContext;
+        public CourseRegistrationRepository(ApplicationDbContext context, Common.RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
+            _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
         }
 
         public async Task<GeneralResponse> CreateCourseRegistrationAsync(CreateCourseRegistrationDto model)
         {
             var response = new GeneralResponse();
+            model.InstitutionShortName = _requestContext.InstitutionShortName;
             try
             {
                 if(model.CourseScheduleIds.Count <= 0)
@@ -50,13 +54,18 @@ namespace EduReg.Services.Repositories
                 var minimumUnits = 15;
                 var maximumUnits = 21;
 
-                var alreadyRegisteredCourses = await _context.CourseRegistrations.Include(x => x.CourseSchedule).Where(x => x.CourseSchedule.SessionId == studentExists.CurrentSessionId && x.CourseSchedule.SemesterId == studentExists.CurrentSemesterId && x.StudentsId == studentExists.Id).ToListAsync();
+                var alreadyRegisteredCourses = await _context.CourseRegistrationDetails.Include(x => x.CourseSchedule).Where(x => x.CourseSchedule.SessionId == studentExists.CurrentSessionId && x.CourseSchedule.SemesterId == studentExists.CurrentSemesterId && x.StudentsId == studentExists.Id).ToListAsync();
                 var alreadyRegisteredCoursesScheduleIds = alreadyRegisteredCourses.Select(x=> x.CourseSchedule.Id).ToList();
 
                 var commonCourseScheduleIds = model.CourseScheduleIds
                                                 .Intersect(alreadyRegisteredCoursesScheduleIds)
                                                 .ToList();
                 string errorMessage = "The following courses have already been registered: \n";
+                var courses = await _context.CourseSchedules
+                                        .AsNoTracking()
+                                        .Where(cs => model.CourseScheduleIds.Contains(cs.Id))
+                                        .ToListAsync();
+
                 foreach (var item in commonCourseScheduleIds)
                 {
                     var cs = alreadyRegisteredCourses.FirstOrDefault(x => x.Id == item);
@@ -98,16 +107,46 @@ namespace EduReg.Services.Repositories
 
                 var levels = await _context.AcademicLevels.ToListAsync();
                 var currentLevel = levels.FirstOrDefault(x => x.LevelId == studentExists.CurrentLevel && x.InstitutionShortName.ToLower() == model.InstitutionShortName.ToLower());
-                var coursesToRegister = new List<CourseRegistration>();
+                var coursesToRegister = new List<CourseRegistrationDetail>();
+
+                var courseRegistration = new CourseRegistration
+                {
+                    SemesterId = Convert.ToInt32(studentExists.CurrentSemesterId),
+                    SessionId = Convert.ToInt32(studentExists.CurrentSessionId),
+                    StudentsId = studentExists.Id,
+                    DepartmentCode = studentExists.DepartmentCode,
+                    ProgrammeCode = studentExists.ProgrammeCode
+
+                };
+
+                var courseRegistrationExists = await _context.CourseRegistrations.FirstOrDefaultAsync(x => x.StudentsId == studentExists.Id && x.SessionId == studentExists.CurrentSessionId && x.SemesterId == studentExists.CurrentSemesterId);
+                if (courseRegistrationExists != null)
+                {
+                    courseRegistration.Id = courseRegistrationExists.Id;
+                }
+                else
+                {
+
+                    await _context.CourseRegistrations.AddAsync(courseRegistration);
+                    await _context.SaveChangesAsync();
+                }
+
+
                 foreach (var item in model.CourseScheduleIds)
                 {
-                    var courseRegistration = new CourseRegistration
+                    var cs = courses.FirstOrDefault(x => x.Id == item);
+
+                    var courseRegistrationDetail = new CourseRegistrationDetail
                     {
                         CourseScheduleId = item,
-                        StudentsId =  studentExists.Id
+                        StudentsId =  studentExists.Id,
+                        CourseRegistrationId = courseRegistration.Id,
+                        CourseCode = cs?.CourseCode,
+                        CourseTitle = cs?.Title,
+                       
                     };
 
-                    var cs = await _context.CourseSchedules.FirstOrDefaultAsync(x => x.Id == item);
+                    //var cs = await _context.CourseSchedules.FirstOrDefaultAsync(x => x.Id == item);
                     var courseLevel = levels.FirstOrDefault(x => x.ClassCode == cs.ClassCode  && x.InstitutionShortName.ToLower() == model.InstitutionShortName.ToLower());
 
 
@@ -115,13 +154,14 @@ namespace EduReg.Services.Repositories
                     {
                         //courseRegistration.IsCarryOver = true;
                         //Work on the above
+                        courseRegistrationDetail.IsCarryOver = true;
                     }
 
-                    coursesToRegister.Add(courseRegistration);
+                    coursesToRegister.Add(courseRegistrationDetail);
                 }
 
 
-                await _context.CourseRegistrations.AddRangeAsync(coursesToRegister);
+                await _context.CourseRegistrationDetails.AddRangeAsync(coursesToRegister);
                 await _context.SaveChangesAsync();
 
                 response.StatusCode = 200;
@@ -146,7 +186,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-                var courseRegistrationQuery = _context.CourseRegistrations.Include(x => x.CourseSchedule).AsQueryable();
+                var courseRegistrationQuery = _context.CourseRegistrations/*.Include(x => x.CourseSchedule)*/.AsQueryable();
                 if(!string.IsNullOrWhiteSpace(model.MatricNo))
                 {
                     var studentExists = await _context.Students.FirstOrDefaultAsync(x => x.MatricNumber.ToLower() == model.MatricNo.ToLower() && x.InstitutionShortName.ToLower() == model.InstitutionShortName.ToLower());
@@ -161,12 +201,14 @@ namespace EduReg.Services.Repositories
 
                 if(model.SessionId != null)
                 {
-                    courseRegistrationQuery = courseRegistrationQuery.Where(x => x.CourseSchedule.SessionId == model.SessionId);
+                    //courseRegistrationQuery = courseRegistrationQuery.Where(x => x.CourseSchedule.SessionId == model.SessionId);
+                    courseRegistrationQuery = courseRegistrationQuery.Where(x => x.SessionId == model.SessionId);
                 }
 
                 if (model.SemesterId != null)
                 {
-                    courseRegistrationQuery = courseRegistrationQuery.Where(x => x.CourseSchedule.SemesterId == model.SemesterId);
+                    //courseRegistrationQuery = courseRegistrationQuery.Where(x => x.CourseSchedule.SemesterId == model.SemesterId);
+                    courseRegistrationQuery = courseRegistrationQuery.Where(x => x.SemesterId == model.SemesterId);
                 }
 
                 var courseRegistrations = await courseRegistrationQuery.ToListAsync();
@@ -174,6 +216,13 @@ namespace EduReg.Services.Repositories
                 foreach (var courseRegistration in courseRegistrations)
                 {
                     var item = MapEntityToDto(courseRegistration);
+                    item.CourseRegistrationDetails = new List<CourseRegistrationDetailViewDto>();
+                    var courseRegistrationDetails = await _context.CourseRegistrationDetails.AsNoTracking().Include(x => x.CourseSchedule).Where(x => x.CourseRegistrationId == courseRegistration.Id).ToListAsync();
+                    foreach (var courseRegistrationDetailDto in courseRegistrationDetails)
+                    {
+                        var courseRegistrationDetail = MapEntityToDto(courseRegistrationDetailDto);
+                        item.CourseRegistrationDetails.Add(courseRegistrationDetail);
+                    }
                     courseRegistrationsDto.Add(item);
 
                 }
@@ -198,7 +247,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-                var courseRegistration = await _context.CourseRegistrations.Include(x => x.CourseSchedule).FirstOrDefaultAsync(x => x.Id == id);
+                var courseRegistration = await _context.CourseRegistrations/*.Include(x => x.CourseSchedule)*/.FirstOrDefaultAsync(x => x.Id == id);
                 if (courseRegistration == null)
                 {
                     response.StatusCode = 400;
@@ -207,6 +256,13 @@ namespace EduReg.Services.Repositories
                 }
                 var courseRegistrationsDto = new CourseRegistrationViewDto();
                 var item = MapEntityToDto(courseRegistration);
+                item.CourseRegistrationDetails = new List<CourseRegistrationDetailViewDto>();
+                var courseRegistrationDetails = await _context.CourseRegistrationDetails.AsNoTracking().Include(x => x.CourseSchedule).Where(x => x.CourseRegistrationId == courseRegistration.Id).ToListAsync();
+                foreach (var courseRegistrationDetailDto in courseRegistrationDetails)
+                {
+                    var courseRegistrationDetail = MapEntityToDto(courseRegistrationDetailDto);
+                    item.CourseRegistrationDetails.Add(courseRegistrationDetail);
+                }
                 courseRegistrationsDto = item;
 
                 response.StatusCode = 200;
@@ -217,6 +273,120 @@ namespace EduReg.Services.Repositories
             }
             catch (Exception ex)
             {
+                response.StatusCode = 500;
+                response.Message = $"Sorry, an error occurred: {ex.Message}";
+
+                return response;
+            }
+        }
+
+        public async Task<GeneralResponse> GetCoursesStudentCanRegister(CoursesStudentCanRegisterRequestDto model)
+        {
+            var response = new GeneralResponse();
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(model.MatricNo))
+                {
+                    var studentExists = await _context.Students.FirstOrDefaultAsync(x => x.MatricNumber.ToLower() == model.MatricNo.ToLower() && x.InstitutionShortName.ToLower() == model.InstitutionShortName.ToLower());
+                    if (studentExists == null)
+                    {
+                        response.StatusCode = 400;
+                        response.Message = $"Matric no: {model.MatricNo} in {model.InstitutionShortName} does not exist";
+                        return response;
+                    }
+
+                    var currentSemesterId = studentExists.CurrentSemesterId;
+                    var currentSessionId = studentExists.CurrentSessionId;
+
+                    var allCourseSchedulesForSessionSemester = await _context.CourseSchedules.Where(x => x.SessionId == currentSessionId && x.SemesterId == currentSemesterId
+                                                                                                            && x.InstitutionShortName == model.InstitutionShortName
+                                                                                                            && x.BatchShortName == studentExists.BatchShortName
+                                                                                                            && x.ProgrammeCode == studentExists.ProgrammeCode).AsNoTracking().ToListAsync();
+                    if (allCourseSchedulesForSessionSemester.Count == 0)
+                    {
+                        response.StatusCode = 200;
+                        response.Message = $"No courses scheduled yet";
+                        return response;
+                    }
+
+                    //List<CourseRegistrationDetailViewDto> coursesStudentCanRegister = new List<CourseRegistrationDetailViewDto>();
+                    //var notPassedCourses = await _context.CourseRegistrationDetails
+                    //                                .Where(x => x.StudentsId == studentExists.Id)
+                    //                                .GroupBy(x => x.CourseCode)
+                    //                                .Where(g => !g.Any(x => x.ExamStatus == "PASSED")) // Exclude if passed at least once
+                    //                                .Select(g => g.First()) // Return once per course
+                    //                                .AsNoTracking()
+                    //                                .ToListAsync();
+                    var passedCourseCodes = await _context.CourseRegistrationDetails
+                                                        .Where(x => x.StudentsId == studentExists.Id
+                                                                    && x.ExamStatus == "PASSED")
+                                                        .Select(x => x.CourseCode)
+                                                        .Distinct()
+                                                        .ToListAsync();
+
+                    var currentSemesterRegistrations = await _context.CourseRegistrationDetails
+                                                                    .Where(x => x.StudentsId == studentExists.Id
+                                                                                && x.CourseSchedule.SessionId == currentSessionId
+                                                                                && x.CourseSchedule.SemesterId == currentSemesterId)
+                                                                    .Select(x => new
+                                                                    {
+                                                                        x.CourseCode,
+                                                                        x.CourseRegistrationDate,
+                                                                        x.CourseScheduleId
+                                                                    })
+                                                                    .ToListAsync();
+                   
+                    var coursesStudentCanRegister = allCourseSchedulesForSessionSemester
+                                                        .Where(s => !passedCourseCodes.Contains(s.CourseCode)) // exclude passed
+                                                        .GroupBy(s => s.CourseCode)
+                                                        .Select(g => g.First())
+                                                        .Select(s =>
+                                                        {
+                                                            var existingRegistration = currentSemesterRegistrations
+                                                                .FirstOrDefault(r => r.CourseCode == s.CourseCode);
+
+                                                            return new CourseRegistrationDetailViewDto
+                                                            {
+                                                                CourseCode = s.CourseCode,
+                                                                CourseTitle = s.Title,
+                                                                CourseUnit = s.Units,
+                                                                CourseCategory = s.CourseType,
+                                                                CourseFee = s.CourseFee,
+                                                                CourseScheduleId = s.Id,
+
+                                                                // Only set registration date if registered this semester
+                                                                RegistrationDate = existingRegistration != null
+                                                                                    ? existingRegistration.CourseRegistrationDate
+                                                                                    : default,
+
+                                                                IsCarryOver = !passedCourseCodes.Contains(s.CourseCode) &&
+                                                                              _context.CourseRegistrationDetails
+                                                                                  .Any(cr => cr.StudentsId == studentExists.Id
+                                                                                             && cr.CourseCode == s.CourseCode)
+                                                            };
+                                                        })
+                                                        .ToList();
+
+
+
+
+                    response.StatusCode = 200;
+                    response.Message = "Courses retrieved successfully";
+                    response.Data = coursesStudentCanRegister;
+
+                    return response;
+                }
+                else
+                {
+                    response.StatusCode = 400;
+                    response.Message = $"Matric no is required";
+                    return response;
+                }
+
+            }
+            catch (Exception ex)
+            {
+
                 response.StatusCode = 500;
                 response.Message = $"Sorry, an error occurred: {ex.Message}";
 
@@ -269,9 +439,9 @@ namespace EduReg.Services.Repositories
 
 
         // Private helper to map DTO → Entity
-        private CourseRegistrationViewDto MapEntityToDto(CourseRegistration entity)
+        private CourseRegistrationDetailViewDto MapEntityToDto(CourseRegistrationDetail entity)
         {
-            return new CourseRegistrationViewDto
+            return new CourseRegistrationDetailViewDto
             {
                 CourseCategory = entity.CourseSchedule?.CourseType,
                 CourseCode = entity.CourseSchedule?.CourseCode,
@@ -284,6 +454,28 @@ namespace EduReg.Services.Repositories
                 
 
                 
+                // If you have Created, CreatedBy, ActiveStatus in entity
+                //Created = dto.Created,
+                //CreatedBy = dto.CreatedBy,
+                //ActiveStatus = dto.ActiveStatus
+            };
+        }
+
+        private CourseRegistrationViewDto MapEntityToDto(CourseRegistration entity)
+        {
+            return new CourseRegistrationViewDto
+            {
+                DepartmentCode = entity.DepartmentCode,
+                Level = entity.Level,
+                ProgrammeCode = entity.ProgrammeCode,
+                SemesterId = entity.SemesterId,
+                SessionId = entity.SessionId,
+                StudentsId = entity.StudentsId,
+                RegistrationDate = entity.Created,
+                Id = entity.Id,
+
+
+
                 // If you have Created, CreatedBy, ActiveStatus in entity
                 //Created = dto.Created,
                 //CreatedBy = dto.CreatedBy,

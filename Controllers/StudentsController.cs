@@ -1,4 +1,4 @@
-﻿using EduReg.Common;
+﻿using EduReg.Common.Attributes;
 using EduReg.Managers;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
@@ -10,6 +10,7 @@ namespace EduReg.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [RequireInstitutionShortName]
     public class StudentsController : ControllerBase
     {
         // This controller is responsible for handling student-related requests.
@@ -21,6 +22,7 @@ namespace EduReg.Controllers
         }
 
         [HttpPost]
+        [SkipRequireInstitutionShortName]
         [Route("LoginStudent")]
         [ProducesResponseType(200)]
         [ProducesResponseType(204)]
@@ -49,7 +51,7 @@ namespace EduReg.Controllers
 
         [HttpPost]
         [Route("CreateCourseRegistration")]
-        public async Task<IActionResult> CreateDepartmentCourse([FromBody] CreateCourseRegistrationDto model)
+        public async Task<IActionResult> CreateCourseRegistration([FromBody] CreateCourseRegistrationDto model)
         {
             var response = await _studentRepository.CreateCourseRegistrationAsync(model);
             return StatusCode(response.StatusCode, response);
@@ -92,6 +94,14 @@ namespace EduReg.Controllers
         public async Task<IActionResult> UpdateStudentRecords(string id, [FromBody] UpdateStudentRecordsDto model)
         {
             var response = await _studentRepository.UpdateStudentRecords(id, model);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetCoursesForRegistration")]
+        public async Task<IActionResult> GetCoursesForRegistration([FromQuery] CoursesStudentCanRegisterRequestDto model)
+        {
+            var response = await _studentRepository.GetCoursesStudentCanRegister(model);
             return StatusCode(response.StatusCode, response);
         }
     }

@@ -64,5 +64,10 @@ namespace EduReg.Managers
         {
             return _studentRecordsRepository.GenerateMatricNumber(programmeCode, sessionId);
         }
+
+        public async Task<GeneralResponse> GetCoursesStudentCanRegister(CoursesStudentCanRegisterRequestDto model)
+        {
+            return await _courseRegistrationRepository.GetCoursesStudentCanRegister(model);
+        }
     }
 }
