@@ -246,20 +246,20 @@ namespace EduReg.Services.Repositories
             };
         }
 
-        public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model)
+        //public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model)
 
-        {
-            var session = await _context.AcademicSessions.FindAsync(Id);
+        //{
+        //    var session = await _context.AcademicSessions.FindAsync(Id);
 
-            if (session == null)
-            {
-                return new GeneralResponse
-                {
-                    StatusCode = 404,
-                    Message = "Academic session not found",
-                    Data = null
-                };
-            }
+        //    if (session == null)
+        //    {
+        //        return new GeneralResponse
+        //        {
+        //            StatusCode = 404,
+        //            Message = "Academic session not found",
+        //            Data = null
+        //        };
+        //    }
 
       
         
