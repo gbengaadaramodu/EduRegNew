@@ -27,18 +27,24 @@ namespace EduReg.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [HttpPost]
+        [Route("RespondToTicketAsync")]
         public async Task<IActionResult> RespondToTicketAsync(long id, [FromBody] RespondToTicketDto dto)
         {
             var response = await _manager.RespondToTicketAsync(id, dto);
                 return StatusCode(response.StatusCode, response);
         }
 
+        [HttpGet]
+        [Route("GetTicketByIdAsync")]
         public async Task<IActionResult> GetTicketByIdAsync(long id)
         {
             var response = await _manager.GetTicketByIdAsync(id);
             return StatusCode(response.StatusCode, response);
         }
 
+        [HttpGet]
+        [Route("GetAllTicketsAsync")]
         public async Task<IActionResult> GetAllTicketsAsync(string institutionShortName, [FromQuery]TicketingFilter filter, [FromQuery] PagingParameters paging)
         {
             var response = await _manager.GetAllTicketsAsync(institutionShortName, filter, paging);
