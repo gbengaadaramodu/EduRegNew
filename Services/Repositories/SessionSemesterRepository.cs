@@ -12,10 +12,12 @@ namespace EduReg.Services.Repositories
     public class SessionSemesterRepository : ISessionSemester
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public SessionSemesterRepository(ApplicationDbContext context)
+        public SessionSemesterRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         public async Task<GeneralResponse> CreateSessionSemesterAsync(string institutionShortName, SessionSemesterDto dto)

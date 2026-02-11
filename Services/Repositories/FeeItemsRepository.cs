@@ -11,10 +11,12 @@ namespace EduReg.Services.Repositories
     public class FeeItemsRepository : IFeeItems
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public FeeItemsRepository(ApplicationDbContext context)
+        public FeeItemsRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         // ✅ Create a new Fee Item

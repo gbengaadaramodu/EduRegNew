@@ -12,11 +12,13 @@ namespace EduReg.Services.Repositories
     public class CourseTypeRepository : ICourseType
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-       
-        public CourseTypeRepository(ApplicationDbContext context)
+
+        public CourseTypeRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         // POST: Create
@@ -36,7 +38,6 @@ namespace EduReg.Services.Repositories
                     Message = $"Course Type '{dto.Name}' already exists for this institution."
                 };
             }
-
            
             var entity = new CourseType
             {

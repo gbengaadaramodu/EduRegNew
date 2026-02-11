@@ -23,8 +23,9 @@ namespace EduReg.Models.Dto
         public int? CourseUnit { get; set; }
         public string? CourseCategory { get; set; }
         public decimal? CourseFee { get; set; }
-        public DateTime RegistrationDate { get; set; }
+        public DateTime? RegistrationDate { get; set; }
         public long CourseScheduleId { get; set; }
         public long Id { get; set; }
+        public bool IsCarryOver { get; set; }
     }
 }

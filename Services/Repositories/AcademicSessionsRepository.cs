@@ -11,21 +11,28 @@ namespace EduReg.Services.Repositories
     public class AcademicSessionsRepository : IAcademicSessions
     {
         private readonly ApplicationDbContext _context;
-        public AcademicSessionsRepository(ApplicationDbContext context)
+        private readonly RequestContext _requestContext;
+        public AcademicSessionsRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
+            _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
         }
-     
+
         public async Task<GeneralResponse> CreateAcademicSessionAsync(CreateAcademicSessionDto model)
         {
             // Validate dates
             if (model.EndDate <= model.StartDate)
                 return new GeneralResponse { StatusCode = 400, Message = "End date must be after start date" };
 
+            var academicBatchExists = await _context.AdmissionBatches.AnyAsync(x => x.InstitutionShortName == _requestContext.InstitutionShortName && x.BatchShortName == model.BatchShortName);
+            if (!academicBatchExists) return new GeneralResponse { StatusCode = 400, Message = $"BatchShortName {model.BatchShortName} does not exist" };
+
             // Check for duplicate session
             var exists = await _context.AcademicSessions
                 .AnyAsync(x => x.SessionName == model.SessionName
                             && x.BatchShortName == model.BatchShortName
+                            && x.InstitutionShortName == _requestContext.InstitutionShortName
                             && !x.IsDeleted);
 
             if (exists)
@@ -38,7 +45,8 @@ namespace EduReg.Services.Repositories
                 BatchShortName = model.BatchShortName,
                 StartDate = model.StartDate,
                 EndDate = model.EndDate,
-                ActiveStatus = model.ActiveStatus
+                ActiveStatus = model.ActiveStatus,
+                InstitutionShortName = _requestContext.InstitutionShortName
             };
 
             await _context.AcademicSessions.AddAsync(entity);
@@ -68,6 +76,9 @@ namespace EduReg.Services.Repositories
         // --- UPDATE ---
         public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, UpdateAcademicSessionDto model)
         {
+            var academicBatchExists = await _context.AdmissionBatches.AnyAsync(x => x.InstitutionShortName == _requestContext.InstitutionShortName && x.BatchShortName == model.BatchShortName);
+            if (!academicBatchExists) return new GeneralResponse { StatusCode = 400, Message = $"BatchShortName {model.BatchShortName} does not exist" };
+
             var session = await _context.AcademicSessions.FindAsync(Id);
             if (session == null)
                 return new GeneralResponse { StatusCode = 404, Message = "Academic session not found" };
@@ -94,6 +105,7 @@ namespace EduReg.Services.Repositories
                 .AnyAsync(s => s.SessionId != Id
                             && s.SessionName == session.SessionName
                             && s.BatchShortName == session.BatchShortName
+                            && s.InstitutionShortName == _requestContext.InstitutionShortName
                             && !s.IsDeleted);
 
             if (exists)
@@ -181,6 +193,7 @@ namespace EduReg.Services.Repositories
                 .Where(x => !x.IsDeleted)
                 .AsQueryable();
 
+            filter.InstitutionShortName = _requestContext.InstitutionShortName;
             // Tenant filter
             if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
             {
@@ -233,7 +246,7 @@ namespace EduReg.Services.Repositories
             };
         }
 
-<<<<<<< HEAD
+
         //public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model)
 
         //{
@@ -263,10 +276,9 @@ namespace EduReg.Services.Repositories
         //        Data = session
         //    };
         //}
-=======
+
       
         
->>>>>>> origin/master
 
     }
 }

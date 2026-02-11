@@ -11,10 +11,12 @@ namespace EduReg.Services.Repositories
     public class DepartmentsRepository : IDepartments
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public DepartmentsRepository(ApplicationDbContext context)
+        public DepartmentsRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
         public async Task<GeneralResponse> CreateDepartmentAsync(DepartmentsDto model)
         {

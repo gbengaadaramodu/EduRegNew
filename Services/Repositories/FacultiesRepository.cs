@@ -12,9 +12,11 @@ namespace EduReg.Services.Repositories
     public class FacultiesRepository : IFaculties
     {
         private readonly ApplicationDbContext _context;
-        public FacultiesRepository(ApplicationDbContext context)
+        private readonly RequestContext _requestContext;
+        public FacultiesRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
         public async Task<GeneralResponse> CreateFacultyAsync(FacultiesDto model)
         {

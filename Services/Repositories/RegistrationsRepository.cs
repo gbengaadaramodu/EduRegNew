@@ -15,12 +15,14 @@ namespace EduReg.Services.Repositories
     public class RegistrationsRepository : IRegistrations
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
         private readonly IRegistrationsBusinessRules _rulesRepo;
 
-        public RegistrationsRepository(ApplicationDbContext context, IRegistrationsBusinessRules rulesRepo)
+        public RegistrationsRepository(ApplicationDbContext context, IRegistrationsBusinessRules rulesRepo, RequestContext requestContext)
         {
             _context = context;
             _rulesRepo = rulesRepo;
+            _requestContext = requestContext;
         }
 
         /// <summary>

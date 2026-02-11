@@ -7,39 +7,44 @@ namespace EduReg.Models.Dto
 {
     public class CreateAcademicSessionDto : CommonBaseDto
     {
-        [Required]
+        [Required(ErrorMessage = "SessionName is required")]
         [StringLength(100)]
         public string? SessionName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "BatchShortName is required")]
         [StringLength(50)]
         public string? BatchShortName { get; set; } // FK to Admission Batches
 
-        [Required]
+        [Required(ErrorMessage = "Start date is required")]
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "End date is required")]
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
     }
 
     public class UpdateAcademicSessionDto : CommonBaseDto
     {
-        [Required]
+        [Required(ErrorMessage = "SessionId is required")]
         public int SessionId { get; set; } // Identifies the record to update
 
+        [Required(ErrorMessage = "SessionName is required")]
         [StringLength(100)]
         public string? SessionName { get; set; }
 
+        [Required(ErrorMessage = "BatchShortName is required")]
         [StringLength(50)]
         public string? BatchShortName { get; set; }
 
+        [Required(ErrorMessage = "Start date is required")]
         [DataType(DataType.Date)]
         public DateTime? StartDate { get; set; }
 
+        [Required(ErrorMessage = "End date is required")]
         [DataType(DataType.Date)]
         public DateTime? EndDate { get; set; }
+        public bool IsDeleted { get; internal set; }
     }
 
     

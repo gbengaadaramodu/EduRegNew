@@ -14,10 +14,12 @@ namespace EduReg.Services.Repositories
     public class InstitutionsRepository : IInstitutions
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public InstitutionsRepository(ApplicationDbContext context)
+        public InstitutionsRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
         }
 
         public async Task<GeneralResponse> CreateInstitutionAsync(InstitutionsDto model)
@@ -161,7 +163,7 @@ namespace EduReg.Services.Repositories
                         TotalRecords = totalRecords,
                         TotalPages = totalRecords == 0
                             ? 0
-                            : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                            : Convert.ToInt32(Math.Ceiling(totalRecords / (double)paging.PageSize))
                     }
                 };
             }

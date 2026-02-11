@@ -5,15 +5,21 @@ using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks.Dataflow;
+using System.Web.WebPages;
 
 namespace EduReg.Services.Repositories
 {
     public class SemestersRepository : ISemesters
     {
         private readonly ApplicationDbContext _context;
-        public SemestersRepository(ApplicationDbContext context)
+        private readonly RequestContext _requestContext;
+        public SemestersRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
+            _requestContext = requestContext;
+            _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
         }
         public async Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
         {
@@ -27,15 +33,47 @@ namespace EduReg.Services.Repositories
                 };
             }
 
+            var sessionExists = await _context.AcademicSessions.AnyAsync(session => session.Id == model.SessionId);
+            if (!sessionExists)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = $"Invalid session Id: {model.SessionId}",
+                    Data = null
+                };
+            }
+
+            var batchExists = await _context.AdmissionBatches.AnyAsync(batch => batch.BatchShortName == model.BatchShortName && batch.InstitutionShortName == _requestContext.InstitutionShortName);
+            if (!batchExists)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = $"Invalid BatchShortName: {model.BatchShortName}",
+                    Data = null
+                };
+            }
+            var validateDates = ValidateDates(model.StartDate, model.EndDate, model.RegistrationStartDate, model.RegistrationEndDate, model.RegistrationCloseDate);
+            if(validateDates.StatusCode != 200)
+            {
+                return validateDates;
+            }
+
+            model.InstitutionShortName = _requestContext.InstitutionShortName;
             var entity = new Semesters
             {
                 InstitutionShortName = model.InstitutionShortName,
                 SessionId = model.SessionId,
                 SemesterName = model.SemesterName,
-                SemesterId = model.SemesterId,
+                //SemesterId = model.SemesterId,
                 StartDate = model.StartDate,
                 EndDate = model.EndDate,
                 ActiveStatus = model.ActiveStatus,
+                BatchShortName = model.BatchShortName,
+                RegistrationStartDate = model.RegistrationStartDate,
+                RegistrationEndDate = model.RegistrationEndDate,
+                RegistrationCloseDate = model.RegistrationCloseDate,
             };
 
             await _context.Semesters.AddAsync(entity);
@@ -79,7 +117,7 @@ namespace EduReg.Services.Repositories
             try
             {
                 var query = _context.Semesters.AsQueryable();
-
+                filter.InstitutionShortName = _requestContext.InstitutionShortName;
                 // Apply optional filters
                 if (filter != null)
                 {
@@ -90,7 +128,7 @@ namespace EduReg.Services.Repositories
                         query = query.Where(x => x.SessionId == filter.SessionId.Value);
 
                     if (filter.SemesterId.HasValue)
-                        query = query.Where(x => x.SemesterId == filter.SemesterId.Value);
+                        query = query.Where(x => x.Id == filter.SemesterId.Value);
 
                     if (!string.IsNullOrWhiteSpace(filter.SemesterName))
                         query = query.Where(x => x.SemesterName.Contains(filter.SemesterName));
@@ -195,13 +233,45 @@ namespace EduReg.Services.Repositories
                 };
             }
 
-            semester.InstitutionShortName = model.InstitutionShortName;
+            var sessionExists = await _context.AcademicSessions.AnyAsync(session => session.Id == model.SessionId);
+            if (!sessionExists)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = $"Invalid session Id: {model.SessionId}",
+                    Data = null
+                };
+            }
+
+            var batchExists = await _context.AdmissionBatches.AnyAsync(batch => batch.BatchShortName == model.BatchShortName && batch.InstitutionShortName == _requestContext.InstitutionShortName);
+            if (!batchExists)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = $"Invalid BatchShortName: {model.BatchShortName}",
+                    Data = null
+                };
+            }
+
+            var validateDates = ValidateDates(model.StartDate, model.EndDate, model.RegistrationStartDate, model.RegistrationEndDate, model.RegistrationCloseDate);
+            if (validateDates.StatusCode != 200)
+            {
+                return validateDates;
+            }
+
+            // semester.InstitutionShortName = model.InstitutionShortName;
             semester.SessionId = model.SessionId;
             semester.SemesterName = model.SemesterName;
-            semester.SemesterId = model.SemesterId;
+            //semester.SemesterId = model.SemesterId;
             semester.StartDate = model.StartDate;
             semester.EndDate = model.EndDate;
             semester.ActiveStatus = model.ActiveStatus;
+            semester.BatchShortName = model.BatchShortName;
+            semester.RegistrationStartDate = model.RegistrationStartDate;
+            semester.RegistrationCloseDate = model.RegistrationCloseDate;
+            semester.RegistrationEndDate = model.RegistrationEndDate;
 
             _context.Semesters.Update(semester);
             await _context.SaveChangesAsync();
@@ -211,6 +281,91 @@ namespace EduReg.Services.Repositories
                 StatusCode = 200,
                 Message = "Semester updated successfully",
                 Data = semester
+            };
+        }
+
+        private static GeneralResponse ValidateDates(
+                                        DateTime startDate,
+                                        DateTime endDate,
+                                        DateTime? registrationStartDate,
+                                        DateTime? registrationEndDate,
+                                        DateTime? registrationCloseDate)
+        {
+            // 1. Extreme ends
+            if (startDate > endDate)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = "StartDate must be less than or equal to EndDate.",
+                    Data = null
+                };
+            }
+
+            // 2. Registration start < registration end
+            if (registrationStartDate.HasValue && registrationEndDate.HasValue &&
+                registrationStartDate.Value >= registrationEndDate.Value)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = "RegistrationStartDate must be less than RegistrationEndDate.",
+                    Data = null
+                };
+            }
+
+            // 3. Registration close > registration end
+            if (registrationCloseDate.HasValue && registrationEndDate.HasValue &&
+                registrationCloseDate.Value <= registrationEndDate.Value)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = "RegistrationCloseDate must be greater than RegistrationEndDate.",
+                    Data = null
+                };
+            }
+
+            // 4. Registration dates must be within Start / End
+            if (registrationStartDate.HasValue &&
+                (registrationStartDate < startDate || registrationStartDate > endDate))
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = "RegistrationStartDate must be within StartDate and EndDate.",
+                    Data = null
+                };
+            }
+
+            if (registrationEndDate.HasValue &&
+                (registrationEndDate < startDate || registrationEndDate > endDate))
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = "RegistrationEndDate must be within StartDate and EndDate.",
+                    Data = null
+                };
+            }
+
+            if (registrationCloseDate.HasValue &&
+                (registrationCloseDate < startDate || registrationCloseDate > endDate))
+            {
+
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = "RegistrationCloseDate must be within StartDate and EndDate.",
+                    Data = null
+                };
+            }
+
+            return new GeneralResponse
+            {
+                StatusCode = 200,
+                Message = "Validation successful",
+                Data = null
             };
         }
     }

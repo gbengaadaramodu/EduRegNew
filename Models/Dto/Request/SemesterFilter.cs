@@ -5,7 +5,7 @@
         public string? InstitutionShortName { get; set; }
         public int? SessionId { get; set; }
 
-        public int? SemesterId { get; set; }
+        public long? SemesterId { get; set; }
         public string? SemesterName { get; set; }
 
         // Date range filters (valid here)

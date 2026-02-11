@@ -12,13 +12,12 @@ namespace EduReg.Services.Repositories
     public class AcademicsRepository : IAcademics
     {
         private readonly ApplicationDbContext _context;
+        private readonly RequestContext _requestContext;
 
-        public AcademicsRepository(ApplicationDbContext context)
+        public AcademicsRepository(ApplicationDbContext context, RequestContext requestContext)
         {
             _context = context;
-             
-             
-            
+            _requestContext = requestContext;
         }
 
 

@@ -261,6 +261,9 @@ namespace EduReg.Migrations
                     b.Property<string>("CourseCode")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("CourseRegistrationDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<long>("CourseRegistrationId")
                         .HasColumnType("bigint");
 
@@ -1122,6 +1125,10 @@ namespace EduReg.Migrations
                     b.Property<int>("ActiveStatus")
                         .HasColumnType("int");
 
+                    b.Property<string>("BatchShortName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -1134,8 +1141,14 @@ namespace EduReg.Migrations
                     b.Property<string>("InstitutionShortName")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("SemesterId")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("RegistrationCloseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RegistrationEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RegistrationStartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("SemesterName")
                         .HasColumnType("nvarchar(max)");

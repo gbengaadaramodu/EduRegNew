@@ -12,6 +12,8 @@ namespace EduReg.Data
         }
         public DbSet<Institutions> Institutions { get; set; }
         public DbSet<Students> Students { get; set; }
+
+        public DbSet<StudentStatus> StudentStatuses { get; set; }
         public DbSet<AcademicLevel> AcademicLevels { get; set; }
         public DbSet<AcademicSession> AcademicSessions { get; set; }
         public DbSet<Departments> Departments { get; set; }
@@ -30,9 +32,12 @@ namespace EduReg.Data
         public DbSet<Registrations> Registrations { get; set; }
 
         public DbSet<RegistrationsBusinessRules> RegistrationsBusinessRules { get; set; }
-         
+
+        public DbSet<FeeType> FeeTypes { get; set; }
+
         public DbSet<FeeItem> FeeItem { get; set; }
         public DbSet<FeeRule> FeeRule { get; set; }
+
         public DbSet<StudentFeeSchedule> StudentFeeSchedule { get; set; }
                      
         public DbSet<ProgrammeFeeSchedule> ProgrammeFeeSchedule { get; set; }
@@ -41,6 +46,9 @@ namespace EduReg.Data
         public DbSet<StudentFeeItem> StudentFeeItem { get; set; }
         public DbSet<CourseRegistration> CourseRegistrations { get; set; }
         public DbSet<CourseRegistrationDetail> CourseRegistrationDetails { get; set; }
+        public DbSet<Ticketing> Ticketing { get; set; }
+
+        public DbSet<ELibrary> ELibraries { get; set; }
 
 
         public DbSet<Permission> PermissionTables { get; set; }

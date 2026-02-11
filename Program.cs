@@ -1,5 +1,7 @@
 
+using EduReg.Common;
 using EduReg.Data;
+using EduReg.Interfaces;
 using EduReg.Managers;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
@@ -10,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.OpenApi.Models;
+
 
 namespace EduReg
 {
@@ -81,6 +85,8 @@ namespace EduReg
 
             // IOC for Repositories
             builder.Services.AddScoped<IStudent, StudentRepository>();
+            builder.Services.AddScoped<IStudentStatus, StudentStatusRepository>();
+            builder.Services.AddScoped<IStudentRecords, StudentRecordsRepository>();
                        
             builder.Services.AddScoped<IInstitutions, InstitutionsRepository>();
             builder.Services.AddScoped<IAdmissionBatches, AdmissionBatchesRepository>();
@@ -105,10 +111,17 @@ namespace EduReg
             builder.Services.AddScoped<ICourseType, CourseTypeRepository>();
 
             // Fees
+            builder.Services.AddScoped<IFeeTypes, FeeTypeRepository>();
             builder.Services.AddScoped<IFeeItems, FeeItemsRepository>();
             builder.Services.AddScoped<IFeeRules, FeeRulesRepository>();
             builder.Services.AddScoped<IProgrammeFeeSchedule, ProgrammeFeeScheduleRepository>();
             builder.Services.AddScoped<IStudentFeePaymentService, StudentFeePaymentServiceRepository>();
+
+            //Library
+            //Ticketing
+            builder.Services.AddScoped<ITicketing, TicketingRepository>();
+
+            builder.Services.AddScoped<IELibrary, ELibraryRepository>();
 
 
             //Authentication
@@ -123,6 +136,7 @@ namespace EduReg
 
             // Managers
 
+
             builder.Services.AddScoped<StudentManager>();
             builder.Services.AddScoped<CoursesManager>();
             builder.Services.AddScoped<InstitutionsManager>();
@@ -133,6 +147,20 @@ namespace EduReg
             builder.Services.AddScoped<FeeServiceManager>();
             builder.Services.AddScoped<FeePaymentManager>();
             builder.Services.AddScoped<AuthenticationManager>();
+
+            builder.Services.AddScoped<TicketingManager>();
+
+
+           
+            
+            
+            
+            builder.Services.AddScoped<RequestContext>();
+            
+
+
+            builder.Services.AddScoped<LibraryManager>();
+
 
 
             builder.Services.AddCors(options =>
@@ -148,7 +176,56 @@ namespace EduReg
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                // Bearer token
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter 'Bearer {token}'"
+                });
+
+                //InstitutionShortName header
+                options.AddSecurityDefinition("InstitutionShortName", new OpenApiSecurityScheme
+                {
+                    Name = "InstitutionShortName",
+                    Type = SecuritySchemeType.ApiKey,
+                    In = ParameterLocation.Header,
+                    Description = "Institution short name"
+                });
+
+                // Apply both globally
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    },
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "InstitutionShortName"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            });
+
 
             var app = builder.Build();
 
@@ -159,12 +236,18 @@ namespace EduReg
             //    app.UseSwaggerUI();
             //}
 
+
             app.UseSwagger();
             app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
 
             app.UseCors("corspolicy");
+
+            //app.UseMiddleware<InstitutionShortNameMiddleware>();
+            app.UseMiddleware<RequestContextMiddleware>();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
