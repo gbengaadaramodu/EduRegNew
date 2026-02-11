@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Data;
+using EduReg.Interfaces;
 using EduReg.Models.Dto;
 using EduReg.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;

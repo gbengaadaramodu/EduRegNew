@@ -1,5 +1,6 @@
 
 using EduReg.Data;
+using EduReg.Interfaces;
 using EduReg.Managers;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
@@ -44,6 +45,7 @@ namespace EduReg
             // IOC for Repositories
             builder.Services.AddScoped<IStudent, StudentRepository>();
             builder.Services.AddScoped<IStudentStatus, StudentStatusRepository>();
+            builder.Services.AddScoped<IStudentRecords, StudentRecordsRepository>();
                        
             builder.Services.AddScoped<IInstitutions, InstitutionsRepository>();
             builder.Services.AddScoped<IAdmissionBatches, AdmissionBatchesRepository>();

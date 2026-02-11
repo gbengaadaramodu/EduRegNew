@@ -1,5 +1,7 @@
-﻿using EduReg.Managers;
+﻿using EduReg.Common;
+using EduReg.Managers;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -66,6 +68,30 @@ namespace EduReg.Controllers
         public async Task<IActionResult> GetCourseRegistrationById(int id)
         {
             var response = await _studentRepository.GetCourseRegistrationById(id);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetAllStudentRecords")]
+        public async Task<IActionResult> GetAllStudentRecords([FromQuery] PagingParameters paging, [FromQuery] StudentRecordsFilter filter)
+        {
+            var response = await _studentRepository.GetAllStudentRecords(paging, filter);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetStudentRecordsById/{id}")]
+        public async Task<IActionResult> GetStudentRecordsById(string id)
+        {
+            var response = await _studentRepository.GetStudentRecordsById(id);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPut] // Using HttpPut for updates
+        [Route("UpdateStudentRecords/{id}")]
+        public async Task<IActionResult> UpdateStudentRecords(string id, [FromBody] UpdateStudentRecordsDto model)
+        {
+            var response = await _studentRepository.UpdateStudentRecords(id, model);
             return StatusCode(response.StatusCode, response);
         }
     }
