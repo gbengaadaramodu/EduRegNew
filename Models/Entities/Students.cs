@@ -31,8 +31,10 @@ namespace EduReg.Models.Entities
         public int ApplicationBatchId { get; set; }
         public DateTime? AcceptanceDate { get; set; }
         public DateTime? AdmissionDate { get; set; }
-        public string? ImageUrl { get; internal set; }
-        public string? Password { get; set; }
+        public string? ImageUrl { get; set; }
+        public string? StartClassCode { get; set; }
+        public string? CurrentClassCode { get; set; }
+
 
         //public bool? IsAdminUser { get; set; }
         //public bool? AdminUserHasChangePassword { get; set; }

@@ -901,10 +901,12 @@ namespace EduReg.Services.Repositories
             // Generate JWT token
             var token = await GenerateJwtToken(user);
 
+
             userToken.Token = token;
             userToken.UserId = user.Id;
             userToken.FirstName = user.FirstName;
             userToken.LastName = user.LastName;
+            userToken.InstitutionShortName = user.InstitutionShortName;
 
             _tokenCache.AddToken(token);
 
@@ -1154,7 +1156,7 @@ namespace EduReg.Services.Repositories
             try
             {
                 model.InstitutionShortName = thisInstitutionShortName;
-                var duplicate = await _context.Students.AnyAsync(a => a.Email == model.Email || a.ApplicantId == model.ApplicationNumber);
+                var duplicate = await _context.Students.AnyAsync(a => a.Email == model.Email || a.ApplicantId == model.ApplicationNumber || a.UserName == model.MatricNumber || a.MatricNumber == model.MatricNumber);
 
                 if (duplicate)
                 {
@@ -1261,7 +1263,7 @@ namespace EduReg.Services.Repositories
            issuer: _configuration["JwtSettings:Issuer"],
            audience: _configuration["JwtSettings:Audience"],
            claims: claims.Concat(roleClaims),
-           expires: DateTime.UtcNow.AddHours(2),
+           expires: DateTime.UtcNow.AddHours(8),
            signingCredentials: creds
        );
 
