@@ -27,7 +27,7 @@ namespace EduReg
 
             // Add services to the container.
             builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("connectionstring")));
-            builder.Services.AddIdentity<Students, IdentityRole>(options =>
+            builder.Services.AddIdentity<Students, Roles>(options =>
             {
                 options.Password.RequiredLength = 8;
                 options.Password.RequireUppercase = true;
@@ -170,6 +170,14 @@ namespace EduReg
                     policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                 });
             });
+
+
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.User.AllowedUserNameCharacters =
+                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+/";
+            });
+
 
             // Add services to the container.
 

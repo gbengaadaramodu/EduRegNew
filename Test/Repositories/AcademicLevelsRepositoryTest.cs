@@ -51,8 +51,8 @@
 //            saved.Should().NotBeNull();
 //        }
 
-<<<<<<< HEAD
-        [Fact]
+
+        //[Fact]
         //public async Task GetAllAcademicLevelAsync_ShouldReturnLevels_WhenDataExists()
         //{
         //    // Arrange
@@ -86,12 +86,12 @@
         //}
 
       //  [Fact]
-        public async Task UpdateAcademicLevelAsync_ShouldUpdateAndReturnLevel()
-        {
-            var level = _fixture.Create<AcademicLevel>();
-            _context.AcademicLevels.Add(level);
-            await _context.SaveChangesAsync();
-=======
+        //public async Task UpdateAcademicLevelAsync_ShouldUpdateAndReturnLevel()
+        //{
+        //    var level = _fixture.Create<AcademicLevel>();
+        //    _context.AcademicLevels.Add(level);
+        //    await _context.SaveChangesAsync();
+
 //        [Fact]
 //        public async Task GetAllAcademicLevelAsync_ShouldReturnLevels_WhenDataExists()
 //        {
@@ -131,7 +131,6 @@
 //            var level = _fixture.Create<AcademicLevel>();
 //            _context.AcademicLevels.Add(level);
 //            await _context.SaveChangesAsync();
->>>>>>> origin/master
 
 //            var dto = _fixture.Create<AcademicLevelsDto>();
 

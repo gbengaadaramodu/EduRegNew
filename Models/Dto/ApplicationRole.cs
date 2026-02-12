@@ -6,6 +6,8 @@
         public string Name { get; set; }
         public string NormalizedName { get; set; }
         public bool IsActive { get; set; }
+        public string InstitutionShortName { get; set; }
+        public string Description { get; set; }
     }
 
 
@@ -14,5 +16,6 @@
     {
         public string UserName { get; set; }
         public string RoleName { get; set; }
+
     }
 }
