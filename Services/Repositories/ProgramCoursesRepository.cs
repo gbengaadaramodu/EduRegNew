@@ -113,7 +113,7 @@ namespace EduReg.Services.Repositories
                 }
 
                 var programmeExists = await _context.Programmes.AnyAsync(x => x.ProgrammeCode == model.ProgrammeCode && x.InstitutionShortName == model.InstitutionShortName);
-                if (!departmentExists)
+                if (!programmeExists)
                 {
                     return new GeneralResponse
                     {
@@ -130,6 +130,17 @@ namespace EduReg.Services.Repositories
                     {
                         StatusCode = 400,
                         Message = $"Invalid course code: {model.CourseCode}",
+                        Data = null
+                    };
+                }
+
+                var academicLevelExistsForProgramme = await _context.AcademicLevels.AnyAsync(x => x.ProgrammeCode == model.ProgrammeCode && x.InstitutionShortName == model.InstitutionShortName && x.ClassCode == model.ClassCode && x.LevelName == model.LevelName);
+                if (!academicLevelExistsForProgramme)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Invalid academic level for programme: {model.ProgrammeCode}",
                         Data = null
                     };
                 }
