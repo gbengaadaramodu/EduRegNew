@@ -75,7 +75,7 @@
 //                        .StatusCode.Should().Be(200);
 //                    break;
 
-<<<<<<< HEAD
+
                 //case "GetAll":
                 //    _levelsMock.Setup(m => m.GetAllAcademicLevelAsync(DefaultPaging))
                 //               .ReturnsAsync(response);
@@ -83,7 +83,7 @@
                 //    (await _controller.GetAllAcademicLevelsAsync(DefaultPaging) as ObjectResult)!
                 //        .StatusCode.Should().Be(200);
                 //    break;
-=======
+
 //                case "GetAll":
 //                    _levelsMock.Setup(m => m.GetAllAcademicLevelAsync(DefaultPaging))
 //                               .ReturnsAsync(response);
@@ -91,7 +91,6 @@
 //                    (await _controller.GetAllAcademicLevelsAsync(DefaultPaging) as ObjectResult)!
 //                        .StatusCode.Should().Be(200);
 //                    break;
->>>>>>> origin/master
 
 //                case "GetById":
 //                    _levelsMock.Setup(m => m.GetAcademicLevelByIdAsync(id))

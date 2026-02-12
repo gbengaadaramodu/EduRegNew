@@ -1,4 +1,5 @@
-﻿using EduReg.Managers;
+﻿using EduReg.Common.Attributes;
+using EduReg.Managers;
 using EduReg.Models.Dto;
 using EduReg.Models.Entities;
 using Microsoft.AspNetCore.Http;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EduReg.Controllers
 {
     [Route("api/[controller]")]
+    [RequireInstitutionShortName]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
@@ -123,7 +125,7 @@ namespace EduReg.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-
+            
         [HttpPost]
         [Route("UpdateAdminAsync")]
         public async Task<IActionResult> UpdateAdminAsync(string email, [FromBody] RegisterAdminRequests model)
@@ -188,6 +190,15 @@ namespace EduReg.Controllers
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordRequest model)
         {
             var response = await _manager.ChangePasswordAsync(model);
+            return StatusCode(response.StatusCode, response);
+        } 
+        
+        
+        [HttpPost]
+        [Route("CreateApplicant")]
+        public async Task<IActionResult> CreateApplicant([FromBody] MoveStudentDto model)
+        {
+            var response = await _manager.CreateApplicant(model);
             return StatusCode(response.StatusCode, response);
         }
     }

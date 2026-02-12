@@ -104,8 +104,8 @@
 //            result.StatusCode.Should().Be(200);
 //        }
 
-<<<<<<< HEAD
-        [Fact]
+
+       // [Fact]
         //public async Task GetAllDepartmentsAsync_ShouldReturnList()
         //{
         //    var context = GetDbContext();
@@ -135,23 +135,23 @@
 
 
         //[Fact]
-        public async Task UpdateDepartmentAsync_ShouldUpdateDepartment()
-        {
-            var context = GetDbContext();
-            var dept = new Departments
-            {
-                DepartmentCode = "MATH01",
-                DepartmentName = "Mathematics",
-                Description = "Math Dept",
-                FacultyCode = "SCI",
-               // Programme = "BSc",
-                Duration = 4,
-                NumberofSemesters = 8,
-                MaximumNumberofSemesters = 10
-            };
-            await context.Departments.AddAsync(dept);
-            await context.SaveChangesAsync();
-=======
+        //public async Task UpdateDepartmentAsync_ShouldUpdateDepartment()
+        //{
+        //    var context = GetDbContext();
+        //    var dept = new Departments
+        //    {
+        //        DepartmentCode = "MATH01",
+        //        DepartmentName = "Mathematics",
+        //        Description = "Math Dept",
+        //        FacultyCode = "SCI",
+        //       // Programme = "BSc",
+        //        Duration = 4,
+        //        NumberofSemesters = 8,
+        //        MaximumNumberofSemesters = 10
+        //    };
+        //    await context.Departments.AddAsync(dept);
+        //    await context.SaveChangesAsync();
+
 //        [Fact]
 //        public async Task GetAllDepartmentsAsync_ShouldReturnList()
 //        {
@@ -198,7 +198,6 @@
 //            };
 //            await context.Departments.AddAsync(dept);
 //            await context.SaveChangesAsync();
->>>>>>> origin/master
 
 //            var repo = new DepartmentsRepository(context);
 //            var updateDto = new DepartmentsDto

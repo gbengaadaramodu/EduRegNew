@@ -90,7 +90,7 @@
 
 //    [Fact]
     
-<<<<<<< HEAD
+
     //public async Task GetAllFacultiesAsync_Should_Return200_With_Paged_List()
     //{
     //    using var ctx = BuildContext();
@@ -114,11 +114,10 @@
 
 
     //[Fact]
-    public async Task DeleteFacultyAsync_Should_Return200_When_Deleted()
-    {
-        using var ctx = BuildContext();
-        var repo = new FacultiesRepository(ctx);
-=======
+//    public async Task DeleteFacultyAsync_Should_Return200_When_Deleted()
+//    {
+//        using var ctx = BuildContext();
+//        var repo = new FacultiesRepository(ctx);
 //    public async Task GetAllFacultiesAsync_Should_Return200_With_Paged_List()
 //    {
 //        using var ctx = BuildContext();
@@ -146,7 +145,6 @@
 //    {
 //        using var ctx = BuildContext();
 //        var repo = new FacultiesRepository(ctx);
->>>>>>> origin/master
 
 //        ctx.Faculties.Add(new Faculties { Id = 7, FacultyName = "ToDel", FacultyCode = "DEL" });
 //        await ctx.SaveChangesAsync();

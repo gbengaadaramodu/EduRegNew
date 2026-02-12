@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EduReg.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<Students>
+    public class ApplicationDbContext : IdentityDbContext<Students, Roles, string> 
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {

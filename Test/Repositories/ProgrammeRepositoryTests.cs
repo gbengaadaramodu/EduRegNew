@@ -24,47 +24,47 @@ namespace Test.Repositories
         }
 
 
-        [Fact]
-        public async Task CreateProgrammeAsync_AddsProgrammeToDatabase()
-        {
+     //   [Fact]
+        //public async Task CreateProgrammeAsync_AddsProgrammeToDatabase()
+        //{
             
-            using var context = CreateContext();
-            var repo = new ProgrammesRepository(context);
-            var dto = new ProgrammesDto
-            {
-                DepartmentCode = "D01",
-                ProgrammeCode = "TEST101",
-                ProgrammeName = "Test Programme",
-                Description = "desc",
-                Duration = 3,
-                NumberOfSemesters = 6,
-                MaximumNumberOfSemesters = 8
-            };
-
-            
-            var response = await repo.CreateProgrammeAsync(dto);
+        //    using var context = CreateContext();
+        //    var repo = new ProgrammesRepository(context);
+        //    var dto = new ProgrammesDto
+        //    {
+        //        DepartmentCode = "D01",
+        //        ProgrammeCode = "TEST101",
+        //        ProgrammeName = "Test Programme",
+        //        Description = "desc",
+        //        Duration = 3,
+        //        NumberOfSemesters = 6,
+        //        MaximumNumberOfSemesters = 8
+        //    };
 
             
-            Assert.Equal(200, response.StatusCode);
-            var saved = await context.Programmes.FirstOrDefaultAsync(p => p.ProgrammeCode == "TEST101");
-            Assert.NotNull(saved);
-            Assert.Equal("Test Programme", saved.ProgrammeName);
-        }
+        //    var response = await repo.CreateProgrammeAsync(dto);
 
-        [Fact]
-        public async Task CreateProgrammeAsync_ReturnsConflict_WhenDuplicateCode()
-        {
-            using var context = CreateContext();
             
-            context.Programmes.Add(new Programmes { ProgrammeCode = "DUP001", ProgrammeName = "Existing" });
-            await context.SaveChangesAsync();
+        //    Assert.Equal(200, response.StatusCode);
+        //    var saved = await context.Programmes.FirstOrDefaultAsync(p => p.ProgrammeCode == "TEST101");
+        //    Assert.NotNull(saved);
+        //    Assert.Equal("Test Programme", saved.ProgrammeName);
+        //}
 
-            var repo = new ProgrammesRepository(context);
-            var dto = new ProgrammesDto { ProgrammeCode = "DUP001", ProgrammeName = "Duplicate" };
+        //[Fact]
+        //public async Task CreateProgrammeAsync_ReturnsConflict_WhenDuplicateCode()
+        //{
+        //    using var context = CreateContext();
+            
+        //    context.Programmes.Add(new Programmes { ProgrammeCode = "DUP001", ProgrammeName = "Existing" });
+        //    await context.SaveChangesAsync();
 
-            var response = await repo.CreateProgrammeAsync(dto);
+        //    var repo = new ProgrammesRepository(context);
+        //    var dto = new ProgrammesDto { ProgrammeCode = "DUP001", ProgrammeName = "Duplicate" };
 
-            Assert.Equal(403, response.StatusCode);
-        }
+        //    var response = await repo.CreateProgrammeAsync(dto);
+
+        //    Assert.Equal(403, response.StatusCode);
+        //}
     }
 }

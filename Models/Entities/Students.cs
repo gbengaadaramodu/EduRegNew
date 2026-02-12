@@ -24,6 +24,15 @@ namespace EduReg.Models.Entities
         public bool? isAdmin { get; set; }
         public DateTime? CreatedDate { get;  set; }
         public List<string>? Roles { get; set; }
+        public string? Address { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public int? CountryId { get; set; }
+        public int? StateId { get;  set; }
+        public int ApplicationBatchId { get; set; }
+        public DateTime? AcceptanceDate { get; set; }
+        public DateTime? AdmissionDate { get; set; }
+        public string? ImageUrl { get; internal set; }
+        public string? Password { get; set; }
 
         //public bool? IsAdminUser { get; set; }
         //public bool? AdminUserHasChangePassword { get; set; }

@@ -20,7 +20,7 @@ namespace EduReg.Services.Repositories
 {
     public class AuthenticationRepository : IAuthentication
     {
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<Roles> _roleManager;
         private readonly UserManager<Students> _usermanager;
         private readonly SignInManager<Students> _signInManager;
         private readonly ApplicationDbContext _context;
@@ -28,10 +28,12 @@ namespace EduReg.Services.Repositories
         private readonly TokenCacheRepositories _tokenCache;
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
+        private readonly RequestContext _requestContext;
+        private string thisInstitutionShortName;
 
 
 
-        public AuthenticationRepository(RoleManager<IdentityRole> roleManager, UserManager<Students> usermanager, ApplicationDbContext context, IHttpContextAccessor accessor,  SignInManager<Students> signInManager, TokenCacheRepositories tokenCache, IConfiguration configuration, IEmailService emailService)
+        public AuthenticationRepository(RoleManager<Roles> roleManager, UserManager<Students> usermanager, ApplicationDbContext context, IHttpContextAccessor accessor, SignInManager<Students> signInManager, TokenCacheRepositories tokenCache, IConfiguration configuration, IEmailService emailService, RequestContext requestContext)
         {
 
             _roleManager = roleManager;
@@ -42,17 +44,22 @@ namespace EduReg.Services.Repositories
             _tokenCache = tokenCache;
             _configuration = configuration;
             _emailService = emailService;
+            _requestContext = requestContext;
+            thisInstitutionShortName = _requestContext.InstitutionShortName;
         }
         public async Task<GeneralResponse> CreateRoleAsync(RoleName model)
         {
             try
             {
-                IdentityRole role = new IdentityRole
+                model.InstitutionShortName = thisInstitutionShortName;
+                Roles role = new Roles
                 {
                     Name = model.Name,
                     NormalizedName = model.NormalizedName,
-                    //IsActive = model.IsActive,
-                   
+                    Description = model.Description,
+                    InstitutionShortName = model.InstitutionShortName,
+                    IsActive = model.IsActive,
+
                 };
 
                 var result = await _roleManager.CreateAsync(role);
@@ -89,7 +96,8 @@ namespace EduReg.Services.Repositories
         {
             try
             {
-                var role = await _roleManager.FindByIdAsync(roleId);
+                var role = await _roleManager.Roles.FirstOrDefaultAsync(r => r.Id == roleId && r.InstitutionShortName == thisInstitutionShortName);
+
 
                 if (role == null)
                 {
@@ -103,7 +111,8 @@ namespace EduReg.Services.Repositories
                 // Update fields
                 role.Name = model.Name;
                 role.NormalizedName = model.Name.ToUpper();
-              //  role.IsActive = model.IsActive;
+                role.Description = model.Description;
+                role.IsActive = model.IsActive;
 
 
                 var result = await _roleManager.UpdateAsync(role);
@@ -140,13 +149,14 @@ namespace EduReg.Services.Repositories
         {
             try
             {
-                var roles = await Task.FromResult(_roleManager.Roles
-                        .Select(r => new
-                        {
+                var roles = await Task.FromResult(_roleManager.Roles.Where(r => r.InstitutionShortName == thisInstitutionShortName).Select(r => new
+                {
                             r.Id,
                             r.Name,
                             r.NormalizedName,
-                         //   r.IsActive,
+                            r.Description,
+                            r.IsActive,
+                            r.InstitutionShortName
                            
                         })
                         .ToList()
@@ -185,7 +195,7 @@ namespace EduReg.Services.Repositories
             try
             {
                 // Find role by name
-                var role = await _roleManager.FindByNameAsync(user.RoleName);
+                var role = await _roleManager.Roles.FirstOrDefaultAsync(r => r.Name == user.RoleName && r.InstitutionShortName == thisInstitutionShortName);
                 if (role == null)
                 {
                     return new GeneralResponse
@@ -245,7 +255,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-           
+                model.InstitutionShortName = thisInstitutionShortName;
                 if (model.Id > 0)
                 {
                     var permission = _context.PermissionTables.FirstOrDefault(a => a.Id == model.Id);
@@ -319,7 +329,8 @@ namespace EduReg.Services.Repositories
 
             try
             {
-                permission = _context.PermissionTables.Select(model => new PermissionModel
+
+                permission = _context.PermissionTables.Where(a => a.InstitutionShortName == thisInstitutionShortName).Select(model => new PermissionModel
                 {
                     Id = (int)model.Id,
                     Name = model.Name,
@@ -354,7 +365,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-                permission = _context.PermissionTables.Where(a => a.Id == Id).Select(model => new PermissionModel
+                permission = _context.PermissionTables.Where(a => a.Id == Id && a.InstitutionShortName == thisInstitutionShortName).Select(model => new PermissionModel
                 {
                     Id = (int)model.Id,
                     Name = model.Name,
@@ -393,7 +404,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-
+                model.InstitutionShortName = thisInstitutionShortName;
                 if (model.Id > 0)
                 {
                     var privillege = _context.Privileges.FirstOrDefault(a => a.Id == model.Id);
@@ -468,7 +479,7 @@ namespace EduReg.Services.Repositories
 
             try
             {
-                privilege = _context.Privileges.Select(model => new PrivilegeModel
+                privilege = _context.Privileges.Where(a => a.InstitutionShortName == thisInstitutionShortName).Select(model => new PrivilegeModel
                 {
                     Id = (int)model.Id,
                     RoleId = model.RoleId,
@@ -503,7 +514,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
-                privilege = _context.Privileges.Where(a => a.Id == Id).Select(model => new PrivilegeModel
+                privilege = _context.Privileges.Where(a => a.Id == Id && a.InstitutionShortName == thisInstitutionShortName).Select(model => new PrivilegeModel
                 {
                     Id = (int)model.Id,
                     RoleId = model.RoleId,
@@ -556,7 +567,7 @@ namespace EduReg.Services.Repositories
             {
                 if (!await _roleManager.RoleExistsAsync(role))
                 {
-                    await _roleManager.CreateAsync(new IdentityRole(role));
+                    await _roleManager.CreateAsync(new Roles(role));
                 }
             }
 
@@ -568,6 +579,7 @@ namespace EduReg.Services.Repositories
             //    await _roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
 
             // Create the user
+            model.InstitutionShortName = thisInstitutionShortName;
             var adminUser = new Students
             {
                 LastName = model.LastName,
@@ -577,6 +589,7 @@ namespace EduReg.Services.Repositories
                 PhoneNumber = model.PhoneNumber,
                 UserName = model.Email,
                 isAdmin = true,
+                InstitutionShortName = model.InstitutionShortName,
             };
 
             var result = await _usermanager.CreateAsync(adminUser, model.Password);
@@ -634,24 +647,21 @@ namespace EduReg.Services.Repositories
         {
             try
             {
-                var admins = await _usermanager.Users
-                    .Where(u => u.isAdmin == true)
-                    .OrderByDescending(u => u.CreatedDate)
-                    .Select(u => new
-                    {
+                var admins = await _usermanager.Users.Where(u => u.isAdmin == true && u.InstitutionShortName == thisInstitutionShortName).OrderByDescending(u => u.CreatedDate).Select(u => new
+                {
                         u.Id,
                         u.LastName,
                         u.FirstName,
                         u.Email,
                         u.PhoneNumber,
                         u.CreatedDate,
-
+                        u.InstitutionShortName,
                         // Fetch roles from UserRoles table
                         Roles = (from userRole in _context.UserRoles
                                  join role in _context.Roles on userRole.RoleId equals role.Id
                                  where userRole.UserId == u.Id
                                  select role.Name).ToList()
-                    })
+                })
                     .ToListAsync();
 
                 return new GeneralResponse
@@ -680,7 +690,7 @@ namespace EduReg.Services.Repositories
             try
             {
                 var admin = await _usermanager.Users
-                    .Where(u => u.Email == email).OrderByDescending(u => u.CreatedDate)
+                    .Where(u => u.Email == email && u.InstitutionShortName == thisInstitutionShortName).OrderByDescending(u => u.CreatedDate)
                     .Select(u => new
                     {
                         u.Id,
@@ -689,6 +699,7 @@ namespace EduReg.Services.Repositories
                         u.Email,
                         u.PhoneNumber,
                         u.CreatedDate,
+                        u.InstitutionShortName,
 
                         Roles = (from userRole in _context.UserRoles
                                  join role in _context.Roles
@@ -727,7 +738,8 @@ namespace EduReg.Services.Repositories
 
             try
             {
-                var admin = await _usermanager.FindByEmailAsync(email);
+                model.InstitutionShortName = thisInstitutionShortName;
+                var admin = await _usermanager.Users.FirstOrDefaultAsync(u => u.Email == email && u.InstitutionShortName == thisInstitutionShortName && u.isAdmin == true);
 
                 if (admin == null)
                 {
@@ -767,7 +779,7 @@ namespace EduReg.Services.Repositories
                     {
                         if (!await _roleManager.RoleExistsAsync(role))
                         {
-                            await _roleManager.CreateAsync(new IdentityRole(role));
+                            await _roleManager.CreateAsync(new Roles(role));
                         }
                     }
                     var currentRoles = await _usermanager.GetRolesAsync(admin);
@@ -806,13 +818,15 @@ namespace EduReg.Services.Repositories
             }
         }
 
+
+
         public async Task<GeneralResponse> DeleteAdminAsync(string Email)
         {
             var response = new GeneralResponse();
 
             try
             {
-                var admin = _usermanager.Users.FirstOrDefault(u => u.Email == Email);
+                var admin = _usermanager.Users.FirstOrDefault(u => u.Email == Email && u.InstitutionShortName == thisInstitutionShortName);
 
                 if (admin == null)
                 {
@@ -856,6 +870,7 @@ namespace EduReg.Services.Repositories
 
             // Find user
             var user = await _usermanager.FindByEmailAsync(model.UserName);
+            user.InstitutionShortName = thisInstitutionShortName;
             if (user == null)
             {
                 return new GeneralResponse
@@ -904,7 +919,8 @@ namespace EduReg.Services.Repositories
         public async Task<GeneralResponse> ResetPasswordAsync(ResetPasswordRequestDto model)
 
         {
-            var user = await _usermanager.FindByEmailAsync(model.Email);
+            var user = await _usermanager.Users.FirstOrDefaultAsync(u =>(u.Email == model.Email || u.MatricNumber == model.MatricNumber)&& u.InstitutionShortName == thisInstitutionShortName);
+         
 
             if (user == null)
             {
@@ -934,7 +950,7 @@ namespace EduReg.Services.Repositories
         <br />
         <p>Regards,</p>";
 
-            await _emailService.SendEmailAsync(model.Email, subject, message);
+            await _emailService.SendEmailAsync(user.Email, subject, message);
 
             return new GeneralResponse
             {
@@ -947,7 +963,9 @@ namespace EduReg.Services.Repositories
 
         public async Task<GeneralResponse> ConfirmResetPasswordAsync(ConfirmResetPasswordRequestDto model)
         {
-            var user = await _usermanager.FindByEmailAsync(model.Email);
+          
+            var user = await _usermanager.Users.FirstOrDefaultAsync(u =>(u.Email == model.Email || u.MatricNumber == model.MatricNumber)&& u.InstitutionShortName == thisInstitutionShortName);
+            user.InstitutionShortName = thisInstitutionShortName;
 
             if (user == null)
             {
@@ -985,7 +1003,8 @@ namespace EduReg.Services.Repositories
 
         public async Task<GeneralResponse> ChangePasswordAsync(ChangePasswordRequest model)
         {
-            var user = await _usermanager.FindByEmailAsync(model.Email);
+
+            var user = await _usermanager.Users.FirstOrDefaultAsync(u =>(u.Email == model.Email || u.MatricNumber == model.MatricNumber)&& u.InstitutionShortName == thisInstitutionShortName);
 
             if (user == null)
             {
@@ -1020,60 +1039,199 @@ namespace EduReg.Services.Repositories
 
 
 
+        //public async Task<GeneralResponse> LoginUserAsync(StudentLoginRequest model)
+        //{
+
+
+        //    var userToken = new LoginUserResponseDto();
+
+        //    userToken.UserName = model.MatricNumber;
+
+        //    //Does this user exists?
+        //    var email = await _usermanager.FindByEmailAsync(model.MatricNumber);
+        //    if (email != null)
+        //    { // Email exists
+        //        await _signInManager.PasswordSignInAsync(model.MatricNumber, model.Password, false, false);
+
+
+        //        var token = await GenerateJwtToken(email);
+        //        userToken.Token = token;
+        //        // Add the token to a cache
+
+        //        _tokenCache.AddToken(token.ToString());
+
+
+        //        return new GeneralResponse { StatusCode = 200, Message = "Successful", Data = userToken };
+        //    }
+        //    else
+        //    {
+
+        //        var mat = await _usermanager.FindByNameAsync(model.MatricNumber);
+        //        if (mat != null)
+        //        { // Email exists
+        //            var res = await _signInManager.PasswordSignInAsync(model.MatricNumber, model.Password, false, false);
+        //            if (res.Succeeded)
+        //            {
+        //                var token = await GenerateJwtToken(mat);
+        //                userToken.Token = token;
+
+        //                //Add the token to a cache
+        //                _tokenCache.AddToken(token.ToString());
+        //                return new GeneralResponse { StatusCode = 200, Message = "Successful", Data = userToken };
+        //            }
+        //            else
+        //            {
+        //                return new GeneralResponse { StatusCode = 200, Message = "Invalid password", Data = userToken };
+        //            }
+
+        //        }
+        //    }
+
+        //    return new GeneralResponse { StatusCode = 404, Message = "Invalid credentials", Data = null };
+
+        //}
+
+
         public async Task<GeneralResponse> LoginUserAsync(StudentLoginRequest model)
         {
 
-
+            
             var userToken = new LoginUserResponseDto();
+            var user = await _usermanager.FindByNameAsync(model.MatricNumber);
 
-            userToken.UserName = model.MatricNumber;
+            user.InstitutionShortName = thisInstitutionShortName;
 
-            //Does this user exists?
-            var email = await _usermanager.FindByEmailAsync(model.MatricNumber);
-            if (email != null)
-            { // Email exists
-                await _signInManager.PasswordSignInAsync(model.MatricNumber, model.Password, false, false);
-
-
-                var token = await GenerateJwtToken(email);
-                userToken.Token = token;
-                // Add the token to a cache
-
-                _tokenCache.AddToken(token.ToString());
-
-
-                return new GeneralResponse { StatusCode = 200, Message = "Successful", Data = userToken };
-            }
-            else
+            if (user == null)
             {
-
-                var mat = await _usermanager.FindByNameAsync(model.MatricNumber);
-                if (mat != null)
-                { // Email exists
-                    var res = await _signInManager.PasswordSignInAsync(model.MatricNumber, model.Password, false, false);
-                    if (res.Succeeded)
-                    {
-                        var token = await GenerateJwtToken(mat);
-                        userToken.Token = token;
-
-                        //Add the token to a cache
-                        _tokenCache.AddToken(token.ToString());
-                        return new GeneralResponse { StatusCode = 200, Message = "Successful", Data = userToken };
-                    }
-                    else
-                    {
-                        return new GeneralResponse { StatusCode = 200, Message = "Invalid password", Data = userToken };
-                    }
-
-                }
+                return new GeneralResponse
+                {
+                    StatusCode = 404,
+                    Message = "Invalid credentials",
+                    Data = null
+                };
             }
 
-            return new GeneralResponse { StatusCode = 404, Message = "Invalid credentials", Data = null };
+            // Check password
+            var result = await _signInManager.PasswordSignInAsync(user.UserName,model.Password,false,false);
 
+            if (!result.Succeeded)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 401,
+                    Message = "Invalid password",
+                    Data = null
+                };
+            }
+
+            // Generate token
+            var token = await GenerateJwtToken(user);
+
+            userToken.UserName = user.UserName;
+            userToken.Token = token;
+            userToken.FirstName = user.FirstName;
+            userToken.LastName = user.LastName;
+            userToken.email = user.Email;
+            userToken.MatricNumber = user.MatricNumber;
+            userToken.InstitutionShortName = user.InstitutionShortName;
+
+            _tokenCache.AddToken(token);
+
+            return new GeneralResponse
+            {
+                StatusCode = 200,
+                Message = "Successful",
+                Data = userToken
+            };
         }
 
 
 
+
+        public async Task<GeneralResponse> CreateApplicant(MoveStudentDto model)
+        {
+          
+            try
+            {
+                model.InstitutionShortName = thisInstitutionShortName;
+                var duplicate = await _context.Students.AnyAsync(a => a.Email == model.Email || a.ApplicantId == model.ApplicationNumber);
+
+                if (duplicate)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = "Student already exists in destination database",
+                        Data = null
+                    };
+                }
+
+                var newStudent = new Students
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    MiddleName = model.MiddleName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNo,
+                    Address = model.Address,
+                    DateOfBirth = model.DateOfBirth,
+                    CountryId = model.CountryId,
+                    StateId = model.StateId,
+                    AdmittedSessionId = model.SessionId,
+                    ApplicationBatchId = model.ApplicationBatchId,
+                    ProgrammeCode = model.ProgrammeCode,
+                    UserName = model.MatricNumber,
+                    BatchShortName = model.BatchShortName,
+                    ImageUrl = model.ImageUrl,
+                    ApplicantId = model.ApplicationNumber,
+                    DepartmentCode = model.DepartmentCode,
+                    AdmissionDate = model.AdmissionDate,
+                    AcceptanceDate = model.AcceptanceDate,
+                    InstitutionShortName = model.InstitutionShortName,
+                    MatricNumber = model.MatricNumber,
+                    isAdmin = false
+
+                    //ProgramId = model.ProgramId,
+                    //ModeOfEntryId = model.ModeOfEntryId,
+                    //ModeOfStudyId = model.ModeOfStudyId,
+                    //ProgramTypeId = model.ProgramTypeId,
+                };
+                var matricNumber = model.MatricNumber;
+
+                if (!string.IsNullOrEmpty(matricNumber))
+                {
+                    matricNumber = char.ToLower(matricNumber[0]) + matricNumber.Substring(1);
+                }
+
+                var result = await _usermanager.CreateAsync(newStudent, matricNumber);
+
+                if (!result.Succeeded)
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = string.Join(", ", result.Errors.Select(e => e.Description)),
+                        Data = null
+                    };
+                }
+
+                return new GeneralResponse
+                {
+                    StatusCode = 200,
+                    Message = "Student moved successfully to new database",
+                    Data = model
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 500,
+                    Message = $"An error occurred: {ex.Message}",
+                    Data = null
+                };
+            }
+        }
 
 
 

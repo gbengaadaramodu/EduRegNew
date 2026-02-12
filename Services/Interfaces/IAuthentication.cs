@@ -25,6 +25,7 @@ namespace EduReg.Services.Interfaces
         Task<GeneralResponse> ResetPasswordAsync(ResetPasswordRequestDto model);
         Task<GeneralResponse> ConfirmResetPasswordAsync(ConfirmResetPasswordRequestDto model);
         Task<GeneralResponse> ChangePasswordAsync(ChangePasswordRequest model);
+        Task<GeneralResponse> CreateApplicant(MoveStudentDto model);
 
     }
 }
