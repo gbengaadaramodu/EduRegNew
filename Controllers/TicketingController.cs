@@ -45,7 +45,7 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllTicketsAsync")]
-        public async Task<IActionResult> GetAllTicketsAsync(string institutionShortName, [FromQuery]TicketingFilter filter, [FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllTicketsAsync(string? institutionShortName, [FromQuery]TicketingFilter filter, [FromQuery] PagingParameters paging)
         {
             var response = await _manager.GetAllTicketsAsync(institutionShortName, filter, paging);
             return StatusCode(response.StatusCode, response);
