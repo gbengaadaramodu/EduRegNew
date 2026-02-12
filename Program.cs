@@ -14,6 +14,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using EduReg.Utilities;
+using Microsoft.Extensions.DependencyInjection;
+using AutoMapper;
 
 
 namespace EduReg
@@ -48,7 +50,12 @@ namespace EduReg
             });
             builder.Services.Configure<BaseUrlConfiguration>(builder.Configuration.GetSection("BaseUrlConfiguration"));
 
-            builder.Services.AddAutoMapper(typeof(MappingProfile));
+            //builder.Services.AddAutoMapper(typeof(Program));
+            builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile).Assembly);
+            //builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+
+
 
 
 
