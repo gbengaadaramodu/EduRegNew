@@ -1,4 +1,5 @@
-﻿using EduReg.Common;
+﻿using AutoMapper;
+using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
 using EduReg.Models.Entities;
@@ -11,11 +12,13 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
-        public AdmissionBatchesRepository(ApplicationDbContext context, RequestContext requestContext)
+        private readonly IMapper _mapper;
+        public AdmissionBatchesRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
             _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
+            _mapper = mapper;
         }
         public async Task<GeneralResponse> CreateAdmissionBatchAsync(AdmissionBatchesDto model)
         {
@@ -58,7 +61,9 @@ namespace EduReg.Services.Repositories
             {
                 StatusCode = 201,
                 Message = "Admission batch created successfully",
-                Data = entity
+                Data = new AdmissionBatchesDto { 
+                
+                }
             };
         }
 
@@ -110,11 +115,13 @@ namespace EduReg.Services.Repositories
                 };
             }
 
+            var batchDto = _mapper.Map<AdmissionBatchesDto>(batch);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Admission batch retrieved successfully",
-                Data = batch
+                Data = batchDto//batch
             };
         }
 
@@ -130,13 +137,15 @@ namespace EduReg.Services.Repositories
                 .Take(paging.PageSize)
                 .ToListAsync();
 
+            var batchesDto = _mapper.Map<List<AdmissionBatchesDto>>(batches);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = totalRecords == 0
                     ? "No admission batches found"
                     : "Admission batches retrieved successfully",
-                Data = batches, // EMPTY LIST if none
+                Data = batchesDto,//batches, // EMPTY LIST if none
                 Meta = new
                 {
                     paging.PageNumber,

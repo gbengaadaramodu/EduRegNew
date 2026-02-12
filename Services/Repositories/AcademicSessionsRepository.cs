@@ -183,7 +183,16 @@ namespace EduReg.Services.Repositories
             {
                 StatusCode = 200,
                 Message = "Academic session retrieved successfully",
-                Data = session
+                Data = new AcademicSessionResponseDto 
+                {
+                    SessionId = session.SessionId,
+                    SessionName = session.SessionName,
+                    SemesterName = session.SemesterName,
+                    BatchShortName = session.BatchShortName,
+                    StartDate = session.StartDate,
+                    EndDate = session.EndDate
+                }
+
             };
         }
 
@@ -208,7 +217,7 @@ namespace EduReg.Services.Repositories
                     x.BatchShortName!.Contains(filter.Search));
             }
 
-            // Date range
+          
             if (filter?.StartDateFrom != null)
             {
                 query = query.Where(x => x.StartDate >= filter.StartDateFrom);
@@ -227,13 +236,23 @@ namespace EduReg.Services.Repositories
                 .Take(paging.PageSize)
                 .ToListAsync();
 
+            var sessionsDto = sessions.Select(session => new AcademicSessionResponseDto
+            {
+                SessionId = session.SessionId,
+                SessionName = session.SessionName,
+                SemesterName = session.SemesterName,
+                BatchShortName = session.BatchShortName,
+                StartDate = session.StartDate,
+                EndDate = session.EndDate
+            }).ToList();
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = totalRecords == 0
                     ? "No academic sessions found"
                     : "Academic sessions retrieved successfully",
-                Data = sessions,
+                Data = sessionsDto,
                 Meta = new
                 {
                     paging.PageNumber,

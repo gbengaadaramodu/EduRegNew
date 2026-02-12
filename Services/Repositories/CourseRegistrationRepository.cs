@@ -186,6 +186,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
+                model.InstitutionShortName = _requestContext.InstitutionShortName;
                 var courseRegistrationQuery = _context.CourseRegistrations/*.Include(x => x.CourseSchedule)*/.AsQueryable();
                 if(!string.IsNullOrWhiteSpace(model.MatricNo))
                 {
@@ -285,6 +286,7 @@ namespace EduReg.Services.Repositories
             var response = new GeneralResponse();
             try
             {
+                model.InstitutionShortName = _requestContext.InstitutionShortName;
                 if (!string.IsNullOrWhiteSpace(model.MatricNo))
                 {
                     var studentExists = await _context.Students.FirstOrDefaultAsync(x => x.MatricNumber.ToLower() == model.MatricNo.ToLower() && x.InstitutionShortName.ToLower() == model.InstitutionShortName.ToLower());
@@ -297,6 +299,20 @@ namespace EduReg.Services.Repositories
 
                     var currentSemesterId = studentExists.CurrentSemesterId;
                     var currentSessionId = studentExists.CurrentSessionId;
+
+                    if (currentSessionId == null || currentSessionId <= 0)
+                    {
+                        response.StatusCode = 400;
+                        response.Message = $"Matric no: {model.MatricNo} in {model.InstitutionShortName} does not have a current session";
+                        return response;
+                    }
+
+                    if (currentSemesterId == null || currentSemesterId <= 0)
+                    {
+                        response.StatusCode = 400;
+                        response.Message = $"Matric no: {model.MatricNo} in {model.InstitutionShortName} does not have a current semester";
+                        return response;
+                    }
 
                     var allCourseSchedulesForSessionSemester = await _context.CourseSchedules.Where(x => x.SessionId == currentSessionId && x.SemesterId == currentSemesterId
                                                                                                             && x.InstitutionShortName == model.InstitutionShortName

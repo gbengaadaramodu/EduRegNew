@@ -157,7 +157,7 @@ namespace EduReg.Services.Repositories
                 if (!string.IsNullOrEmpty(model.ApplicantId))
                     student.ApplicantId = model.ApplicantId;
 
-                // 4. REGENERATE MATRIC NUMBER if programme changed
+                
                 if (programmeChanged)
                 {
                     // Validate programme exists
