@@ -33,11 +33,48 @@ namespace EduReg.Services.Repositories
                 };
             }
 
+            var programmeExists = await _context.Programmes.AnyAsync(x => x.ProgrammeCode == model.ProgrammeCode && x.InstitutionShortName == model.InstitutionShortName);
+            if (programmeExists)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = $"Invalid programme code: {model.ProgrammeCode}",
+                    Data = null
+                };
+            }
+
+            var academicLevelExists = await _context.AcademicLevels.AnyAsync(x => x.InstitutionShortName == _requestContext.InstitutionShortName && x.ClassCode == model.ClassCode && x.ProgrammeCode == model.ProgrammeCode);
+            if (academicLevelExists)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = $"Academic level with class code {model.ClassCode} already exists",
+                    Data = null
+                };
+            }
+
+            var academicLevel = await _context.AcademicLevels.OrderByDescending(x => x.Order).AsNoTracking().FirstOrDefaultAsync(x => x.InstitutionShortName == _requestContext.InstitutionShortName && x.ProgrammeCode == model.ProgrammeCode);
+            model.InstitutionShortName = _requestContext.InstitutionShortName;
+            int levelOrder = 0;
+            if(academicLevel != null)
+            {
+                levelOrder = Convert.ToInt32(academicLevel.Order) + 1;
+            }
+            else
+            {
+                levelOrder = 1;
+            }
+
             var entity = new AcademicLevel
             {
                 LevelName = model.LevelName,
                 Description = model.Description,
-                InstitutionShortName = model.InstitutionShortName
+                InstitutionShortName = model.InstitutionShortName,
+                ClassCode = model.ClassCode,
+                Order = levelOrder,
+                ProgrammeCode = model.ProgrammeCode,
             };
 
             await _context.AcademicLevels.AddAsync(entity);
@@ -146,6 +183,8 @@ namespace EduReg.Services.Repositories
 
             level.LevelName = model.LevelName;
             level.Description = model.Description;
+            //level.ClassCode = model.ClassCode;
+            //level.ProgrammeCode = model.ProgrammeCode;
 
             _context.AcademicLevels.Update(level);
             await _context.SaveChangesAsync();
