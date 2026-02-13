@@ -1,7 +1,7 @@
-﻿using EduReg.Models.Entities;
+﻿using EduReg.Models.Dto;
 using System.ComponentModel.DataAnnotations;
 
-namespace EduReg.Models.Dto
+namespace EduReg.Models.Entities
 {
     public class PaymentTransactionDetailDto : CommonBaseDto
     {

@@ -15,6 +15,26 @@ namespace EduReg.Utilities
             CreateMap<AcademicLevel, AcademicLevelsDto>().ReverseMap();
             CreateMap<Departments, DepartmentsDto>().ReverseMap();
             CreateMap<CommonBase, CommonBaseDto>().ReverseMap();
+            CreateMap<SessionSemester, SessionSemesterDto>().ReverseMap();
+            CreateMap<AcademicSession, CreateAcademicSessionDto>().ReverseMap();
+            CreateMap<AcademicSession, UpdateAcademicSessionDto>().ReverseMap();
+            CreateMap<CourseMaxMin, CourseMaxMinDto>().ReverseMap();
+            CreateMap<CourseRegistration, CourseRegistrationViewDto>().ReverseMap();
+            CreateMap<CourseSchedule, CourseScheduleDto>().ReverseMap();
+            CreateMap<CourseRegistration, CreateCourseRegistrationDto>().ReverseMap();
+            CreateMap<CourseType, CourseTypeDto>().ReverseMap();
+            CreateMap<DepartmentCourses, DepartmentCoursesDto>().ReverseMap();
+            CreateMap<ELibrary, ELibraryDto>().ReverseMap();
+            CreateMap<Faculties, FacultiesDto>().ReverseMap();
+            CreateMap<FeeItem, FeeItemDto>().ReverseMap();
+
+
+
+
+
+
+
+
 
         }
     }
