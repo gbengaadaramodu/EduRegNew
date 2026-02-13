@@ -5,8 +5,8 @@ namespace EduReg.Models.Dto
     public class CourseRegistrationViewDto
     {
         public string StudentsId { get; set; }
-        public int SemesterId { get; set; }
-        public int SessionId { get; set; }
+        public long SemesterId { get; set; }
+        public long SessionId { get; set; }
         public string? DepartmentCode { get; set; } //FK ->Department
         public string? ProgrammeCode { get; set; }
         public string? Level { get; set; }
