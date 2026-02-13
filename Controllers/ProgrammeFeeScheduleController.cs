@@ -48,10 +48,10 @@ namespace EduReg.Api.Controllers
         }
 
         [HttpGet]
-        [Route("GetAllProgrammeFeeSchedules/{institutionShortName}")]
-        public async Task<IActionResult> GetAllProgrammeFeeSchedulesAsync(string institutionShortName, [FromQuery] PagingParameters paging, [FromQuery] ProgrammeFeeScheduleFilter filter)
+        [Route("GetAllProgrammeFeeSchedules")]
+        public async Task<IActionResult> GetAllProgrammeFeeSchedulesAsync([FromQuery] PagingParameters paging, [FromQuery] ProgrammeFeeScheduleFilter filter)
         {
-            var result = await _manager.GetAllProgrammeFeeSchedulesAsync(institutionShortName,paging, filter);
+            var result = await _manager.GetAllProgrammeFeeSchedulesAsync("",paging, filter);
             return StatusCode(result.StatusCode, result);
         }
 
@@ -72,10 +72,10 @@ namespace EduReg.Api.Controllers
         }
 
         [HttpGet]
-        [Route("GetProgrammeFeeSchedulesByProgramme/{institutionShortName}/{programmeCode}")]
-        public async Task<IActionResult> GetProgrammeFeeSchedulesByProgrammeAsync(string institutionShortName, string programmeCode)
+        [Route("GetProgrammeFeeSchedulesByProgramme{programmeCode}")]
+        public async Task<IActionResult> GetProgrammeFeeSchedulesByProgrammeAsync(string programmeCode)
         {
-            var result = await _manager.GetProgrammeFeeSchedulesByProgrammeAsync(institutionShortName, programmeCode);
+            var result = await _manager.GetProgrammeFeeSchedulesByProgrammeAsync("", programmeCode);
             return StatusCode(result.StatusCode, result);
         }
 

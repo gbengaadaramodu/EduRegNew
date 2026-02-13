@@ -86,10 +86,11 @@ namespace EduReg.Api.Controllers
         }
 
         [HttpGet]
-        [Route("GetAllFeeRules/{institutionShortName}")]
-        public async Task<IActionResult> GetAllFeeRulesAsync(string institutionShortName, [FromQuery] PagingParameters paging, [FromQuery] FeeRuleFilter filter)
+        [Route("GetAllFeeRules")]
+        public async Task<IActionResult> GetAllFeeRulesAsync([FromQuery] PagingParameters paging, [FromQuery] FeeRuleFilter filter)
         {
-            var result = await _manager.GetAllFeeRuleAsync(institutionShortName, paging, filter);
+            //var result = await _manager.GetAllFeeRuleAsync(institutionShortName, paging, filter);
+            var result = await _manager.GetAllFeeRuleAsync("", paging, filter);
             return StatusCode(result.StatusCode, result);
         }
 
