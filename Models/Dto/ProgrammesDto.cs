@@ -7,6 +7,8 @@ namespace EduReg.Models.Dto
         [Key]
         public string? DepartmentCode { get; set; } //FK
         public string? ProgrammeCode { get; set; }
+
+        public string? InstitutionShortName { get; set; }
         public string? ProgrammeName { get; set; }
         public string? Description { get; set; }
         public int Duration { get; set; }

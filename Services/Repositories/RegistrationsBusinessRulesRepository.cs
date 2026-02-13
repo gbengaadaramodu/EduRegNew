@@ -5,6 +5,7 @@ using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace EduReg.Services.Repositories
 {
@@ -12,11 +13,13 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly IMapper _mapper;
 
-        public RegistrationsBusinessRulesRepository(ApplicationDbContext context, RequestContext requestContext)
+        public RegistrationsBusinessRulesRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
 
         public async Task<GeneralResponse> ValidateStudentRegistrationAsync(RegistrationBusinessRulesDto model)
@@ -25,7 +28,7 @@ namespace EduReg.Services.Repositories
             {
                 var ruleEntity = await _context.RegistrationsBusinessRules
                     .FirstOrDefaultAsync(rb =>
-                        rb.InstitutionShortName == model.InstitutionShortName &&
+                        rb.InstitutionShortName == _requestContext.InstitutionShortName &&
                         rb.DepartmentCode == model.DepartmentCode &&
                         rb.ProgrammeCode == model.ProgrammeCode &&
                         rb.SemesterName == model.SemesterName &&
@@ -43,14 +46,13 @@ namespace EduReg.Services.Repositories
                     };
                 }
 
-                // Could also validate minimum or compulsory/elective metrics here if needed.
-                // e.g., ensure total minimum units are met, etc.
+                var ruleDto = _mapper.Map<RegistrationBusinessRulesDto>(ruleEntity);
 
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = "Business rule found.",
-                    Data = ruleEntity
+                    Data = ruleDto
                 };
             }
             catch (Exception ex)
@@ -70,7 +72,7 @@ namespace EduReg.Services.Repositories
                 // Check if a rule already exists for this combination
                 var exists = await _context.RegistrationsBusinessRules
                     .FirstOrDefaultAsync(rb =>
-                        rb.InstitutionShortName == model.InstitutionShortName &&
+                        rb.InstitutionShortName == _requestContext.InstitutionShortName &&
                         rb.DepartmentCode == model.DepartmentCode &&
                         rb.ProgrammeCode == model.ProgrammeCode &&
                         rb.SemesterName == model.SemesterName &&
@@ -92,7 +94,7 @@ namespace EduReg.Services.Repositories
                 {
                     Name = model.Name,
                     Description = model.Description,
-                    InstitutionShortName = model.InstitutionShortName,
+                    InstitutionShortName = _requestContext.InstitutionShortName,
                     DepartmentCode = model.DepartmentCode,
                     ProgrammeCode = model.ProgrammeCode,
                     SemesterName = model.SemesterName,
@@ -112,11 +114,13 @@ namespace EduReg.Services.Repositories
                 _context.RegistrationsBusinessRules.Add(entity);
                 await _context.SaveChangesAsync();
 
+                var createdDto = _mapper.Map<RegistrationBusinessRulesDto>(entity);
+
                 return new GeneralResponse
                 {
                     StatusCode = 201,
                     Message = "Business rule created successfully.",
-                    Data = entity
+                    Data = createdDto
                 };
             }
             catch (Exception ex)
@@ -139,7 +143,7 @@ namespace EduReg.Services.Repositories
                 {
                     var exists = await _context.RegistrationsBusinessRules
                         .FirstOrDefaultAsync(rb =>
-                            rb.InstitutionShortName == model.InstitutionShortName &&
+                            rb.InstitutionShortName == _requestContext.InstitutionShortName &&
                             rb.DepartmentCode == model.DepartmentCode &&
                             rb.ProgrammeCode == model.ProgrammeCode &&
                             rb.SemesterId == model.SemesterId &&
@@ -154,7 +158,7 @@ namespace EduReg.Services.Repositories
                     {
                         Name = model.Name,
                         Description = model.Description,
-                        InstitutionShortName = model.InstitutionShortName,
+                        InstitutionShortName = _requestContext.InstitutionShortName,
                         DepartmentCode = model.DepartmentCode,
                         ProgrammeCode = model.ProgrammeCode,
                         SemesterId = model.SemesterId,
@@ -185,11 +189,12 @@ namespace EduReg.Services.Repositories
                 _context.RegistrationsBusinessRules.AddRange(added);
                 await _context.SaveChangesAsync();
 
+                var addedDtos = _mapper.Map<List<RegistrationBusinessRulesDto>>(added);
                 return new GeneralResponse
                 {
                     StatusCode = 201,
                     Message = $"{added.Count} business rule(s) created successfully.",
-                    Data = added
+                    Data = addedDtos
                 };
             }
             catch (Exception ex)
@@ -233,8 +238,12 @@ namespace EduReg.Services.Repositories
         {
             try
             {
-                var query = _context.RegistrationsBusinessRules
+               
+
+                 var query = _context.RegistrationsBusinessRules
                     .Where(rb => rb.DepartmentCode == DepartmentCode);
+
+                 query = query.Where(rb => rb.InstitutionShortName == _requestContext.InstitutionShortName);
 
                 // Filter optional things if provided
                 if (!string.IsNullOrEmpty(model.InstitutionShortName))
@@ -248,11 +257,13 @@ namespace EduReg.Services.Repositories
 
                 var list = await query.ToListAsync();
 
+                var dtos = _mapper.Map<List<RegistrationBusinessRulesDto>>(list);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = list.Any() ? "Business rules retrieved." : "No business rules found.",
-                    Data = list
+                    Data = dtos
                 };
             }
             catch (Exception ex)
@@ -273,13 +284,9 @@ namespace EduReg.Services.Repositories
                     .AsNoTracking()
                     .AsQueryable();
 
+                     query = query.Where(x =>
+                        x.InstitutionShortName == _requestContext.InstitutionShortName);
                 // APPLY FILTERS
-
-                if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
-                {
-                    query = query.Where(x =>
-                        x.InstitutionShortName == filter.InstitutionShortName);
-                }
 
                 if (!string.IsNullOrWhiteSpace(filter?.DepartmentCode))
                 {
@@ -344,13 +351,15 @@ namespace EduReg.Services.Repositories
                     .Take(paging.PageSize)
                     .ToListAsync();
 
+                var rulesDto = _mapper.Map<List<RegistrationBusinessRulesDto>>(rules);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = totalRecords == 0
                         ? "No business rules found."
                         : "Business rules retrieved successfully.",
-                    Data = rules,
+                    Data = rulesDto,
                     Meta = new
                     {
                         paging.PageNumber,
@@ -374,12 +383,13 @@ namespace EduReg.Services.Repositories
         }
 
 
-        public async Task<GeneralResponse> UpdateRegistrationBusinessRuleAsync(long Id, RegistrationBusinessRulesDto model)
+        public async Task<GeneralResponse> UpdateRegistrationBusinessRuleAsync(long id, RegistrationBusinessRulesDto model)
 
         {
             try
             {
-                var entity = await _context.RegistrationsBusinessRules.FindAsync(Id);
+                
+                var entity = await _context.RegistrationsBusinessRules.FirstOrDefaultAsync(x =>x.Id == id && x.InstitutionShortName == _requestContext.InstitutionShortName);
                 if (entity == null)
                 {
                     return new GeneralResponse
@@ -392,7 +402,7 @@ namespace EduReg.Services.Repositories
                 // Update values
                 entity.Name = model.Name;
                 entity.Description = model.Description;
-                entity.InstitutionShortName = model.InstitutionShortName;
+                entity.InstitutionShortName =_requestContext.InstitutionShortName;
                 entity.DepartmentCode = model.DepartmentCode;
                 entity.ProgrammeCode = model.ProgrammeCode;
                 entity.SemesterName = model.SemesterName;
@@ -409,11 +419,13 @@ namespace EduReg.Services.Repositories
                 _context.RegistrationsBusinessRules.Update(entity);
                 await _context.SaveChangesAsync();
 
+                var updatedDto = _mapper.Map<RegistrationBusinessRulesDto>(entity);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = "Business rule updated successfully.",
-                    Data = entity
+                    Data = updatedDto
                 };
             }
             catch (Exception ex)
@@ -430,7 +442,7 @@ namespace EduReg.Services.Repositories
         {
             try
             {
-                var entity = await _context.RegistrationsBusinessRules.FindAsync(Id);
+                var entity = await _context.RegistrationsBusinessRules.FirstOrDefaultAsync(x => x.Id == Id && x.InstitutionShortName == _requestContext.InstitutionShortName);
                 if (entity == null)
                 {
                     return new GeneralResponse
