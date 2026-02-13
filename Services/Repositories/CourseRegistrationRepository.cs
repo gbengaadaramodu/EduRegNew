@@ -1,4 +1,5 @@
-﻿using Azure;
+﻿using AutoMapper;
+using Azure;
 using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
@@ -12,11 +13,13 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly Common.RequestContext _requestContext;
+       
         public CourseRegistrationRepository(ApplicationDbContext context, Common.RequestContext requestContext)
         {
             _context = context;
             _requestContext = requestContext;
             _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
+            
         }
 
         public async Task<GeneralResponse> CreateCourseRegistrationAsync(CreateCourseRegistrationDto model)

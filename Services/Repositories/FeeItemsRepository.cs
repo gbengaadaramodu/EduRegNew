@@ -1,4 +1,5 @@
-﻿using EduReg.Common;
+﻿using AutoMapper;
+using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
@@ -12,11 +13,13 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly IMapper _mapper;
 
-        public FeeItemsRepository(ApplicationDbContext context, RequestContext requestContext)
+        public FeeItemsRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
 
         // ✅ Create a new Fee Item
@@ -55,11 +58,13 @@ namespace EduReg.Services.Repositories
             _context.FeeItem.Add(item);
             await _context.SaveChangesAsync();
 
+            var feeItemDto = _mapper.Map<FeeItemDto>(item);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Created successfully.",
-                Data = item
+                Data = feeItemDto
             };
         }
 
@@ -111,13 +116,15 @@ namespace EduReg.Services.Repositories
                 .Take(paging.PageSize)
                 .ToListAsync();
 
+            var feeItemsDto = _mapper.Map<List<FeeItemDto>>(feeItems);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = totalRecords == 0
                     ? "No fee items found"
                     : "Fee items retrieved successfully",
-                Data = feeItems,
+                Data = feeItemsDto,
                 Meta = new
                 {
                     paging.PageNumber,
@@ -147,11 +154,13 @@ namespace EduReg.Services.Repositories
                 };
             }
 
+            var feeItemDto = _mapper.Map<FeeItemDto>(item);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Success",
-                Data = item
+                Data = feeItemDto
             };
         }
 
@@ -193,11 +202,14 @@ namespace EduReg.Services.Repositories
             _context.FeeItem.Update(existingItem);
             await _context.SaveChangesAsync();
 
+
+            var feeItemDto = _mapper.Map<FeeItemDto>(existingItem);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Updated successfully.",
-                Data = existingItem
+                Data = feeItemDto
             };
         }
 
@@ -269,7 +281,7 @@ namespace EduReg.Services.Repositories
                 // Build a FeeRule
                 var rule = new FeeRule
                 {
-                    FeeItemId = feeItem.Id,
+                    Id = feeItem.Id,
                     InstitutionShortName = dto.InstitutionShortName,
                     ProgrammeCode = dto.FeeRules?.FirstOrDefault()?.ProgrammeCode,
                     DepartmentCode = dto.FeeRules?.FirstOrDefault()?.DepartmentCode,
@@ -293,11 +305,12 @@ namespace EduReg.Services.Repositories
 
             await _context.SaveChangesAsync();
 
+            var feeRuleDto = _mapper.Map<List<FeeRuleDto>>(createdRules);
             return new GeneralResponse
             {
                 StatusCode = 201,
                 Message = "Fee items added to semester schedule successfully.",
-                Data = createdRules
+                Data = feeRuleDto
             };
         }
     }

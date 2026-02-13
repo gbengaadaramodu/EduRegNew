@@ -57,13 +57,13 @@ namespace EduReg.Services.Repositories
             await _context.AdmissionBatches.AddAsync(entity);
             await _context.SaveChangesAsync();
 
+            var batchDto = _mapper.Map<AdmissionBatchesDto>(entity);
+
             return new GeneralResponse
             {
                 StatusCode = 201,
                 Message = "Admission batch created successfully",
-                Data = new AdmissionBatchesDto { 
-                
-                }
+                Data = batchDto
             };
         }
 
@@ -121,7 +121,7 @@ namespace EduReg.Services.Repositories
             {
                 StatusCode = 200,
                 Message = "Admission batch retrieved successfully",
-                Data = batchDto//batch
+                Data = batchDto
             };
         }
 
@@ -178,12 +178,14 @@ namespace EduReg.Services.Repositories
 
             _context.AdmissionBatches.Update(batch);
             await _context.SaveChangesAsync();
+            
+            var batchDto = _mapper.Map<AdmissionBatchesDto>(batch);
 
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Admission batch updated successfully",
-                Data = batch
+                Data = batchDto
             };
         }
 
@@ -207,11 +209,13 @@ namespace EduReg.Services.Repositories
             _context.AdmissionBatches.Update(batch);
             await _context.SaveChangesAsync();
 
+            var batchDto = _mapper.Map<AdmissionBatchesDto>(batch);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Admission batch updated successfully",
-                Data = batch
+                Data = batchDto
             };
         }
     }

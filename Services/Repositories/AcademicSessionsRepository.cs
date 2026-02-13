@@ -1,4 +1,5 @@
-﻿using EduReg.Common;
+﻿using AutoMapper;
+using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
@@ -12,11 +13,13 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
-        public AcademicSessionsRepository(ApplicationDbContext context, RequestContext requestContext)
+        private readonly IMapper _mapper;
+        public AcademicSessionsRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
             _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
+            _mapper = mapper;
         }
 
         public async Task<GeneralResponse> CreateAcademicSessionAsync(CreateAcademicSessionDto model)
@@ -52,22 +55,14 @@ namespace EduReg.Services.Repositories
             await _context.AcademicSessions.AddAsync(entity);
             await _context.SaveChangesAsync();
 
+            var dto = _mapper.Map<AcademicSessionResponseDto>(entity);
+
             // Map Entity → Response DTO
             return new GeneralResponse
             {
                 StatusCode = 201,
                 Message = "Academic session created successfully",
-                Data = new AcademicSessionResponseDto
-                {
-                    SessionId = entity.SessionId,
-                    SessionName = entity.SessionName,
-                    SemesterName = entity.SemesterName,
-                    BatchShortName = entity.BatchShortName,
-                    StartDate = entity.StartDate,
-                    EndDate = entity.EndDate
-                    
-                   
-                }
+                Data = dto
             };
 
 
@@ -114,20 +109,13 @@ namespace EduReg.Services.Repositories
             _context.AcademicSessions.Update(session);
             await _context.SaveChangesAsync();
 
+            var updatedDto = _mapper.Map<AcademicSessionResponseDto>(session);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Academic session updated successfully",
-                Data = new AcademicSessionResponseDto
-                {
-                    SessionId = session.SessionId,
-                    SessionName = session.SessionName,
-                    SemesterName = session.SemesterName,
-                    BatchShortName = session.BatchShortName,
-                    StartDate = session.StartDate,
-                    EndDate = session.EndDate
-
-                }
+                Data = updatedDto
             };
         }
 
@@ -179,19 +167,13 @@ namespace EduReg.Services.Repositories
                 };
             }
 
+            var academicSessionDto = _mapper.Map<AcademicSessionResponseDto>(session);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Academic session retrieved successfully",
-                Data = new AcademicSessionResponseDto 
-                {
-                    SessionId = session.SessionId,
-                    SessionName = session.SessionName,
-                    SemesterName = session.SemesterName,
-                    BatchShortName = session.BatchShortName,
-                    StartDate = session.StartDate,
-                    EndDate = session.EndDate
-                }
+                Data = academicSessionDto
 
             };
         }
@@ -236,15 +218,9 @@ namespace EduReg.Services.Repositories
                 .Take(paging.PageSize)
                 .ToListAsync();
 
-            var sessionsDto = sessions.Select(session => new AcademicSessionResponseDto
-            {
-                SessionId = session.SessionId,
-                SessionName = session.SessionName,
-                SemesterName = session.SemesterName,
-                BatchShortName = session.BatchShortName,
-                StartDate = session.StartDate,
-                EndDate = session.EndDate
-            }).ToList();
+            var sessionsDto = _mapper.Map<List<AcademicSessionResponseDto>>(sessions);
+
+            
 
             return new GeneralResponse
             {
@@ -265,38 +241,6 @@ namespace EduReg.Services.Repositories
             };
         }
 
-
-        //public async Task<GeneralResponse> UpdateAcademicSessionAsync(long Id, AcademicSessionsDto model)
-
-        //{
-        //    var session = await _context.AcademicSessions.FindAsync(Id);
-
-        //    if (session == null)
-        //    {
-        //        return new GeneralResponse
-        //        {
-        //            StatusCode = 404,
-        //            Message = "Academic session not found",
-        //            Data = null
-        //        };
-        //    }
-
-        //    session.BatchShortName = model.BatchShortName;
-        //    session.SessionName = model.SessionName;
-        //    session.IsDeleted = model.IsDeleted;
-
-        //    _context.AcademicSessions.Update(session);
-        //    await _context.SaveChangesAsync();
-
-        //    return new GeneralResponse
-        //    {
-        //        StatusCode = 200,
-        //        Message = "Academic session updated successfully",
-        //        Data = session
-        //    };
-        //}
-
-      
         
 
     }

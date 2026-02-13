@@ -9,7 +9,7 @@ namespace EduReg.Common
             {
                 return sourceRules.Select(r => new FeeRule
                 {
-                    FeeItemId = r.FeeItemId,
+                    Id = r.Id,
                     InstitutionShortName = r.InstitutionShortName,
                     ProgrammeCode = r.ProgrammeCode,
                     DepartmentCode = r.DepartmentCode,

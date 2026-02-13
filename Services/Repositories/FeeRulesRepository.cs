@@ -51,7 +51,10 @@ namespace EduReg.Services.Repositories
 
                 var Dto = _mapper.Map<FeeRuleDto>(entity);
 
-                return new GeneralResponse { StatusCode = 200, Message = "Fee rules created successfully.", Data = Dto };
+                return new GeneralResponse {
+                    StatusCode = 200,
+                    Message = "Fee rules created successfully.",
+                    Data = Dto };
 
             }
             catch (Exception ex)
@@ -175,7 +178,10 @@ namespace EduReg.Services.Repositories
             
             var ruleDto = _mapper.Map<FeeRuleDto>(rule);
 
-            return new GeneralResponse { StatusCode = 200, Message = "Fee rules retrieved successfully.", Data = ruleDto };
+            return new GeneralResponse {
+                StatusCode = 200,
+                Message = "Fee rules retrieved successfully.",
+                Data = ruleDto };
 
         }
 
