@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EduReg.Models.Dto;
 using EduReg.Models.Entities;
+using EduReg.Services.Interfaces;
 using EduReg.Services.Repositories;
 
 namespace EduReg.Utilities
@@ -42,6 +43,8 @@ namespace EduReg.Utilities
             CreateMap<ProgramCourses, ProgramCoursesDto>().ReverseMap();
             CreateMap<ProgrammeFeeSchedule, ProgrammeFeeScheduleDto>().ReverseMap();
             CreateMap<Programmes, ProgrammesDto>().ReverseMap();
+            CreateMap<RegistrationsBusinessRules, RegistrationBusinessRulesDto>().ReverseMap();
+            CreateMap<Students, StudentResponse>().ReverseMap();
 
         }
     }
