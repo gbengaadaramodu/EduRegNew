@@ -10,12 +10,12 @@ namespace EduReg.Utilities
         { // Add your mappings here // Example: // CreateMap<SourceModel, DestinationModel>(); }
 
             CreateMap<Faculties, FacultiesDto>().ReverseMap();
-
             CreateMap<AdmissionBatches, AdmissionBatchesDto>().ReverseMap(); 
             CreateMap<AcademicLevel, AcademicLevelsDto>().ReverseMap();
             CreateMap<Departments, DepartmentsDto>().ReverseMap();
             CreateMap<CommonBase, CommonBaseDto>().ReverseMap();
             CreateMap<SessionSemester, SessionSemesterDto>().ReverseMap();
+            CreateMap<AcademicSession, AcademicSessionResponseDto>().ReverseMap();
             CreateMap<AcademicSession, CreateAcademicSessionDto>().ReverseMap();
             CreateMap<AcademicSession, UpdateAcademicSessionDto>().ReverseMap();
             CreateMap<CourseMaxMin, CourseMaxMinDto>().ReverseMap();
@@ -27,14 +27,6 @@ namespace EduReg.Utilities
             CreateMap<ELibrary, ELibraryDto>().ReverseMap();
             CreateMap<Faculties, FacultiesDto>().ReverseMap();
             CreateMap<FeeItem, FeeItemDto>().ReverseMap();
-
-
-
-
-
-
-
-
             CreateMap<FeeRule, FeeRuleDto>().ReverseMap();
             CreateMap<FeeType, FeeTypeDto>().ReverseMap();
 

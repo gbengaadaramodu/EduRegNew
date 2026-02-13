@@ -1,4 +1,5 @@
-﻿using EduReg.Common;
+﻿using AutoMapper;
+using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
@@ -12,11 +13,13 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly IMapper _mapper;
 
-        public DepartmentsRepository(ApplicationDbContext context, RequestContext requestContext)
+        public DepartmentsRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
         public async Task<GeneralResponse> CreateDepartmentAsync(DepartmentsDto model)
         {
@@ -49,11 +52,13 @@ namespace EduReg.Services.Repositories
                await _context.Departments.AddAsync(department);
                 await _context.SaveChangesAsync();
 
+                var departmentDto = _mapper.Map<DepartmentsDto>(department);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = "Department Created Successfully",
-                    Data = department
+                    Data = departmentDto
                 };
             }
             catch (Exception ex)
@@ -128,13 +133,15 @@ namespace EduReg.Services.Repositories
                 .Take(paging.PageSize)
                 .ToListAsync();
 
+
+            var departmentDtos = _mapper.Map<List<DepartmentsDto>>(pagedList);
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = totalRecords == 0
                     ? "No departments found."
                     : "Departments retrieved successfully.",
-                Data = pagedList,
+                Data = departmentDtos,
                 Meta = new
                 {
                     paging.PageNumber,
@@ -162,11 +169,13 @@ namespace EduReg.Services.Repositories
                 };
             }
 
+            var departmentDto = _mapper.Map<DepartmentsDto>(department);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Success",
-                Data = department
+                Data = departmentDto
             };
         }
 
@@ -185,11 +194,13 @@ namespace EduReg.Services.Repositories
                 };
             }
 
+            var departmentDto = _mapper.Map<DepartmentsDto>(department);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Success",
-                Data = department
+                Data = departmentDto
             };
         }
 
@@ -220,11 +231,13 @@ namespace EduReg.Services.Repositories
 
                 await _context.SaveChangesAsync();
 
+                var departmentDto = _mapper.Map<DepartmentsDto>(department);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = "Updated successfully",
-                    Data = department
+                    Data = departmentDto
                 };
             }
             catch (Exception ex)

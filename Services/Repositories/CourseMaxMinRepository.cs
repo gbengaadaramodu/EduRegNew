@@ -1,4 +1,5 @@
-﻿using EduReg.Common;
+﻿using AutoMapper;
+using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
@@ -12,11 +13,13 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly IMapper _mapper;
 
-        public CourseMaxMinRepository(ApplicationDbContext context, RequestContext requestContext)
+        public CourseMaxMinRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
 
         // POST: Create
@@ -59,7 +62,13 @@ namespace EduReg.Services.Repositories
             _context.CourseMaxMin.Add(entity);
             await _context.SaveChangesAsync();
 
-            return new GeneralResponse { StatusCode = 201, Message = "Course unit policy created successfully", Data = entity };
+            var courseMaxMinDto = _mapper.Map<CourseMaxMinDto>(entity);
+
+            return new GeneralResponse {
+                StatusCode = 201,
+                Message = "Course unit policy created successfully",
+                Data = courseMaxMinDto 
+            };
         }
 
         // GET: By ID
@@ -69,9 +78,17 @@ namespace EduReg.Services.Repositories
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             if (record == null)
-                return new GeneralResponse { StatusCode = 404, Message = "Policy not found" };
+                return new GeneralResponse {
+                    StatusCode = 404,
+                    Message = "Policy not found" };
 
-            return new GeneralResponse { StatusCode = 200, Message = "Success", Data = record };
+            var courseMaxMinDto = _mapper.Map<CourseMaxMinDto>(record);
+
+            return new GeneralResponse {
+                StatusCode = 200,
+                Message = "Success",
+                Data = courseMaxMinDto
+            };
         }
 
 
@@ -104,13 +121,25 @@ namespace EduReg.Services.Repositories
                 .ToListAsync();
 
             // 4. (Optional) Get Total Count for UI progress bars
-            var totalCount = await query.CountAsync();
+            var totalRecords = await query.CountAsync();
+
+            var courseMaxMinsDto = _mapper.Map<List<CourseMaxMinDto>>(pagedData);
+
 
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = pagedData.Any() ? "Data retrieved successfully" : "No records found matching criteria",
-                Data = new { TotalCount = totalCount, Items = pagedData } 
+                Data = courseMaxMinsDto,
+                Meta = new
+                {
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
             };
         }
 
@@ -132,10 +161,15 @@ namespace EduReg.Services.Repositories
             
 
             await _context.SaveChangesAsync();
-            return new GeneralResponse { StatusCode = 200, Message = "Policy updated successfully", Data = found };
+
+            var courseMaxMinDto = _mapper.Map<CourseMaxMinDto>(found);
+            return new GeneralResponse {
+                StatusCode = 200,
+                Message = "Policy updated successfully",
+                Data = courseMaxMinDto };
         }
 
-        // DELETE: Soft Delete by ID
+       
         public async Task<GeneralResponse> DeleteCourseMaxMinAsync(long id)
         {
             var record = await _context.CourseMaxMin.FindAsync(id);

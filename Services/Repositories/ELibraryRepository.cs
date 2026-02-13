@@ -1,4 +1,5 @@
-﻿using EduReg.Common;
+﻿using AutoMapper;
+using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
 using EduReg.Models.Entities;
@@ -11,11 +12,13 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly IMapper _mapper;
 
-        public ELibraryRepository(ApplicationDbContext context, RequestContext requestContext)
+        public ELibraryRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
 
         public async Task<GeneralResponse> CreateELibraryAsync(ELibraryDto model)
@@ -34,15 +37,29 @@ namespace EduReg.Services.Repositories
 
             _context.ELibraries.Add(library);
             await _context.SaveChangesAsync();
-            return new GeneralResponse { StatusCode = 200, Message = "E-Library resource added successfully", Data = library };
+
+            var eLibraryDto = _mapper.Map<ELibraryDto>(library);
+            return new GeneralResponse {
+                StatusCode = 200,
+                Message = "E-Library resource added successfully",
+                Data = eLibraryDto };
         }
 
         public async Task<GeneralResponse> GetELibraryByIdAsync(long id)
         {
             var item = await _context.ELibraries.FindAsync(id);
-            if (item == null) return new GeneralResponse { StatusCode = 404, Message = "Resource not found." };
+            if (item == null) return new GeneralResponse {
+                StatusCode = 404,
+                Message = "Resource not found."
+            };
 
-            return new GeneralResponse { StatusCode = 200, Message = "Success", Data = item };
+            var eLibraryDto = _mapper.Map<ELibraryDto>(item);
+
+            return new GeneralResponse {
+                StatusCode = 200,
+                Message = "Success",
+                Data = eLibraryDto
+            };
         }
 
         
@@ -64,7 +81,13 @@ namespace EduReg.Services.Repositories
                                   .Take(paging.PageSize)
                                   .ToListAsync();
 
-            return new GeneralResponse { StatusCode = 200, Message = "Success", Data = data };
+            var eLibrariesDto = _mapper.Map<List<ELibraryDto>>(data);
+
+            return new GeneralResponse {
+                StatusCode = 200,
+                Message = "Success",
+                Data = eLibrariesDto
+            };
         }
 
         public async Task<GeneralResponse> UpdateELibraryAsync(long id, ELibraryDto model)
@@ -72,12 +95,20 @@ namespace EduReg.Services.Repositories
             var existing = await _context.ELibraries.FindAsync(id);
             if (existing == null) return new GeneralResponse { StatusCode = 404, Message = "Resource not found" };
 
+
             existing.CourseCode = model.CourseCode;
             existing.ProgramId = model.ProgramId;
             existing.FilePath = model.FilePath;
 
+
+            var eLibraryDto = _mapper.Map<ELibraryDto>(existing);
+
             await _context.SaveChangesAsync();
-            return new GeneralResponse { StatusCode = 200, Message = "Updated successfully", Data = existing };
+            return new GeneralResponse {
+                StatusCode = 200,
+                Message = "Updated successfully",
+                Data = eLibraryDto
+            };
         }
 
         public async Task<GeneralResponse> DeleteELibraryAsync(long id)

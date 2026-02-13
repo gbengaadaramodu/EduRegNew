@@ -1,4 +1,5 @@
-﻿using EduReg.Common;
+﻿using AutoMapper;
+using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
@@ -13,12 +14,14 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly IMapper _mapper;
 
 
-        public CourseTypeRepository(ApplicationDbContext context, RequestContext requestContext)
+        public CourseTypeRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
 
         // POST: Create
@@ -50,8 +53,14 @@ namespace EduReg.Services.Repositories
 
             _context.CourseTypes.Add(entity);
             await _context.SaveChangesAsync();
+            
+            var courseTypeDto = _mapper.Map<CourseTypeDto>(entity);
 
-            return new GeneralResponse { StatusCode = 201, Message = "Course Type created successfully", Data = entity };
+            return new GeneralResponse {
+                StatusCode = 201,
+                Message = "Course Type created successfully",
+                Data = courseTypeDto
+            };
         }
 
         // GET: Get By Id
@@ -61,9 +70,18 @@ namespace EduReg.Services.Repositories
             var record = await _context.CourseTypes.FindAsync(id);
 
             if (record == null)
-                return new GeneralResponse { StatusCode = 404, Message = "Not Found" };
+                return new GeneralResponse {
+                    StatusCode = 404,
+                    Message = "Not Found"
+                };
 
-            return new GeneralResponse { StatusCode = 200, Message = "Success", Data = record };
+            var courseTypeDto = _mapper.Map<CourseTypeDto>(record);
+
+            return new GeneralResponse {
+                StatusCode = 200,
+                Message = "Success",
+                Data = courseTypeDto
+            };
         }
 
         // GET ALL: Filtered by School
@@ -91,25 +109,29 @@ namespace EduReg.Services.Repositories
             // 4. Order for consistent results
             query = query.OrderBy(x => x.Name);
 
-            // 5. Get Total Count 
-            var totalCount = await query.CountAsync();
+            // 5. Get Totl Count 
+            var totalRecords = await query.CountAsync();
 
             // 6.  Pagination
             var items = await query
                 .Skip((paging.PageNumber - 1) * paging.PageSize)
                 .Take(paging.PageSize)
                 .ToListAsync();
+            var courseTypesDto = _mapper.Map<List<CourseTypeDto>>(items);
 
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Data retrieved successfully",
-                Data = new
+                Data = courseTypesDto,//batches, // EMPTY LIST if none
+                Meta = new
                 {
-                    TotalCount = totalCount,
-                    PageNumber = paging.PageNumber,
-                    PageSize = paging.PageSize,
-                    Items = items
+                    paging.PageNumber,
+                    paging.PageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalRecords == 0
+                        ? 0
+                        : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
                 }
             };
         }
@@ -123,8 +145,15 @@ namespace EduReg.Services.Repositories
             record.Name = dto.Name;
             record.ActiveStatus = dto.ActiveStatus;
 
+
             await _context.SaveChangesAsync();
-            return new GeneralResponse { StatusCode = 200, Message = "Updated", Data = record };
+
+            var courseTypeDto = _mapper.Map<CourseTypeDto>(record);
+            return new GeneralResponse {
+                StatusCode = 200,
+                Message = "Updated",
+                Data = courseTypeDto
+            };
         }
 
         // DELETE: Hard Delete
