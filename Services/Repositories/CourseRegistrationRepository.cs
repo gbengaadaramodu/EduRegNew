@@ -51,7 +51,7 @@ namespace EduReg.Services.Repositories
                 }
 
                 //These are placeholders. Come and modify once architecture is sorted
-                var minimumUnits = 15;
+                var minimumUnits = 5;
                 var maximumUnits = 21;
 
                 var alreadyRegisteredCourses = await _context.CourseRegistrationDetails.Include(x => x.CourseSchedule).Where(x => x.CourseSchedule.SessionId == studentExists.CurrentSessionId && x.CourseSchedule.SemesterId == studentExists.CurrentSemesterId && x.StudentsId == studentExists.Id).ToListAsync();
@@ -89,7 +89,7 @@ namespace EduReg.Services.Repositories
                 totalUnitsBeingRegistered = result.courseSchedules.Sum(x => x.Units);
 
                 totalUnitsRegistered = totalUnitsAlreadyRegistered + totalUnitsBeingRegistered;
-                if(totalUnitsRegistered < maximumUnits)
+                if(totalUnitsRegistered < minimumUnits)
                 {
                     response.StatusCode = 400;
                     response.Message = $"{totalUnitsRegistered} units is less than the minimum required units {minimumUnits}";
@@ -106,16 +106,24 @@ namespace EduReg.Services.Repositories
                 }
 
                 var levels = await _context.AcademicLevels.ToListAsync();
-                var currentLevel = levels.FirstOrDefault(x => x.LevelId == studentExists.CurrentLevel && x.InstitutionShortName.ToLower() == model.InstitutionShortName.ToLower());
+                var currentLevel = levels.FirstOrDefault(x => x.ClassCode == studentExists.CurrentClassCode && x.InstitutionShortName.ToLower() == model.InstitutionShortName.ToLower() && x.ProgrammeCode == studentExists.ProgrammeCode);
+                if (currentLevel == null)
+                {
+                    response.StatusCode = 400;
+                    response.Message = "Academic level configuration error.";
+                    return response;
+                }
                 var coursesToRegister = new List<CourseRegistrationDetail>();
 
                 var courseRegistration = new CourseRegistration
                 {
-                    SemesterId = Convert.ToInt32(studentExists.CurrentSemesterId),
-                    SessionId = Convert.ToInt32(studentExists.CurrentSessionId),
+                    SemesterId = Convert.ToInt64(studentExists.CurrentSemesterId),
+                    SessionId = Convert.ToInt64(studentExists.CurrentSessionId),
                     StudentsId = studentExists.Id,
                     DepartmentCode = studentExists.DepartmentCode,
-                    ProgrammeCode = studentExists.ProgrammeCode
+                    ProgrammeCode = studentExists.ProgrammeCode,
+                    Level = currentLevel.LevelName,
+                    ClassCode = currentLevel.ClassCode
 
                 };
 
@@ -333,7 +341,7 @@ namespace EduReg.Services.Repositories
                     //                                .Select(g => g.First()) // Return once per course
                     //                                .AsNoTracking()
                     //                                .ToListAsync();
-                    var passedCourseCodes = await _context.CourseRegistrationDetails
+                    /*var passedCourseCodes = await _context.CourseRegistrationDetails
                                                         .Where(x => x.StudentsId == studentExists.Id
                                                                     && x.ExamStatus == "PASSED")
                                                         .Select(x => x.CourseCode)
@@ -381,7 +389,199 @@ namespace EduReg.Services.Repositories
                                                                                              && cr.CourseCode == s.CourseCode)
                                                             };
                                                         })
-                                                        .ToList();
+                                                        .ToList();*/
+
+
+                    // Get student's start & current academic level orders
+                    var studentLevels = await _context.AcademicLevels
+                        .Where(x => x.ClassCode == studentExists.StartClassCode
+                                 || x.ClassCode == studentExists.CurrentClassCode)
+                        .Select(x => new
+                        {
+                            x.ClassCode,
+                            x.Order
+                        })
+                        .ToListAsync();
+
+                    var startLevel = studentLevels
+                        .FirstOrDefault(x => x.ClassCode == studentExists.StartClassCode);
+
+                    var currentLevel = studentLevels
+                        .FirstOrDefault(x => x.ClassCode == studentExists.CurrentClassCode);
+
+                    if (startLevel == null || currentLevel == null)
+                    {
+                        response.StatusCode = 400;
+                        response.Message = "Academic level configuration error.";
+                        return response;
+                    }
+
+
+                    //Load all academic levels once (to map course ClassCode → Order)
+                    var academicLevels = await _context.AcademicLevels.Where(x => x.InstitutionShortName == model.InstitutionShortName && x.ProgrammeCode == studentExists.ProgrammeCode)
+                        .Select(x => new
+                        {
+                            x.ClassCode,
+                            x.Order
+                        })
+                        .ToListAsync();
+
+
+                    //Get student course history
+                    var studentCourseHistory = await _context.CourseRegistrationDetails
+                        .Where(x => x.StudentsId == studentExists.Id)
+                        .Select(x => new
+                        {
+                            x.CourseCode,
+                            x.ExamStatus
+                        })
+                        .AsNoTracking()
+                        .ToListAsync();
+
+                    var passedCourseCodes = studentCourseHistory
+                        .Where(x => x.ExamStatus == "PASSED")
+                        .Select(x => x.CourseCode)
+                        .Distinct()
+                        .ToList();
+
+                    var takenCourseCodes = studentCourseHistory
+                        .Select(x => x.CourseCode)
+                        .Distinct()
+                        .ToList();
+
+
+                    //Get current semester registrations
+                    var currentSemesterRegistrations = await _context.CourseRegistrationDetails
+                        .Where(x => x.StudentsId == studentExists.Id
+                                    && x.CourseSchedule.SessionId == currentSessionId
+                                    && x.CourseSchedule.SemesterId == currentSemesterId)
+                        .Select(x => new
+                        {
+                            x.CourseCode,
+                            x.CourseRegistrationDate,
+                            x.CourseScheduleId
+                        })
+                        .AsNoTracking()
+                        .ToListAsync();
+
+
+                    ////FINAL FILTERING (ORDER-BASED)
+                    //var coursesStudentCanRegister = allCourseSchedulesForSessionSemester
+                    //    .Where(s =>
+                    //    {
+                    //        var courseLevel = academicLevels
+                    //            .FirstOrDefault(l => l.ClassCode == s.ClassCode);
+
+                    //        if (courseLevel == null)
+                    //            return false;
+
+                    //        // Rule 1: cannot register below starting level
+                    //        if (courseLevel.Order < startLevel.Order)
+                    //            return false;
+
+                    //        // Rule 2: cannot register above current level
+                    //        if (courseLevel.Order > currentLevel.Order)
+                    //            return false;
+
+                    //        // Rule 3: cannot register passed courses
+                    //        if (passedCourseCodes.Contains(s.CourseCode))
+                    //            return false;
+
+                    //        return true;
+                    //    })
+                    //    .GroupBy(s => s.CourseCode)
+                    //    .Select(g => g.First())
+                    //    .Select(s =>
+                    //    {
+                    //        var existingRegistration = currentSemesterRegistrations
+                    //            .FirstOrDefault(r => r.CourseCode == s.CourseCode);
+
+                    //        bool hasTakenBefore = takenCourseCodes.Contains(s.CourseCode);
+                    //        bool isPassed = passedCourseCodes.Contains(s.CourseCode);
+
+                    //        return new CourseRegistrationDetailViewDto
+                    //        {
+                    //            CourseCode = s.CourseCode,
+                    //            CourseTitle = s.Title,
+                    //            CourseUnit = s.Units,
+                    //            CourseCategory = s.CourseType,
+                    //            CourseFee = s.CourseFee,
+                    //            CourseScheduleId = s.Id,
+
+                    //            RegistrationDate = existingRegistration != null
+                    //                               ? existingRegistration.CourseRegistrationDate
+                    //                               : default,
+
+                    //            IsCarryOver = hasTakenBefore && !isPassed
+                    //        };
+                    //    })
+                    //    .OrderBy(x => x.CourseCode)
+                    //    .ToList();
+
+                    var coursesStudentCanRegister = allCourseSchedulesForSessionSemester
+    .Where(s =>
+    {
+        var courseLevel = academicLevels
+            .FirstOrDefault(l => l.ClassCode == s.ClassCode);
+
+        if (courseLevel == null)
+            return false;
+
+        // Rule 1: cannot register below starting level
+        if (courseLevel.Order < startLevel.Order)
+            return false;
+
+        // Rule 2: cannot register above current level
+        if (courseLevel.Order > currentLevel.Order)
+            return false;
+
+        // Rule 3: cannot register passed courses
+        if (passedCourseCodes.Contains(s.CourseCode))
+            return false;
+
+        return true;
+    })
+    .GroupBy(s => s.CourseCode)
+    .Select(g => g.First())
+    .Select(s =>
+    {
+        var existingRegistration = currentSemesterRegistrations
+            .FirstOrDefault(r => r.CourseCode == s.CourseCode);
+
+        bool hasTakenBefore = takenCourseCodes.Contains(s.CourseCode);
+        bool isPassed = passedCourseCodes.Contains(s.CourseCode);
+
+        return new
+        {
+            Schedule = s,
+            CourseRegistration = existingRegistration,
+            IsCarryOver = hasTakenBefore && !isPassed,
+            LevelOrder = academicLevels
+                            .First(l => l.ClassCode == s.ClassCode)
+                            .Order
+        };
+    })
+    // ORDER: descending level first, then carryovers last, then course code for tie-breaker
+    .OrderByDescending(x => x.LevelOrder)            // Current level courses first
+    .ThenBy(x => x.IsCarryOver ? 1 : 0)            // Non-carryovers first
+    .ThenBy(x => x.Schedule.CourseCode)            // Tie-breaker
+    .Select(x => new CourseRegistrationDetailViewDto
+    {
+        CourseCode = x.Schedule.CourseCode,
+        CourseTitle = x.Schedule.Title,
+        CourseUnit = x.Schedule.Units,
+        CourseCategory = x.Schedule.CourseType,
+        CourseFee = x.Schedule.CourseFee,
+        CourseScheduleId = x.Schedule.Id,
+
+        RegistrationDate = x.CourseRegistration != null
+                           ? x.CourseRegistration.CourseRegistrationDate
+                           : default,
+
+        IsCarryOver = x.IsCarryOver
+    })
+    .ToList();
+
 
 
 
