@@ -50,10 +50,9 @@ namespace EduReg.Services.Repositories
         {
             var query = _context.StudentStatuses.AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(institutionShortName))
-            {
-                query = query.Where(x => x.InstitutionShortName == institutionShortName);
-            }
+            
+            query = query.Where(x => x.InstitutionShortName == _requestContext.InstitutionShortName);
+            
 
             var totalRecords = await query.CountAsync();
             var data = await query

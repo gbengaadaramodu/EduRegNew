@@ -1,4 +1,5 @@
-﻿using EduReg.Common;
+﻿using AutoMapper;
+using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
@@ -16,11 +17,13 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly IMapper _mapper;
 
-        public CourseScheduleRepository(ApplicationDbContext context, RequestContext requestContext)
+        public CourseScheduleRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
 
         public async Task<GeneralResponse> CreateCourseScheduleAsync(CourseScheduleDto model)
@@ -33,6 +36,8 @@ namespace EduReg.Services.Repositories
 
                 await _context.CourseSchedules.AddAsync(entity);
                 await _context.SaveChangesAsync();
+
+
 
                 return new GeneralResponse
                 {
@@ -59,6 +64,8 @@ namespace EduReg.Services.Repositories
                 var entities = models.Select(MapDtoToEntity).ToList();
                 await _context.CourseSchedules.AddRangeAsync(entities);
                 await _context.SaveChangesAsync();
+
+
 
                 return new GeneralResponse
                 {
@@ -117,6 +124,7 @@ namespace EduReg.Services.Repositories
 
                 _context.CourseSchedules.Update(entity);
                 await _context.SaveChangesAsync();
+                
 
                 return new GeneralResponse
                 {

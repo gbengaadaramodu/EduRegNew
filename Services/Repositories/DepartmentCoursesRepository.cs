@@ -1,4 +1,5 @@
-﻿using EduReg.Common;
+﻿using AutoMapper;
+using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
@@ -12,11 +13,13 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
-        public DepartmentCoursesRepository(ApplicationDbContext context, RequestContext requestContext)
+        private readonly IMapper _mapper;
+        public DepartmentCoursesRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
             _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
+            _mapper = mapper;
         }
 
         public async Task<GeneralResponse> CreateDepartmentCourseAsync(DepartmentCoursesDto model)
@@ -65,11 +68,12 @@ namespace EduReg.Services.Repositories
                 await _context.DepartmentCourses.AddAsync(entity);
                 await _context.SaveChangesAsync();
 
+                var departmentCoursesDto = _mapper.Map<DepartmentCoursesDto>(entity);
                 return new GeneralResponse
                 {
                     StatusCode = 201,
                     Message = "Department course created successfully.",
-                    Data = entity
+                    Data = departmentCoursesDto
                 };
             }
             catch (Exception ex)
@@ -105,11 +109,13 @@ namespace EduReg.Services.Repositories
                 await _context.DepartmentCourses.AddRangeAsync(entities);
                 await _context.SaveChangesAsync();
 
+                var departmentCoursesDtos = _mapper.Map<List<DepartmentCoursesDto>>(entities);
+
                 return new GeneralResponse
                 {
                     StatusCode = 201,
                     Message = "Department courses created successfully.",
-                    Data = entities
+                    Data = departmentCoursesDtos
                 };
             }
             catch (Exception ex)
@@ -181,11 +187,13 @@ namespace EduReg.Services.Repositories
             _context.DepartmentCourses.Update(course);
             await _context.SaveChangesAsync();
 
+            var departmentCourseDto = _mapper.Map<DepartmentCoursesDto>(course);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Course updated successfully",
-                Data = course
+                Data = departmentCourseDto
             };
         }
 
@@ -226,11 +234,13 @@ namespace EduReg.Services.Repositories
                 };
             }
 
+            var departmentCourseDto = _mapper.Map<DepartmentCoursesDto>(course);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Success",
-                Data = course
+                Data = departmentCourseDto
             };
         }
 
@@ -280,13 +290,15 @@ namespace EduReg.Services.Repositories
                 .Take(paging.PageSize)
                 .ToListAsync();
 
+            var departmentCoursesDtos = _mapper.Map<List<DepartmentCoursesDto>>(courses);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = totalRecords == 0
                     ? "No department courses found"
                     : "Department courses retrieved successfully",
-                Data = courses,
+                Data = departmentCoursesDtos ,
                 Meta = new
                 {
                     paging.PageNumber,
