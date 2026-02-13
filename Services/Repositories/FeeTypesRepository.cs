@@ -85,7 +85,7 @@ namespace EduReg.Services.Repositories
 
         public async Task<GeneralResponse> GetFeeTypeByIdAsync(long id)
         {
-            var item = await _context.FeeTypes.FindAsync(id);
+            var item = await _context.FeeTypes.FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == _requestContext.InstitutionShortName);
             if (item == null) return new GeneralResponse { StatusCode = 404, Message = "Not found." };
 
             var itemDto = _mapper.Map<FeeTypeDto>(item);
@@ -95,7 +95,7 @@ namespace EduReg.Services.Repositories
 
         public async Task<GeneralResponse> UpdateFeeTypeAsync(long id, FeeTypeDto model)
         {
-            var existingItem = await _context.FeeTypes.FindAsync(id);
+            var existingItem = await _context.FeeTypes.FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == _requestContext.InstitutionShortName);
             if (existingItem == null) return new GeneralResponse { StatusCode = 404, Message = "Not found." };
 
             if (existingItem.IsSystemDefined)
@@ -113,7 +113,7 @@ namespace EduReg.Services.Repositories
 
         public async Task<GeneralResponse> DeleteFeeTypeAsync(long id)
         {
-            var item = await _context.FeeTypes.FindAsync(id);
+            var item = await _context.FeeTypes.FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == _requestContext.InstitutionShortName);
             if (item == null) return new GeneralResponse { StatusCode = 404, Message = "Not found." };
 
             if (item.IsSystemDefined)

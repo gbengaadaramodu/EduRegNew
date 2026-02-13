@@ -12,8 +12,8 @@
         public string? PhoneNumber { get; set; }
 
         // Academic 
-        public string? InstitutionShortName { get; set; }
-        public string? BatchShortName { get; set; }
+       // public string? InstitutionShortName { get; set; }
+       // public string? BatchShortName { get; set; }
         public string? DepartmentCode { get; set; }
         public string? ProgrammeCode { get; set; } // ← The matric trigger
 

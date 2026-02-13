@@ -5,6 +5,7 @@ using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace EduReg.Services.Repositories
 {
@@ -12,19 +13,21 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly IMapper _mapper;
 
-        public StudentRecordsRepository(ApplicationDbContext context, RequestContext requestContext)
+        public StudentRecordsRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
 
         public async Task<GeneralResponse> GetAllStudentRecords(PagingParameters paging, StudentRecordsFilter filter)
         {
             var query = _context.Students.AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
-                query = query.Where(x => x.InstitutionShortName == filter.InstitutionShortName);
+            
+            query = query.Where(x => x.InstitutionShortName == _requestContext.InstitutionShortName);
 
             if (!string.IsNullOrWhiteSpace(filter?.MatricNumber))
                 query = query.Where(x => x.MatricNumber == filter.MatricNumber);
@@ -48,11 +51,13 @@ namespace EduReg.Services.Repositories
                 .Take(paging.PageSize)
                 .ToListAsync();
 
+            var dto = _mapper.Map<List<StudentResponse>>(data);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = totalRecords == 0 ? "No student records found" : "Student records retrieved successfully",
-                Data = data,
+                Data = dto,
                 Meta = new
                 {
                     paging.PageNumber,
@@ -65,7 +70,7 @@ namespace EduReg.Services.Repositories
 
         public async Task<GeneralResponse> GetStudentRecordsById(string id)
         {
-            var student = await _context.Students.FirstOrDefaultAsync(x => x.Id == id);
+            var student = await _context.Students.FirstOrDefaultAsync(x => x.Id == id && x.InstitutionShortName == _requestContext.InstitutionShortName);
 
             if (student == null)
             {
@@ -77,11 +82,13 @@ namespace EduReg.Services.Repositories
                 };
             }
 
+            var response = _mapper.Map<StudentResponse>(student);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Student record retrieved successfully",
-                Data = student
+                Data = response
             };
         }
 
@@ -90,7 +97,7 @@ namespace EduReg.Services.Repositories
             try
             {
                 // 1. Fetch the student
-                var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
+                var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id && s.InstitutionShortName == _requestContext.InstitutionShortName);
                 if (student == null)
                 {
                     return new GeneralResponse
@@ -100,6 +107,7 @@ namespace EduReg.Services.Repositories
                         Data = null
                     };
                 }
+                 
 
                 // 2. Check if ProgrammeCode is changing (TRIGGER for matric regeneration)
                 bool programmeChanged =
@@ -118,6 +126,23 @@ namespace EduReg.Services.Repositories
 
                 if (!string.IsNullOrEmpty(model.Email))
                 {
+                    // Check if any OTHER student already uses this email within the same institution
+                    var emailExists = await _context.Students.AnyAsync(s =>
+                        s.Email == model.Email &&
+                        s.Id != id && // Important: Exclude the current student
+                        s.InstitutionShortName == _requestContext.InstitutionShortName);
+
+                    if (emailExists)
+                    {
+                        return new GeneralResponse
+                        {
+                            StatusCode = 400,
+                            Message = "The email address is already in use by another student.",
+                            Data = null
+                        };
+                    }
+
+                    // If unique, proceed with assignment
                     student.Email = model.Email;
                     student.UserName = model.Email;
                     student.NormalizedEmail = model.Email.ToUpper();
@@ -126,12 +151,6 @@ namespace EduReg.Services.Repositories
 
                 if (!string.IsNullOrEmpty(model.PhoneNumber))
                     student.PhoneNumber = model.PhoneNumber;
-
-                if (!string.IsNullOrEmpty(model.InstitutionShortName))
-                    student.InstitutionShortName = model.InstitutionShortName;
-
-                if (!string.IsNullOrEmpty(model.BatchShortName))
-                    student.BatchShortName = model.BatchShortName;
 
                 if (!string.IsNullOrEmpty(model.DepartmentCode))
                     student.DepartmentCode = model.DepartmentCode;
