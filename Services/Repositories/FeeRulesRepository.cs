@@ -60,18 +60,16 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetAllFeeRuleAsync(string institutionShortName, PagingParameters paging,FeeRuleFilter? filter)
+        public async Task<GeneralResponse> GetAllFeeRuleAsync(string institutionShortName, PagingParameters paging, FeeRuleFilter? filter)
         {
             try
             {
                 var query = _context.FeeRule
                     .AsQueryable();
 
-
-                // Mandatory InstitutionShortName filter
                 query = query.Where(x => x.InstitutionShortName == _requestContext.InstitutionShortName);
 
-                // Optional filters from the filter object
+                //filters 
                 if (filter != null)
                 {
                     if (filter.Id.HasValue)
@@ -202,8 +200,12 @@ namespace EduReg.Services.Repositories
             rule.RecurrenceType = model.RecurrenceType;
             rule.UpdatedAt = DateTime.UtcNow;
 
+
+
             await _context.SaveChangesAsync();
-            return new GeneralResponse { StatusCode = 200, Message = "Fee rules updated successfully." };
+
+            var ruleDto = _mapper.Map<FeeRuleDto>(rule);
+            return new GeneralResponse { StatusCode = 200, Message = "Fee rules updated successfully.",Data = ruleDto};
 
         }
 

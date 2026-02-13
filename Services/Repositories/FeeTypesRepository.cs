@@ -106,7 +106,9 @@ namespace EduReg.Services.Repositories
             existingItem.ActiveStatus = model.ActiveStatus;
 
             await _context.SaveChangesAsync();
-            return new GeneralResponse { StatusCode = 200, Message = "Updated successfully." };
+
+            var itemDto = _mapper.Map<FeeTypeDto>(existingItem);
+            return new GeneralResponse { StatusCode = 200, Message = "Updated successfully.", Data = itemDto };
         }
 
         public async Task<GeneralResponse> DeleteFeeTypeAsync(long id)

@@ -5,6 +5,7 @@ using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace EduReg.Services.Repositories
 {
@@ -12,6 +13,9 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly ILogger _logger;
+        private readonly IMapper _mapper;
+
 
         public ProgramCoursesRepository(ApplicationDbContext context, RequestContext requestContext)
         {
@@ -77,11 +81,13 @@ namespace EduReg.Services.Repositories
                 await _context.ProgramCourses.AddAsync(course);
                 await _context.SaveChangesAsync();
 
+                var courseDto = _mapper.Map<ProgramCoursesDto>(course);
+
                 return new GeneralResponse
                 {
                     StatusCode = 201,
                     Message = "Course assigned to program successfully.",
-                    Data = course
+                    Data = courseDto
                 };
             }
             catch (Exception ex)
@@ -149,11 +155,13 @@ namespace EduReg.Services.Repositories
                 await _context.ProgramCourses.AddAsync(course);
                 await _context.SaveChangesAsync();
 
+                var courseDto = _mapper.Map<ProgramCoursesDto>(course);
+
                 return new GeneralResponse
                 {
                     StatusCode = 201,
                     Message = "Program course created successfully.",
-                    Data = course
+                    Data = courseDto
                 };
             }
             catch (Exception ex)
@@ -176,11 +184,13 @@ namespace EduReg.Services.Repositories
                 await _context.ProgramCourses.AddRangeAsync(entities);
                 await _context.SaveChangesAsync();
 
+                var Dto = _mapper.Map<List<ProgramCoursesDto>>(entities);
+
                 return new GeneralResponse
                 {
                     StatusCode = 201,
                     Message = "Program courses created successfully.",
-                    Data = entities
+                    Data = Dto
                 };
             }
             catch (Exception ex)
@@ -222,11 +232,13 @@ namespace EduReg.Services.Repositories
             _context.ProgramCourses.Update(course);
             await _context.SaveChangesAsync();
 
+            var courseDto = _mapper.Map<ProgramCoursesDto>(course);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Program course updated successfully",
-                Data = course
+                Data = courseDto
             };
         }
 
@@ -267,11 +279,13 @@ namespace EduReg.Services.Repositories
                 };
             }
 
+            var courseDto = _mapper.Map<ProgramCoursesDto>(course);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Success",
-                Data = course
+                Data = courseDto
             };
         }
 
@@ -281,11 +295,12 @@ namespace EduReg.Services.Repositories
                 .Where(x => x.ProgrammeCode == programName)
                 .ToListAsync();
 
+            var coursesDto = _mapper.Map<List<ProgramCoursesDto>>(courses);
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Success",
-                Data = courses
+                Data = coursesDto
             };
         }
 
