@@ -7,7 +7,7 @@ namespace EduReg.Models.Entities
     public class FeeRule: CommonBase
     {
        
-        public long FeeItemId { get; set; }
+        //public long FeeItemId { get; set; }
         public FeeItem? FeeItem { get; set; }
         public string? InstitutionShortName { get; set; }
 

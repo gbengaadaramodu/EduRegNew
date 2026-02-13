@@ -6,7 +6,7 @@ namespace EduReg.Models.Dto.Request
     {
         public string? InstitutionShortName { get; set; }
 
-        public long? FeeItemId { get; set; }
+        public long? Id { get; set; }
 
         public string? ProgrammeCode { get; set; }
         public string? DepartmentCode { get; set; }

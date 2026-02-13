@@ -7,7 +7,7 @@ namespace EduReg.Models.Dto
      
     public class FeeRuleDto : CommonBaseDto
     {
-        public int FeeItemId { get; set; }
+        public long Id { get; set; }
         public FeeItem? FeeItem { get; set; }
         public string? InstitutionShortName { get; set; }
 

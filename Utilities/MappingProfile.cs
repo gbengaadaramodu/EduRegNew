@@ -15,6 +15,8 @@ namespace EduReg.Utilities
             CreateMap<AcademicLevel, AcademicLevelsDto>().ReverseMap();
             CreateMap<Departments, DepartmentsDto>().ReverseMap();
             CreateMap<CommonBase, CommonBaseDto>().ReverseMap();
+            CreateMap<FeeRule, FeeRuleDto>().ReverseMap();
+            CreateMap<FeeType, FeeTypeDto>().ReverseMap();
 
         }
     }
