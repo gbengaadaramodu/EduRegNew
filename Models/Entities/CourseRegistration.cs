@@ -12,10 +12,11 @@
         //public bool IsCarryOver { get; set; }
         //public long CourseScheduleId { get; set; }
         //public CourseSchedule CourseSchedule { get; set; }
-        public int SemesterId { get; set; }
-        public int SessionId { get; set; }
+        public long SemesterId { get; set; }
+        public long SessionId { get; set; }
         public string? DepartmentCode { get; set; } //FK ->Department
         public string? ProgrammeCode { get; set; }
+        public string? ClassCode { get; set; }
         public string? Level { get; set; }
     }
 
