@@ -21,7 +21,7 @@ namespace EduReg.Controllers
 
         [HttpPost]
         [Route("CreateE-Ticket")]
-        public async Task<IActionResult> CreateTicketAsync(string institutionShortName,[FromBody] TicketDto dto)
+        public async Task<IActionResult> CreateTicketAsync(string? institutionShortName,[FromBody] TicketDto dto)
         {
           var response = await _manager.CreateTicketAsync(institutionShortName, dto);
             return StatusCode(response.StatusCode, response);

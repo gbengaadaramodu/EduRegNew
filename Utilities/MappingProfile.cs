@@ -33,7 +33,7 @@ namespace EduReg.Utilities
 
 
 
-
+            
 
 
             
@@ -46,6 +46,11 @@ namespace EduReg.Utilities
             CreateMap<RegistrationsBusinessRules, RegistrationBusinessRulesDto>().ReverseMap();
             CreateMap<Students, StudentResponse>().ReverseMap();
             CreateMap<Semesters, SemestersDto>().ReverseMap();
+            CreateMap<StudentStatus, StudentStatusDto>().ReverseMap();
+            CreateMap<StudentRepository, StudentRepository>().ReverseMap();
+            CreateMap<Ticketing, TicketDto>().ReverseMap();
+            CreateMap<Ticketing, GetTicketDto>().ReverseMap();
+            CreateMap<Ticketing, RespondToTicketDto>().ReverseMap();
 
         }
     }

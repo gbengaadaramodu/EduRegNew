@@ -14,7 +14,7 @@ namespace EduReg.Managers
             _ticketing = ticketing;
         }
 
-        public async Task<GeneralResponse> CreateTicketAsync(string institutionShortName, TicketDto dto)
+        public async Task<GeneralResponse> CreateTicketAsync(string? institutionShortName, TicketDto dto)
         {
           return await  _ticketing.CreateTicketAsync(institutionShortName, dto);
         }

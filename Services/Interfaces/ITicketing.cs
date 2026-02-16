@@ -7,7 +7,7 @@ namespace EduReg.Services.Interfaces
     public interface ITicketing
     {
        
-        Task<GeneralResponse> CreateTicketAsync(string institutionShortName, TicketDto dto);
+        Task<GeneralResponse> CreateTicketAsync(string? institutionShortName, TicketDto dto);
 
         // UPDATE: Admin responds to a specific ticket
         // Uses the "Clean Body" pattern: ID in URL, Response in Body

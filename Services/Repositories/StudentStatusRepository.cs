@@ -67,7 +67,7 @@ namespace EduReg.Services.Repositories
                 .Take(paging.PageSize)
                 .ToListAsync();
 
-            var Dto = _mapper.Map<StudentStatusDto>(data);
+            var Dto = _mapper.Map<List<StudentStatusDto>>(data);
 
             return new GeneralResponse
             {

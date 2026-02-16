@@ -5,6 +5,7 @@ using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace EduReg.Services.Repositories
 {
@@ -13,29 +14,52 @@ namespace EduReg.Services.Repositories
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
         private readonly IEmailService _emailService;
+        private readonly IMapper _mapper;
 
-        public TicketingRepository(ApplicationDbContext context, RequestContext requestContext, IEmailService emailService)
+        public TicketingRepository(ApplicationDbContext context, RequestContext requestContext, IEmailService emailService, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
             _emailService = emailService;
+            _mapper = mapper;
         }
 
         public async Task<GeneralResponse> CreateTicketAsync(string institutionShortName, TicketDto dto)
         {
+            var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(a => a.MatricNumber == dto.MatricNumber && a.InstitutionShortName == _requestContext.InstitutionShortName);
+
+            if (dto == null)
+            {
+                return new GeneralResponse { StatusCode = 400, Message = "Request data is empty." };
+            }
+
+            if (string.IsNullOrWhiteSpace(dto.MessageBody))
+            {
+                return new GeneralResponse { StatusCode = 400, Message = "Message body is empty." };
+            }
+
+            if (student == null)
+            {
+                return new GeneralResponse { StatusCode = 404, Message = "Student with this Matric Number not found." };
+            }
+
+
+
             //. 1. Generate the Reference Number
             string refNumber = $"TIC-{DateTime.Now.Year}-{Guid.NewGuid().ToString().Substring(0, 5).ToUpper()}";
 
-           
 
-            var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(a => a.MatricNumber == dto.MatricNumber && a.InstitutionShortName == _requestContext.InstitutionShortName);
+            string fullName = $"{student.FirstName} {student.LastName}";
+
+
+
             // 2. Map DTO to Entity
             var ticket = new Ticketing
             {
                 MatricNumber = dto.MatricNumber,
               //  StudentId = dto.StudentId,
                 InstitutionShortName = _requestContext.InstitutionShortName,
-                StudentName = dto.StudentName,
+                StudentName = fullName,
                 Title = dto.Title,
                 MessageBody = dto.MessageBody,
                 ReferenceNumber = refNumber,
@@ -51,15 +75,17 @@ namespace EduReg.Services.Repositories
 
                 // 3. TODO: Email Notification to Student
                 string subject = "Ticket Received: " + refNumber;
-                string body = $"Hello {dto.StudentName}, your ticket '{dto.Title}' has been received. Your Ref is {refNumber}.";
+                string body = $"Hello {ticket.StudentName}, your ticket '{dto.Title}' has been received. Your Ref is {refNumber}.";
 
                 await _emailService.SendEmailAsync(student.Email, subject, body);
 
+
+                var ticketDto = _mapper.Map<TicketDto>(ticket);
                 return new GeneralResponse
                 {
                     StatusCode = 201,
                     Message = $"Ticket created successfully. Reference: {refNumber}",
-                    Data = ticket
+                    Data = ticketDto 
                 };
             }
             catch (Exception ex)
@@ -74,23 +100,32 @@ namespace EduReg.Services.Repositories
             if (ticket == null)
                 return new GeneralResponse { StatusCode = 404, Message = "Ticket not found." };
 
+            if (ticket.TicketStatus == "Closed")
+            {
+                return new GeneralResponse { StatusCode = 400, Message = "Ticket is already Closed" };
+            }
+
+            var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(a => a.MatricNumber == dto.MatricNumber && a.InstitutionShortName == _requestContext.InstitutionShortName);
+
             // Update fields
             ticket.ResponseBody = dto.ResponseBody;
-            ticket.TicketStatus = dto.TicketStatus; // Defaults to "Closed"
+            ticket.TicketStatus = "Closed"; 
             ticket.DateOfResponse = DateTime.Now;
 
             await _context.SaveChangesAsync();
 
-            // 4. TODO: Email Notification of Response
-            // string subject = "Update on Ticket: " + ticket.ReferenceNumber;
-            // string body = $"Hello {ticket.StudentName}, an admin has responded: {dto.ResponseBody}";
-            // await _emailService.SendEmailAsync(studentEmail, subject, body);
+            //4. TODO: Email Notification of Response
+             string subject = "Update on Ticket: " + ticket.ReferenceNumber;
+             string body = $"Hello {ticket.StudentName}, an admin has responded: {dto.ResponseBody}";
+            await _emailService.SendEmailAsync(student.Email, subject, body);
 
+            var Dto = _mapper.Map<RespondToTicketDto>(ticket);  
+            
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Response sent and ticket closed.",
-                Data = ticket
+                Data = Dto
             };
         }
 
@@ -99,13 +134,14 @@ namespace EduReg.Services.Repositories
             var ticket = await _context.Ticketing.FindAsync(id);
             if (ticket == null) return new GeneralResponse { StatusCode = 404, Message = "Ticket not found." };
 
-            return new GeneralResponse { StatusCode = 200, Data = ticket };
+            var Dto = _mapper.Map<GetTicketDto>(ticket);
+            return new GeneralResponse { StatusCode = 200, Data = Dto };
         }
 
         public async Task<GeneralResponse> GetAllTicketsAsync(string institutionShortName, TicketingFilter filter, PagingParameters paging)
         {
             var query = _context.Ticketing
-                .Where(x => x.InstitutionShortName == institutionShortName)
+                .Where(x => x.InstitutionShortName == _requestContext.InstitutionShortName)
                 .AsNoTracking()
                 .AsQueryable();
 
@@ -121,17 +157,29 @@ namespace EduReg.Services.Repositories
                                          x.ReferenceNumber.ToLower().Contains(search));
             }
 
-            var totalCount = await query.CountAsync();
+            var totalRecords = await query.CountAsync();
             var items = await query
                 .OrderByDescending(x => x.Created)
                 .Skip((paging.PageNumber - 1) * paging.PageSize)
                 .Take(paging.PageSize)
                 .ToListAsync();
 
+            var itemsDto = _mapper.Map<List<GetTicketDto>>(items);
+            
+
             return new GeneralResponse
             {
                 StatusCode = 200,
-                Data = new { TotalCount = totalCount, Items = items }
+                Data = itemsDto,
+                Meta = new
+                {
+                        paging.PageNumber,
+                        paging.PageSize,
+                        TotalRecords = totalRecords,
+                        TotalPages = totalRecords == 0
+                            ? 0
+                            : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
+                }
             };
         }
     }
