@@ -45,6 +45,7 @@ namespace EduReg.Utilities
             CreateMap<Programmes, ProgrammesDto>().ReverseMap();
             CreateMap<RegistrationsBusinessRules, RegistrationBusinessRulesDto>().ReverseMap();
             CreateMap<Students, StudentResponse>().ReverseMap();
+            CreateMap<Semesters, SemestersDto>().ReverseMap();
 
         }
     }
