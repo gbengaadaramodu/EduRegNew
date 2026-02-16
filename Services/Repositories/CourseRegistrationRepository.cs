@@ -56,6 +56,17 @@ namespace EduReg.Services.Repositories
                 //These are placeholders. Come and modify once architecture is sorted
                 var minimumUnits = 5;
                 var maximumUnits = 21;
+                //var programmeId 
+                //var courseMaxMin = await _context.CourseMaxMin.FirstOrDefaultAsync(x => x.InstitutionShortName == model.InstitutionShortName 
+                //                                                            && x.SemesterId == studentExists.CurrentSemesterId);
+
+                //if(courseMaxMin == null || courseMaxMin.MinimumUnits < 0 || courseMaxMin.MaximumUnits < 0)
+                //{
+                //    response.StatusCode = 400;
+                //    response.Message = "Minimum and maximun units not configured";
+
+                //    return response;
+                //}
 
                 var alreadyRegisteredCourses = await _context.CourseRegistrationDetails.Include(x => x.CourseSchedule).Where(x => x.CourseSchedule.SessionId == studentExists.CurrentSessionId && x.CourseSchedule.SemesterId == studentExists.CurrentSemesterId && x.StudentsId == studentExists.Id).ToListAsync();
                 var alreadyRegisteredCoursesScheduleIds = alreadyRegisteredCourses.Select(x=> x.CourseSchedule.Id).ToList();

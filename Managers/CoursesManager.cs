@@ -81,6 +81,22 @@ namespace EduReg.Managers
             return _departmentRepo.UploadDepartmentCourseAsync(model);
         }
 
+        public Task<GeneralResponse> UploadDepartmentCourseAsync(IFormFile fileUploaded)
+        {
+            if (fileUploaded == null || fileUploaded.Length == 0)
+            {
+                return Task.FromResult(new GeneralResponse
+                {
+                    StatusCode = 400,
+                    Message = "Invalid file upload",
+                    Data = null
+                });
+            }
+
+            return _departmentRepo.UploadDepartmentCourseAsync(fileUploaded);
+        }
+
+
         public Task<GeneralResponse> UpdateDepartmentCourseAsync(long Id, DepartmentCoursesDto model)
         {
             if (Id <= 0)

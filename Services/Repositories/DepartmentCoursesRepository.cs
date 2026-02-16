@@ -5,7 +5,10 @@ using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
+using EduReg.Utilities.FileUtility;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace EduReg.Services.Repositories
 {
@@ -14,12 +17,14 @@ namespace EduReg.Services.Repositories
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
         private readonly IMapper _mapper;
-        public DepartmentCoursesRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
+        private readonly IWebHostEnvironment _hostEnvironment;
+        public DepartmentCoursesRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper, IWebHostEnvironment hostEnvironment)
         {
             _context = context;
             _requestContext = requestContext;
             _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
             _mapper = mapper;
+            _hostEnvironment = hostEnvironment;
         }
 
         public async Task<GeneralResponse> CreateDepartmentCourseAsync(DepartmentCoursesDto model)
@@ -139,6 +144,191 @@ namespace EduReg.Services.Repositories
                 Message = "Upload functionality not yet implemented. Please use individual course creation.",
                 Data = null
             };
+        }
+
+        public async Task<GeneralResponse> UploadDepartmentCourseAsync(IFormFile fileUploaded)
+        {
+            // TODO: Implement Excel file parsing using EPPlus or similar library
+            // For now, return a placeholder response
+            try
+            {
+                if(fileUploaded != null)
+                {
+                    //where upload will be done.
+                    var file = new AttachmentModel();
+                    //reads a content of the file
+
+                    string folderPath = Path.Combine(_hostEnvironment.ContentRootPath, "FilledDocuments");
+                    //create folder if not existing
+                    Directory.CreateDirectory(folderPath);
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await fileUploaded.CopyToAsync(memoryStream);
+
+                        // Upload the file if less than 2 MB
+                        // if (memoryStream.Length < 2097152)
+                        if (memoryStream.Length < Convert.ToInt32(_config["FileSize"]))
+                        {
+                            file = new AttachmentModel()
+                            {
+                                FileName = fileUploaded.FileName,
+                                Format = fileUploaded.ContentType,
+                                Content = memoryStream.ToArray()
+                            };
+
+                            var fullpath = Path.Combine(_hostEnvironment.ContentRootPath, "FilledDocuments", file.FileName);
+
+                            //save the file
+                            //System.IO.File.WriteAllBytes(fullpath, file.Content);
+                            ByteToFile.SaveByteArrayToFile(file.Content, fullpath);
+
+                            //read the excel
+                            // ReadToExcel.ReadExcelFile(fullpath);
+                            var dataTable = ReadToExcel.GetDataTableFromExcelFile(fullpath, "");
+
+                            //Convert the datatable to list
+                            var member = new List<DepartmentCoursesUploadModel>();
+                            member = DataTableToList.ConvertDataTable<DepartmentCoursesUploadModel>(dataTable);
+                            if (member.Count > 0)
+                            {
+                                var response = await CreateDepartmentCourseForFileAsync(member);
+                                
+                                if (response.StatusCode == 400)
+                                {
+                                    return new GeneralResponse()
+                                    {
+                                        Message = response.Message,
+                                        StatusCode = 400
+                                    };
+                                }
+                                //if (errors.Count() > 0)
+                                if (response.StatusCode == 403)
+                                {
+                                    List<string> errors = (List<string>)response.Data;
+                                    var filename = "DepartmentCoursesErrorMessages.xlsx";
+
+                                    string folderPath2 = Path.Combine(_hostEnvironment.ContentRootPath, "Documents");
+
+                                    //create folder if not existing
+                                    Directory.CreateDirectory(folderPath2);
+
+                                    var fullpath2 = Path.Combine(_hostEnvironment.ContentRootPath, "Documents", filename);
+
+                                    WriteToExcel.WriteExcelFile(errors, fullpath2);
+
+                                    var provider = new FileExtensionContentTypeProvider();
+                                    if (!provider.TryGetContentType(fullpath2, out var contentType))
+                                    {
+                                        contentType = "application/octet-stream";
+                                    }
+
+                                    var bytes = await System.IO.File.ReadAllBytesAsync(fullpath2);
+
+                                    return new GeneralResponse
+                                    {
+                                        StatusCode = 201,
+                                        Data = new FileUploadErrorResponse
+                                        {
+                                            Bytes = bytes,
+                                            ContentType = contentType,
+                                            FilePath = fullpath2
+                                        },
+                                        Message = "Some deparment courses not uploaded"
+                                    };
+                                    //return File(bytes, contentType, Path.GetFileName(fullpath2));
+
+
+                                }
+
+                                return new GeneralResponse()
+                                {
+                                    //Data = response.member,
+                                    Message = "Successfully uploaded department courses",
+                                    StatusCode = 200
+                                };
+                            }
+                            else
+                            {
+                                return new GeneralResponse()
+                                {
+                                    Message = "No department course uploaded.",
+                                    StatusCode = 400
+                                };
+                            }
+                        }
+                        else
+                        {
+                            return new GeneralResponse()
+                            {
+                                Message = "The file upload is too large",
+                                StatusCode = 400
+                            };
+                        }
+                    }
+                }
+                else
+                {
+
+                    return new GeneralResponse()
+                    {
+                        Message = "Kindly upload Document to continue",
+                        StatusCode = 400
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return new GeneralResponse
+                {
+                    StatusCode = 501,
+                    Message = "Upload functionality not yet implemented. Please use individual course creation.",
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<GeneralResponse> CreateDepartmentCourseForFileAsync(List<DepartmentCoursesUploadModel> models)
+        {
+            try
+            {
+                var entities = models.Select(model => new DepartmentCourses
+                {
+                    InstitutionShortName = _requestContext.InstitutionShortName,
+                    DepartmentCode = model.DepartmentCode,
+                    CourseCode = model.CourseCode,
+                    Title = model.Title,
+                    Units = model.Units,
+                    CourseType = model.CourseType,
+                    //Prerequisite = model.Prerequisite,
+                    Description = model.Description,
+                    //CreatedBy = model.CreatedBy,
+                    //Created = model.Created,
+                    //ActiveStatus = model.ActiveStatus
+                }).ToList();
+
+                await _context.DepartmentCourses.AddRangeAsync(entities);
+                await _context.SaveChangesAsync();
+
+                var departmentCoursesDtos = _mapper.Map<List<DepartmentCoursesDto>>(entities);
+
+                return new GeneralResponse
+                {
+                    StatusCode = 201,
+                    Message = "Department courses created successfully.",
+                    Data = departmentCoursesDtos
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 500,
+                    Message = $"An error occurred: {ex.Message}",
+                    Data = null
+                };
+            }
         }
 
         public async Task<GeneralResponse> UpdateDepartmentCourseAsync(long id, DepartmentCoursesDto model)
