@@ -20,7 +20,7 @@ namespace EduReg.Controllers
             _manager = manager;
         }
 
-        // POST: api/Institutions/CreateInstitution
+   
         [HttpPost("CreateInstitution")]
         public async Task<IActionResult> CreateInstitution([FromBody] InstitutionsDto model)
         {
@@ -28,7 +28,7 @@ namespace EduReg.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        // PUT: api/Institutions/UpdateInstitution/5
+       
         [HttpPut("UpdateInstitution/{id}")]
         public async Task<IActionResult> UpdateInstitution(int id, [FromBody] UpdateInstitutionsDto model)
         {
@@ -43,7 +43,7 @@ namespace EduReg.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        // DELETE: api/Institutions/DeleteInstitution/5
+        
         [HttpDelete("DeleteInstitution/{id}")]
         public async Task<IActionResult> DeleteInstitution(int id)
         {
@@ -51,7 +51,7 @@ namespace EduReg.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        // GET: api/Institutions/GetInstitutionById/5
+       
         [HttpGet("GetInstitutionById/{id}")]
         public async Task<IActionResult> GetInstitutionById(int id)
         {
@@ -59,7 +59,7 @@ namespace EduReg.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        // GET: api/Institutions/GetInstitutionByShortName/ABC123
+      
         [HttpGet("GetInstitutionByShortName/{shortName}")]
         public async Task<IActionResult> GetInstitutionByShortName(string shortName)
         {
@@ -67,7 +67,7 @@ namespace EduReg.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        // GET: api/Institutions/GetAllInstitutions
+      
         [HttpGet("GetAllInstitutions")]
         public async Task<IActionResult> GetAllInstitutions([FromQuery] PagingParameters paging, [FromQuery] InstitutionFilter filter)
         {

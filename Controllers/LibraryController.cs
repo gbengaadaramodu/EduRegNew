@@ -21,16 +21,10 @@ namespace EduReg.Controllers
             _requestContext = requestContext;
         }
 
-        /// <summary>
-        /// Upload a new resource to E-Library
-        /// </summary>
-        /// <param name="model">Resource details with file</param>
-        /// <returns>Created resource</returns>
+  
         [HttpPost]
         [Route("UploadResource")]
-        [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(500)]
+      
         public async Task<IActionResult> UploadResource([FromForm] CreateELibraryDto model)
         {
            // var institutionShortName = _requestContext.InstitutionShortName;
@@ -41,7 +35,7 @@ namespace EduReg.Controllers
        
         [HttpGet]
         [Route("GetAllResources")]
-        [ProducesResponseType(200)]
+      
         public async Task<IActionResult> GetAllResources(
             [FromQuery] PagingParameters paging,
             [FromQuery] ELibraryFilter filter)
@@ -52,8 +46,7 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetResource/{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
+   
         public async Task<IActionResult> GetResource(long id)
         {
             var response = await _manager.GetELibraryByIdAsync(id);
@@ -63,10 +56,7 @@ namespace EduReg.Controllers
       
         [HttpPut]
         [Route("UpdateResource/{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(500)]
+      
         public async Task<IActionResult> UpdateResource(long id, [FromForm] UpdateELibraryDto model)
         {
             var response = await _manager.UpdateELibraryAsync(id, model);
@@ -76,8 +66,7 @@ namespace EduReg.Controllers
      
         [HttpDelete]
         [Route("DeleteResource/{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
+   
         public async Task<IActionResult> DeleteResource(long id)
         {
             var response = await _manager.DeleteELibraryAsync(id);
