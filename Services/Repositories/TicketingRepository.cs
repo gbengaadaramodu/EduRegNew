@@ -25,11 +25,15 @@ namespace EduReg.Services.Repositories
         {
             //. 1. Generate the Reference Number
             string refNumber = $"TIC-{DateTime.Now.Year}-{Guid.NewGuid().ToString().Substring(0, 5).ToUpper()}";
-            var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(a => a.ApplicantId == dto.ApplicantId && a.InstitutionShortName == _requestContext.InstitutionShortName);
+
+           
+
+            var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(a => a.MatricNumber == dto.MatricNumber && a.InstitutionShortName == _requestContext.InstitutionShortName);
             // 2. Map DTO to Entity
             var ticket = new Ticketing
             {
-                ApplicantId = student.ApplicantId,
+                MatricNumber = dto.MatricNumber,
+              //  StudentId = dto.StudentId,
                 InstitutionShortName = _requestContext.InstitutionShortName,
                 StudentName = dto.StudentName,
                 Title = dto.Title,
