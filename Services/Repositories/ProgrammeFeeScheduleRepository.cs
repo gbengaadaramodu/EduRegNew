@@ -5,6 +5,7 @@ using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace EduReg.Services.Repositories
 {
@@ -12,20 +13,24 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly IMapper _mapper;
 
-        public ProgrammeFeeScheduleRepository(ApplicationDbContext context, RequestContext requestContext)
+        public ProgrammeFeeScheduleRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
         public async Task<GeneralResponse> GenerateProgrammeFeeSchedulesAsync(string institutionShortName, AcademicContextDto model)
+
+
         {
             var feeItems = await _context.FeeItem
-                .Where(f => f.InstitutionShortName == model.InstitutionShortName)
+                .Where(f => f.InstitutionShortName == _requestContext.InstitutionShortName)
                 .ToListAsync();
 
             var programmes = await _context.Programmes
-                .Where(p => p.InstitutionShortName == model.InstitutionShortName)
+                .Where(p => p.InstitutionShortName == _requestContext.InstitutionShortName)
                 .ToListAsync();
 
             var newSchedules = new List<ProgrammeFeeSchedule>();
@@ -67,24 +72,26 @@ namespace EduReg.Services.Repositories
             _context.ProgrammeFeeSchedule.AddRange(newSchedules);
             await _context.SaveChangesAsync();
 
+            var newScheduleDtos = _mapper.Map<List<ProgrammeFeeScheduleDto>>(newSchedules);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = $"{newSchedules.Count} Programme Fee Schedules generated successfully.",
-                Data = newSchedules
+                Data = newScheduleDtos
             };
         }
 
         public async Task<GeneralResponse> CreateProgrammeFeeScheduleAsync(ProgrammeFeeScheduleDto model)
         {
-            if (string.IsNullOrWhiteSpace(model.InstitutionShortName))
-                return new GeneralResponse { StatusCode = 400, Message = "InstitutionShortName is required." };
+            //if (string.IsNullOrWhiteSpace(model.InstitutionShortName))
+            //    return new GeneralResponse { StatusCode = 400, Message = "InstitutionShortName is required." };
 
             if (model.FeeItemId <= 0)
                 return new GeneralResponse { StatusCode = 400, Message = "FeeItemId is required." };
 
             var exists = await _context.ProgrammeFeeSchedule.AnyAsync(p =>
-                p.InstitutionShortName == model.InstitutionShortName &&
+                p.InstitutionShortName == _requestContext.InstitutionShortName &&
                 p.ProgrammeCode == model.ProgrammeCode &&
                 p.SessionId == model.SessionId &&
                 p.SemesterId == model.SemesterId &&
@@ -95,7 +102,7 @@ namespace EduReg.Services.Repositories
 
             var entity = new ProgrammeFeeSchedule
             {
-                InstitutionShortName = model.InstitutionShortName,
+                InstitutionShortName = _requestContext.InstitutionShortName,
                 DepartmentCode = model.DepartmentCode,
                 ProgrammeCode = model.ProgrammeCode,
                 SessionId = model.SessionId,
@@ -111,13 +118,15 @@ namespace EduReg.Services.Repositories
             _context.ProgrammeFeeSchedule.Add(entity);
             await _context.SaveChangesAsync();
 
-            return new GeneralResponse { StatusCode = 201, Message = "Created successfully.", Data = entity };
+            var entityDto = _mapper.Map<ProgrammeFeeScheduleDto>(entity);
+
+            return new GeneralResponse { StatusCode = 201, Message = "Created successfully.", Data = entityDto };
         }
 
         public async Task<GeneralResponse> UpdateProgrammeFeeScheduleAsync(long id, ProgrammeFeeScheduleDto model)
         {
             var entity = await _context.ProgrammeFeeSchedule
-                .FirstOrDefaultAsync(p => p.Id == id && p.InstitutionShortName == model.InstitutionShortName);
+                .FirstOrDefaultAsync(p => p.Id == id && p.InstitutionShortName == _requestContext.InstitutionShortName);
 
             if (entity == null)
                 return new GeneralResponse { StatusCode = 404, Message = "Record not found." };
@@ -135,13 +144,15 @@ namespace EduReg.Services.Repositories
             _context.ProgrammeFeeSchedule.Update(entity);
             await _context.SaveChangesAsync();
 
-            return new GeneralResponse { StatusCode = 200, Message = "Updated successfully.", Data = entity };
+            var entityDto = _mapper.Map<ProgrammeFeeScheduleDto>(entity);
+
+            return new GeneralResponse { StatusCode = 200, Message = "Updated successfully.", Data = entityDto };
         }
 
         public async Task<GeneralResponse> DeleteProgrammeFeeScheduleAsync(long id, string institutionShortName)
         {
             var entity = await _context.ProgrammeFeeSchedule
-                .FirstOrDefaultAsync(p => p.Id == id && p.InstitutionShortName == institutionShortName);
+                .FirstOrDefaultAsync(p => p.Id == id && p.InstitutionShortName == _requestContext.InstitutionShortName);
 
             if (entity == null)
                 return new GeneralResponse { StatusCode = 404, Message = "Record not found." };
@@ -158,12 +169,14 @@ namespace EduReg.Services.Repositories
                 .Include(p => p.FeeItem)
                 .Include(p => p.FeeRule)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.Id == id && p.InstitutionShortName == institutionShortName);
+                .FirstOrDefaultAsync(p => p.Id == id && p.InstitutionShortName == _requestContext.InstitutionShortName);
 
             if (entity == null)
                 return new GeneralResponse { StatusCode = 404, Message = "Not found." };
 
-            return new GeneralResponse { StatusCode = 200, Message = "Retrieved successfully.", Data = entity };
+            var entityDto = _mapper.Map<ProgrammeFeeScheduleDto>(entity);
+
+            return new GeneralResponse { StatusCode = 200, Message = "Retrieved successfully.", Data = entityDto };
         }
 
         public async Task<GeneralResponse> GetAllProgrammeFeeSchedulesAsync(string institutionShortName,PagingParameters paging,ProgrammeFeeScheduleFilter? filter)
@@ -177,7 +190,7 @@ namespace EduReg.Services.Repositories
                     .AsQueryable();
 
                 // Mandatory InstitutionShortName filter
-                query = query.Where(x => x.InstitutionShortName == institutionShortName);
+                query = query.Where(x => x.InstitutionShortName == _requestContext.InstitutionShortName);
 
                 // Apply optional filters from the filter object
                 if (filter != null)
@@ -226,13 +239,15 @@ namespace EduReg.Services.Repositories
                     .Take(paging.PageSize)
                     .ToListAsync();
 
+                var pagedDataDto = _mapper.Map<List<ProgrammeFeeScheduleDto>>(pagedData);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = totalRecords == 0
                         ? "No programme fee schedules found."
                         : "Programme fee schedules retrieved successfully.",
-                    Data = pagedData,
+                    Data = pagedDataDto,
                     Meta = new
                     {
                         paging.PageNumber,
@@ -260,25 +275,29 @@ namespace EduReg.Services.Repositories
         public async Task<GeneralResponse> GetProgrammeFeeSchedulesByProgrammeAsync(string institutionShortName, string programmeCode)
         {
             var list = await _context.ProgrammeFeeSchedule
-                .Where(p => p.InstitutionShortName == institutionShortName && p.ProgrammeCode == programmeCode)
+                .Where(p => p.InstitutionShortName == _requestContext.InstitutionShortName && p.ProgrammeCode == programmeCode)
                 .Include(p => p.FeeItem)
                 .Include(p => p.FeeRule)
                 .AsNoTracking()
                 .ToListAsync();
 
-            return new GeneralResponse { StatusCode = 200, Message = "Programme Fee Schedules retrieved successfully.", Data = list };
+            var listDto = _mapper.Map<List<ProgrammeFeeScheduleDto>>(list);
+
+            return new GeneralResponse { StatusCode = 200, Message = "Programme Fee Schedules retrieved successfully.", Data = listDto };
         }
 
         public async Task<GeneralResponse> GetProgrammeFeeSchedulesByFeeItemAsync(string institutionShortName, int feeItemId)
         {
             var list = await _context.ProgrammeFeeSchedule
-                .Where(p => p.InstitutionShortName == institutionShortName && p.FeeItemId == feeItemId)
+                .Where(p => p.InstitutionShortName == _requestContext.InstitutionShortName && p.FeeItemId == feeItemId)
                 .Include(p => p.FeeItem)
                 .Include(p => p.FeeRule)
                 .AsNoTracking()
                 .ToListAsync();
 
-            return new GeneralResponse { StatusCode = 200, Message = "FeeItem-based Programme Fee Schedules retrieved successfully.", Data = list };
+            var listDto = _mapper.Map<List<ProgrammeFeeScheduleDto>>(list);
+
+            return new GeneralResponse { StatusCode = 200, Message = "FeeItem-based Programme Fee Schedules retrieved successfully.", Data = listDto };
         }
     }
 }

@@ -17,11 +17,12 @@ namespace EduReg.Services.Repositories
         private readonly IMapper _mapper;
 
 
-        public ProgramCoursesRepository(ApplicationDbContext context, RequestContext requestContext)
+        public ProgramCoursesRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
             _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
+            _mapper = mapper;
         }
 
         public async Task<GeneralResponse> AssignCoursesToProgramsAsync(string departmentShortName, ProgramCoursesDto model)
@@ -361,13 +362,15 @@ namespace EduReg.Services.Repositories
                 .Take(paging.PageSize)
                 .ToListAsync();
 
+            var coursesDto = _mapper.Map<ProgramCoursesDto>(courses);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = totalRecords == 0
                     ? "No program courses found"
                     : "Program courses retrieved successfully",
-                Data = courses,
+                Data = coursesDto,
                 Meta = new
                 {
                     paging.PageNumber,

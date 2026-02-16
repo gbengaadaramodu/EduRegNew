@@ -4,6 +4,9 @@
     {
         // Request Fields (Student)
         public string StudentName { get; set; }
+        public string MatricNumber { get; set; }
+
+       // public string StudentId { get; set; }
         public string Title { get; set; }
         public string MessageBody { get; set; }
         public string ReferenceNumber { get; set; } // Generated: e.g., TIC-2026-A1B2

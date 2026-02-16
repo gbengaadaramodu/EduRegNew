@@ -198,7 +198,7 @@ namespace EduReg.Services.Repositories
             try
             {
                 model.InstitutionShortName = _requestContext.InstitutionShortName;
-                var courseRegistrationQuery = _context.CourseRegistrations/*.Include(x => x.CourseSchedule)*/.AsQueryable();
+                var courseRegistrationQuery = _context.CourseRegistrations.AsNoTracking()/*.Include(x => x.CourseSchedule)*/.AsQueryable();
                 if(!string.IsNullOrWhiteSpace(model.MatricNo))
                 {
                     var studentExists = await _context.Students.FirstOrDefaultAsync(x => x.MatricNumber.ToLower() == model.MatricNo.ToLower() && x.InstitutionShortName.ToLower() == model.InstitutionShortName.ToLower());

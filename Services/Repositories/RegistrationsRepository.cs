@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace EduReg.Services.Repositories
 {
@@ -17,12 +18,14 @@ namespace EduReg.Services.Repositories
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
         private readonly IRegistrationsBusinessRules _rulesRepo;
+        private readonly IMapper _mapper;
 
-        public RegistrationsRepository(ApplicationDbContext context, IRegistrationsBusinessRules rulesRepo, RequestContext requestContext)
+        public RegistrationsRepository(ApplicationDbContext context, IRegistrationsBusinessRules rulesRepo, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _rulesRepo = rulesRepo;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
 
         /// <summary>

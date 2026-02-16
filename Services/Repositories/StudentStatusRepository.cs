@@ -1,10 +1,12 @@
-﻿using EduReg.Common;
+﻿using AutoMapper;
+using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EduReg.Services.Repositories
 {
@@ -12,18 +14,20 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly IMapper _mapper;
 
-        public StudentStatusRepository(ApplicationDbContext context, RequestContext requestContext)
+        public StudentStatusRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
 
         public async Task<GeneralResponse> CreateStudentStatusAsync(StudentStatusDto model)
         {
             var exists = await _context.StudentStatuses
                 .AnyAsync(x => x.Name.ToLower() == model.Name.ToLower() &&
-                               x.InstitutionShortName == model.InstitutionShortName);
+                               x.InstitutionShortName == _requestContext.InstitutionShortName);
 
             if (exists)
             {
@@ -34,7 +38,7 @@ namespace EduReg.Services.Repositories
             {
                 Name = model.Name,
                 IsActive = model.IsActive,
-                InstitutionShortName = model.InstitutionShortName,
+                InstitutionShortName = _requestContext.InstitutionShortName,
                 Created = DateTime.Now,
                 CreatedBy = model.CreatedBy,
                 ActiveStatus = model.ActiveStatus
@@ -43,7 +47,9 @@ namespace EduReg.Services.Repositories
             _context.StudentStatuses.Add(status);
             await _context.SaveChangesAsync();
 
-            return new GeneralResponse { StatusCode = 200, Message = "Created successfully.", Data = status };
+            var statusDto = _mapper.Map<StudentStatusDto>(status);
+
+            return new GeneralResponse { StatusCode = 200, Message = "Created successfully.", Data = statusDto };
         }
 
         public async Task<GeneralResponse> GetAllStudentStatusAsync(PagingParameters paging, string? institutionShortName = null)
@@ -61,11 +67,13 @@ namespace EduReg.Services.Repositories
                 .Take(paging.PageSize)
                 .ToListAsync();
 
+            var Dto = _mapper.Map<StudentStatusDto>(data);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Success",
-                Data = data,
+                Data = Dto,
                 Meta = new
                 {
                     paging.PageNumber,
@@ -78,15 +86,17 @@ namespace EduReg.Services.Repositories
 
         public async Task<GeneralResponse> GetStudentStatusByIdAsync(long id)
         {
-            var item = await _context.StudentStatuses.FindAsync(id);
+            var item = await _context.StudentStatuses.FirstOrDefaultAsync(x => x.Id == id && x.InstitutionShortName == _requestContext.InstitutionShortName);
             if (item == null) return new GeneralResponse { StatusCode = 404, Message = "Not found." };
 
-            return new GeneralResponse { StatusCode = 200, Message = "Success", Data = item };
+            var Dto = _mapper.Map<StudentStatusDto>(item);
+
+            return new GeneralResponse { StatusCode = 200, Message = "Success", Data = Dto };
         }
 
         public async Task<GeneralResponse> UpdateStudentStatusAsync(long id, StudentStatusDto model)
         {
-            var existing = await _context.StudentStatuses.FindAsync(id);
+            var existing = await _context.StudentStatuses.FirstOrDefaultAsync(x=>x.Id == id && x.InstitutionShortName == _requestContext.InstitutionShortName);
             if (existing == null) return new GeneralResponse { StatusCode = 404, Message = "Not found." };
 
             existing.Name = model.Name;
@@ -94,12 +104,14 @@ namespace EduReg.Services.Repositories
             existing.ActiveStatus = model.ActiveStatus;
 
             await _context.SaveChangesAsync();
-            return new GeneralResponse { StatusCode = 200, Message = "Updated successfully.", Data = existing };
+
+            var Dto = _mapper.Map<StudentStatusDto>(existing);
+            return new GeneralResponse { StatusCode = 200, Message = "Updated successfully.", Data = Dto};
         }
 
         public async Task<GeneralResponse> DeleteStudentStatusAsync(long id)
         {
-            var item = await _context.StudentStatuses.FindAsync(id);
+            var item = await _context.StudentStatuses.FirstOrDefaultAsync(x => x.Id == id && x.InstitutionShortName == _requestContext.InstitutionShortName);
             if (item == null) return new GeneralResponse { StatusCode = 404, Message = "Not found." };
 
             _context.StudentStatuses.Remove(item);

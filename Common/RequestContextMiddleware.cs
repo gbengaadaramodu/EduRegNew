@@ -1,4 +1,5 @@
 ﻿using EduReg.Common.Attributes;
+using EduReg.Models.Dto;
 using EduReg.Services.Interfaces;
 using EduReg.Services.Repositories;
 using Microsoft.Net.Http.Headers;
@@ -62,7 +63,7 @@ namespace EduReg.Common
 
             // Store in RequestContext for downstream usage
             requestContext.InstitutionShortName = institutionShortName.ToUpper();
-            requestContext.Institution = (Models.Entities.Institutions)institution.Data;
+            requestContext.Institution = (InstitutionsDto)institution.Data;
 
             await _next(context);
         }

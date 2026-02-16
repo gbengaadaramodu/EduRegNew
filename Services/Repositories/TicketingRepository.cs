@@ -12,12 +12,13 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
-        // private readonly IEmailService _emailService; // Ill Inject this when ready
+        private readonly IEmailService _emailService;
 
-        public TicketingRepository(ApplicationDbContext context, RequestContext requestContext)
+        public TicketingRepository(ApplicationDbContext context, RequestContext requestContext, IEmailService emailService)
         {
             _context = context;
             _requestContext = requestContext;
+            _emailService = emailService;
         }
 
         public async Task<GeneralResponse> CreateTicketAsync(string institutionShortName, TicketDto dto)
@@ -25,10 +26,15 @@ namespace EduReg.Services.Repositories
             //. 1. Generate the Reference Number
             string refNumber = $"TIC-{DateTime.Now.Year}-{Guid.NewGuid().ToString().Substring(0, 5).ToUpper()}";
 
+           
+
+            var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(a => a.MatricNumber == dto.MatricNumber && a.InstitutionShortName == _requestContext.InstitutionShortName);
             // 2. Map DTO to Entity
             var ticket = new Ticketing
             {
-                InstitutionShortName = institutionShortName,
+                MatricNumber = dto.MatricNumber,
+              //  StudentId = dto.StudentId,
+                InstitutionShortName = _requestContext.InstitutionShortName,
                 StudentName = dto.StudentName,
                 Title = dto.Title,
                 MessageBody = dto.MessageBody,
@@ -44,10 +50,10 @@ namespace EduReg.Services.Repositories
                 await _context.SaveChangesAsync();
 
                 // 3. TODO: Email Notification to Student
-                //string subject = "Ticket Received: " + refNumber;
-                //string body = $"Hello {dto.StudentName}, your ticket '{dto.Title}' has been received. Your Ref is {refNumber}.";
+                string subject = "Ticket Received: " + refNumber;
+                string body = $"Hello {dto.StudentName}, your ticket '{dto.Title}' has been received. Your Ref is {refNumber}.";
 
-                //await _emailService.SendEmailAsync(studentEmail, subject, body);
+                await _emailService.SendEmailAsync(student.Email, subject, body);
 
                 return new GeneralResponse
                 {
