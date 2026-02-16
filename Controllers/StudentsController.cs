@@ -90,7 +90,7 @@ namespace EduReg.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [HttpPut] // Using HttpPut for updates
+        [HttpPut] 
         [Route("UpdateStudentRecords/{id}")]
         public async Task<IActionResult> UpdateStudentRecords(string id, [FromBody] UpdateStudentRecordsDto model)
         {

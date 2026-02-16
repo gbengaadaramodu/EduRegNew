@@ -1,5 +1,6 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Entities;
 
 namespace EduReg.Services.Interfaces
 {

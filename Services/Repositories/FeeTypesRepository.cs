@@ -1,4 +1,5 @@
-﻿using EduReg.Common;
+﻿using AutoMapper;
+using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
@@ -12,17 +13,19 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly IMapper _mapper;
 
-        public FeeTypeRepository(ApplicationDbContext context, RequestContext requestContext)
+        public FeeTypeRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
 
         public async Task<GeneralResponse> CreateFeeTypeAsync(FeeTypeDto model)
         {
             var exists = await _context.FeeTypes.AnyAsync(x => x.Name == model.Name &&
-                                                              x.InstitutionShortName == model.InstitutionShortName);
+                                                              x.InstitutionShortName == _requestContext.InstitutionShortName);
             if (exists)
             {
                 return new GeneralResponse { StatusCode = 400, Message = "Fee Type already exists." };
@@ -32,7 +35,7 @@ namespace EduReg.Services.Repositories
             {
                 Name = model.Name,
                 Description = model.Description,
-                InstitutionShortName = model.InstitutionShortName,
+                InstitutionShortName = _requestContext.InstitutionShortName,
                 IsSystemDefined = model.IsSystemDefined,
                 ActiveStatus = model.ActiveStatus,
                 CreatedBy = model.CreatedBy,
@@ -42,17 +45,19 @@ namespace EduReg.Services.Repositories
             _context.FeeTypes.Add(feeType);
             await _context.SaveChangesAsync();
 
-            return new GeneralResponse { StatusCode = 200, Message = "Created successfully.", Data = feeType };
+            var feeTypeDto = _mapper.Map<FeeTypeDto>(feeType);
+
+            return new GeneralResponse { StatusCode = 200, Message = "Created successfully.", Data = feeTypeDto };
         }
 
         public async Task<GeneralResponse> GetAllFeeTypesAsync(PagingParameters paging, string? institutionShortName = null)
         {
             var query = _context.FeeTypes.AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(institutionShortName))
-            {
-                query = query.Where(x => x.InstitutionShortName == institutionShortName);
-            }
+            
+            
+                query = query.Where(x => x.InstitutionShortName == _requestContext.InstitutionShortName);
+            
 
             var totalRecords = await query.CountAsync();
             var data = await query
@@ -61,11 +66,13 @@ namespace EduReg.Services.Repositories
                 .Take(paging.PageSize)
                 .ToListAsync();
 
+            var dataDto = _mapper.Map<List<FeeTypeDto>>(data);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Success",
-                Data = data,
+                Data = dataDto,
                 Meta = new
                 {
                     paging.PageNumber,
@@ -78,31 +85,35 @@ namespace EduReg.Services.Repositories
 
         public async Task<GeneralResponse> GetFeeTypeByIdAsync(long id)
         {
-            var item = await _context.FeeTypes.FindAsync(id);
+            var item = await _context.FeeTypes.FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == _requestContext.InstitutionShortName);
             if (item == null) return new GeneralResponse { StatusCode = 404, Message = "Not found." };
 
-            return new GeneralResponse { StatusCode = 200, Message = "Success", Data = item };
+            var itemDto = _mapper.Map<FeeTypeDto>(item);
+
+            return new GeneralResponse { StatusCode = 200, Message = "Success", Data = itemDto };
         }
 
         public async Task<GeneralResponse> UpdateFeeTypeAsync(long id, FeeTypeDto model)
         {
-            var existingItem = await _context.FeeTypes.FindAsync(id);
+            var existingItem = await _context.FeeTypes.FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == _requestContext.InstitutionShortName);
             if (existingItem == null) return new GeneralResponse { StatusCode = 404, Message = "Not found." };
 
             if (existingItem.IsSystemDefined)
-                return new GeneralResponse { StatusCode = 403, Message = "System-defined items cannot be updated." };
+            return new GeneralResponse { StatusCode = 403, Message = "System-defined items cannot be updated." };
 
             existingItem.Name = model.Name;
             existingItem.Description = model.Description;
             existingItem.ActiveStatus = model.ActiveStatus;
 
             await _context.SaveChangesAsync();
-            return new GeneralResponse { StatusCode = 200, Message = "Updated successfully.", Data = existingItem };
+
+            var itemDto = _mapper.Map<FeeTypeDto>(existingItem);
+            return new GeneralResponse { StatusCode = 200, Message = "Updated successfully.", Data = itemDto };
         }
 
         public async Task<GeneralResponse> DeleteFeeTypeAsync(long id)
         {
-            var item = await _context.FeeTypes.FindAsync(id);
+            var item = await _context.FeeTypes.FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == _requestContext.InstitutionShortName);
             if (item == null) return new GeneralResponse { StatusCode = 404, Message = "Not found." };
 
             if (item.IsSystemDefined)

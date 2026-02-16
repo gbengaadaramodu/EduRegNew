@@ -2,7 +2,7 @@
 {
     public class ProgrammeFeeScheduleFilter
     {
-        public string? InstitutionShortName { get; set; }
+        //public string? InstitutionShortName { get; set; }
 
         public string? DepartmentCode { get; set; }
         public string? ProgrammeCode { get; set; }

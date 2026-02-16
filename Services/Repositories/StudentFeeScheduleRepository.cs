@@ -21,7 +21,7 @@ namespace EduReg.Services.Repositories
             var programmeSchedule = await _context.ProgrammeFeeSchedule
                 .Include(p => p.FeeItem)
                 .FirstOrDefaultAsync(p =>
-                    p.InstitutionShortName == institutionShortName &&
+                    p.InstitutionShortName == _requestContext.InstitutionShortName &&
                     p.ProgrammeCode == model.ProgrammeCode &&
                     p.SessionId == model.SessionId);
 
@@ -31,7 +31,7 @@ namespace EduReg.Services.Repositories
 
             // Fetch all students in this programme
             var students = await _context.Students
-                .Where(s => s.InstitutionShortName == institutionShortName &&
+                .Where(s => s.InstitutionShortName == _requestContext.InstitutionShortName&&
                             s.ProgrammeCode == model.ProgrammeCode)
                 .ToListAsync();
 
@@ -48,7 +48,7 @@ namespace EduReg.Services.Repositories
 
                 var studentSchedule = new StudentFeeSchedule
                 {
-                    InstitutionShortName = institutionShortName,
+                    InstitutionShortName = _requestContext.InstitutionShortName,
                     MatricNumber = student.MatricNumber, // UNIQUE IDENTIFIER
                     ProgrammeCode = model.ProgrammeCode,
                     SessionId = model.SessionId,

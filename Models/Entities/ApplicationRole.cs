@@ -1,4 +1,4 @@
-﻿namespace EduReg.Models.Dto
+﻿namespace EduReg.Models.Entities
 {
     public class RoleName
     {

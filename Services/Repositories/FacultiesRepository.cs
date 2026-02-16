@@ -1,4 +1,5 @@
-﻿using EduReg.Common;
+﻿using AutoMapper;
+using EduReg.Common;
 using EduReg.Controllers;
 using EduReg.Data;
 using EduReg.Models.Dto;
@@ -13,10 +14,12 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
-        public FacultiesRepository(ApplicationDbContext context, RequestContext requestContext)
+        private readonly IMapper _mapper;
+        public FacultiesRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
         public async Task<GeneralResponse> CreateFacultyAsync(FacultiesDto model)
         {
@@ -33,10 +36,13 @@ namespace EduReg.Services.Repositories
                 _context.Faculties.Add(faculties);
                 await _context.SaveChangesAsync();
 
+                var facultyDto = _mapper.Map<FacultiesDto>(faculties);
+
                 response.StatusCode = 200;
                 response.Message = "New Faculty created successfully";
-                response.Data = faculties;
+                response.Data = facultyDto;
             }
+
             catch (Exception ex)
             {
                 response.StatusCode = 500;
@@ -69,11 +75,13 @@ namespace EduReg.Services.Repositories
 
                 await _context.SaveChangesAsync();
 
+                var facultyDto = _mapper.Map<FacultiesDto>(faculty);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = "Faculty updated successfully",
-                    Data = faculty
+                    Data = facultyDto
                 };
             }
             catch (Exception ex)
@@ -108,7 +116,7 @@ namespace EduReg.Services.Repositories
                 {
                     StatusCode = 200,
                     Message = "Faculty deleted successfully",
-                    Data = Faculty
+                    Data = null
                 };
 
             }
@@ -147,13 +155,15 @@ namespace EduReg.Services.Repositories
                 .Take(paging.PageSize)
                 .ToListAsync();
 
+            var facultiesDto = _mapper.Map<List<FacultiesDto>>(pagedList);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = totalRecords == 0
                     ? "No faculties found."
                     : "Faculties retrieved successfully.",
-                Data = pagedList,
+                Data = facultiesDto,
                 Meta = new
                 {
                     paging.PageNumber,
@@ -180,11 +190,13 @@ namespace EduReg.Services.Repositories
                         Data = null
                     };
                 }
+
+                var facultyDto = _mapper.Map<FacultiesDto>(faculty);
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = $"Faculty with ID {Id} retrieved successfully",
-                    Data = faculty
+                    Data = facultyDto
                 };
             }
             catch (Exception ex)
@@ -222,11 +234,14 @@ namespace EduReg.Services.Repositories
                         Data = null
                     };
                 }
+
+                var facultyDto = _mapper.Map<FacultiesDto>(faculty);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = $"Faculty with code {facultyCode} retrieved successfully",
-                    Data = faculty
+                    Data = facultyDto
                 };
             }
             catch (Exception ex)

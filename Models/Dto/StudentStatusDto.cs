@@ -7,8 +7,8 @@ namespace EduReg.Models.Dto
         [Required]
         public string Name { get; set; } = null!;
 
-        [Required]
-        public string InstitutionShortName { get; set; } = null!;
+        //[Required]
+        //public string InstitutionShortName { get; set; } = null!;
 
         public bool IsActive { get; set; } = true;
     }

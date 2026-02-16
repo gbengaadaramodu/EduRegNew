@@ -1,4 +1,5 @@
-﻿using EduReg.Common;
+﻿using AutoMapper;
+using EduReg.Common;
 using EduReg.Data;
 using EduReg.Models.Dto;
 using EduReg.Models.Dto.Request;
@@ -12,11 +13,13 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly IMapper _mapper;
 
-        public FeeRulesRepository(ApplicationDbContext context, RequestContext requestContext)
+        public FeeRulesRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
 
         public async Task<GeneralResponse> CreateFeeRuleAsync(FeeRuleDto model, string institutionShortName)
@@ -25,8 +28,8 @@ namespace EduReg.Services.Repositories
             {
                 var entity = new FeeRule
                 {
-                    FeeItemId = model.FeeItemId,
-                    InstitutionShortName = institutionShortName,
+                    Id = model.Id,
+                    InstitutionShortName = _requestContext.InstitutionShortName,
                     ProgrammeCode = model.ProgrammeCode,
                     DepartmentCode = model.DepartmentCode,
                     LevelName = model.LevelName,
@@ -46,7 +49,12 @@ namespace EduReg.Services.Repositories
                 _context.FeeRule.Add(entity);
                 await _context.SaveChangesAsync();
 
-                return new GeneralResponse { StatusCode = 200, Message = "Fee rules created successfully.", Data = entity };
+                var Dto = _mapper.Map<FeeRuleDto>(entity);
+
+                return new GeneralResponse {
+                    StatusCode = 200,
+                    Message = "Fee rules created successfully.",
+                    Data = Dto };
 
             }
             catch (Exception ex)
@@ -55,21 +63,20 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> GetAllFeeRuleAsync(string institutionShortName, PagingParameters paging,FeeRuleFilter? filter)
+        public async Task<GeneralResponse> GetAllFeeRuleAsync(string institutionShortName, PagingParameters paging, FeeRuleFilter? filter)
         {
             try
             {
                 var query = _context.FeeRule
                     .AsQueryable();
 
-                // Mandatory InstitutionShortName filter
-                query = query.Where(x => x.InstitutionShortName == institutionShortName);
+                query = query.Where(x => x.InstitutionShortName == _requestContext.InstitutionShortName);
 
-                // Optional filters from the filter object
+                //filters 
                 if (filter != null)
                 {
-                    if (filter.FeeItemId.HasValue)
-                        query = query.Where(x => x.FeeItemId == filter.FeeItemId.Value);
+                    if (filter.Id.HasValue)
+                        query = query.Where(x => x.Id == filter.Id.Value);
 
                     if (!string.IsNullOrWhiteSpace(filter.ProgrammeCode))
                         query = query.Where(x => x.ProgrammeCode == filter.ProgrammeCode);
@@ -121,10 +128,12 @@ namespace EduReg.Services.Repositories
                 var totalRecords = await query.CountAsync();
 
                 var feeRules = await query
-                    .OrderBy(x => x.FeeItemId)
+                    .OrderBy(x => x.Id)
                     .Skip((paging.PageNumber - 1) * paging.PageSize)
                     .Take(paging.PageSize)
                     .ToListAsync();
+
+                var feeRuleDtos = _mapper.Map<List<FeeRuleDto>>(feeRules);
 
                 return new GeneralResponse
                 {
@@ -132,7 +141,7 @@ namespace EduReg.Services.Repositories
                     Message = totalRecords == 0
                         ? "No fee rules found"
                         : "Fee rules retrieved successfully",
-                    Data = feeRules,
+                    Data = feeRuleDtos,
                     Meta = new
                     {
                         paging.PageNumber,
@@ -160,29 +169,31 @@ namespace EduReg.Services.Repositories
         {
             var rule = await _context.FeeRule
                 .Include(r => r.FeeItem)
-                .FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == institutionShortName);
+                .FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == _requestContext.InstitutionShortName);
 
             if (rule == null)
             {
                 return new GeneralResponse { StatusCode = 404, Message = $"Rule not found" };
             }
             
+            var ruleDto = _mapper.Map<FeeRuleDto>(rule);
 
-           return new GeneralResponse { StatusCode = 200, Message = "Fee rules retrieved successfully.", Data = rule };
-        
-        
+            return new GeneralResponse {
+                StatusCode = 200,
+                Message = "Fee rules retrieved successfully.",
+                Data = ruleDto };
 
         }
 
         public async Task<GeneralResponse> UpdateFeeRuleAsync(long id, FeeRuleDto model, string institutionShortName)
         {
             var rule = await _context.FeeRule
-                .FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == institutionShortName);
+                .FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == _requestContext.InstitutionShortName);
 
             if (rule == null)
                 return new GeneralResponse { StatusCode = 404, Message = $"Rule not found" };
 
-            rule.FeeItemId = model.FeeItemId;
+            rule.Id = model.Id;
             rule.Amount = model.Amount;
             rule.IsRecurring = model.IsRecurring;
             rule.ProgrammeCode = model.ProgrammeCode;
@@ -195,15 +206,19 @@ namespace EduReg.Services.Repositories
             rule.RecurrenceType = model.RecurrenceType;
             rule.UpdatedAt = DateTime.UtcNow;
 
+
+
             await _context.SaveChangesAsync();
-            return new GeneralResponse { StatusCode = 200, Message = "Fee rules updated successfully." };
+
+            var ruleDto = _mapper.Map<FeeRuleDto>(rule);
+            return new GeneralResponse { StatusCode = 200, Message = "Fee rules updated successfully.",Data = ruleDto};
 
         }
 
         public async Task<GeneralResponse> DeleteFeeRuleAsync(long id, string institutionShortName)
         {
             var rule = await _context.FeeRule
-                .FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == institutionShortName);
+                .FirstOrDefaultAsync(r => r.Id == id && r.InstitutionShortName == _requestContext.InstitutionShortName);
 
             if (rule == null)
                 return new GeneralResponse { StatusCode = 404, Message = $"Rule not found" };
@@ -221,8 +236,8 @@ namespace EduReg.Services.Repositories
             {
                 foreach (var model in models)
                 {
-                    model.InstitutionShortName = institutionShortName;
-                    await CreateFeeRuleAsync(model, institutionShortName);
+                    model.InstitutionShortName = _requestContext.InstitutionShortName;
+                    await CreateFeeRuleAsync(model, _requestContext.InstitutionShortName);
                 }
 
                 return new GeneralResponse { StatusCode = 200, Message = "Fee rules applied successfully." };

@@ -265,7 +265,7 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllCourseMaxMin")]
-        public async Task<IActionResult> GetAllCourseMaxMinAsync(string institutionShortName,[FromQuery] CourseMaxMinFilter filter, [FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllCourseMaxMinAsync(string? institutionShortName,[FromQuery] CourseMaxMinFilter filter, [FromQuery] PagingParameters paging)
         {
             var response = await _coursesManager.GetAllCourseMaxMinAsync(institutionShortName, filter, paging);
             return StatusCode(response.StatusCode, response);
@@ -306,7 +306,7 @@ namespace EduReg.Controllers
 
         [HttpGet]
         [Route("GetAllCourseTypes")]
-        public async Task<IActionResult> GetAllCourseTypesAsync(string institutionShortName, [FromQuery]CourseTypeFilter filter, [FromQuery]PagingParameters paging)
+        public async Task<IActionResult> GetAllCourseTypesAsync(string? institutionShortName, [FromQuery]CourseTypeFilter filter, [FromQuery]PagingParameters paging)
         {
             var response = await _coursesManager.GetAllCourseTypesAsync(institutionShortName,filter, paging);
             return StatusCode(response.StatusCode, response);

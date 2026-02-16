@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks.Dataflow;
 using System.Web.WebPages;
+using AutoMapper;
 
 namespace EduReg.Services.Repositories
 {
@@ -15,11 +16,13 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
-        public SemestersRepository(ApplicationDbContext context, RequestContext requestContext)
+        private readonly IMapper _mapper;
+        public SemestersRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
             _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
+            _mapper = mapper;
         }
         public async Task<GeneralResponse> CreateSemesterAsync(SemestersDto model)
         {
@@ -79,17 +82,19 @@ namespace EduReg.Services.Repositories
             await _context.Semesters.AddAsync(entity);
             await _context.SaveChangesAsync();
 
+            var dto = _mapper.Map<SemestersDto>(entity);
+
             return new GeneralResponse
             {
                 StatusCode = 201,
                 Message = "Semester created successfully",
-                Data = entity
+                Data = dto
             };
         }
 
         public async Task<GeneralResponse> DeleteSemesterAsync(long Id)
         {
-            var semester = await _context.Semesters.FindAsync(Id);
+            var semester = await _context.Semesters.FirstOrDefaultAsync(r => r.Id == Id && r.InstitutionShortName == _requestContext.InstitutionShortName);
 
             if (semester == null)
             {
@@ -158,13 +163,15 @@ namespace EduReg.Services.Repositories
                     .Take(paging.PageSize)
                     .ToListAsync();
 
+                var semesterDtos = _mapper.Map<List<SemestersDto>>(semesters);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = totalRecords == 0
                         ? "No semesters found"
                         : "Semesters retrieved successfully",
-                    Data = semesters,
+                    Data = semesterDtos,
                     Meta = new
                     {
                         paging.PageNumber,
@@ -200,7 +207,7 @@ namespace EduReg.Services.Repositories
                 };
             }
 
-            var semester = await _context.Semesters.FindAsync(Id);
+            var semester = await _context.Semesters.FirstOrDefaultAsync(r => r.Id == Id && r.InstitutionShortName == _requestContext.InstitutionShortName);
             if (semester == null)
             {
                 return new GeneralResponse
@@ -211,17 +218,18 @@ namespace EduReg.Services.Repositories
                 };
             }
 
+            var semesterDto = _mapper.Map<SemestersDto>(semester);
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Semester retrieved successfully",
-                Data = semester
+                Data = semesterDto
             };
         }
 
         public async Task<GeneralResponse> UpdateSemesterAsync(long Id, SemestersDto model)
         {
-            var semester = await _context.Semesters.FindAsync(Id);
+            var semester = await _context.Semesters.FirstOrDefaultAsync(r => r.Id == Id && r.InstitutionShortName == _requestContext.InstitutionShortName);
 
             if (semester == null)
             {
@@ -276,11 +284,13 @@ namespace EduReg.Services.Repositories
             _context.Semesters.Update(semester);
             await _context.SaveChangesAsync();
 
+            var dto = _mapper.Map<SemestersDto>(semester);
+
             return new GeneralResponse
             {
                 StatusCode = 200,
                 Message = "Semester updated successfully",
-                Data = semester
+                Data = dto
             };
         }
 

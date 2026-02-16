@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace EduReg.Services.Repositories
 {
@@ -15,21 +16,23 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
+        private readonly IMapper _mapper;
 
-        public InstitutionsRepository(ApplicationDbContext context, RequestContext requestContext)
+        public InstitutionsRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
 
         public async Task<GeneralResponse> CreateInstitutionAsync(InstitutionsDto model)
         {
             try
             {
-                var existingInstitution = await _context.Institutions
+                var existingInstitutionShortName = await _context.Institutions
                     .FirstOrDefaultAsync(i => i.InstitutionShortName == model.InstitutionShortName);
 
-                if (existingInstitution != null)
+                if (existingInstitutionShortName != null)
                 {
                     return new GeneralResponse
                     {
@@ -38,9 +41,21 @@ namespace EduReg.Services.Repositories
                     };
                 }
 
-                var institution = new Institutions
+                var existingInstitution = await _context.Institutions
+                    .FirstOrDefaultAsync(i => i.InstitutionName == model.InstitutionName);
+
+                if (existingInstitution != null)
                 {
-                    InstitutionShortName = model.InstitutionShortName,
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = "Institution with this name already exists."
+                    };
+                }
+
+                    var institution = new Institutions
+                {
+                    InstitutionShortName =model.InstitutionShortName,
                     InstitutionName = model.InstitutionName,
                     Address = model.Address,
                     ContactPerson = model.ContactPerson,
@@ -55,11 +70,13 @@ namespace EduReg.Services.Repositories
                 _context.Institutions.Add(institution);
                 await _context.SaveChangesAsync();
 
+                var institutionDto = _mapper.Map<InstitutionsDto>(institution);
+
                 return new GeneralResponse
                 {
                     StatusCode = 201,
                     Message = "Institution created successfully.",
-                    Data = institution
+                    Data = institutionDto
                 };
             }
             catch (Exception ex)
@@ -149,13 +166,15 @@ namespace EduReg.Services.Repositories
                     .Take(paging.PageSize)
                     .ToListAsync();
 
+                var institutionDtos = _mapper.Map<List<InstitutionsDto>>(institutions);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = totalRecords == 0
                         ? "No institutions found."
                         : "Institutions retrieved successfully.",
-                    Data = institutions,
+                    Data = institutionDtos,
                     Meta = new
                     {
                         paging.PageNumber,
@@ -193,11 +212,12 @@ namespace EduReg.Services.Repositories
                     };
                 }
 
+                var institutionDto = _mapper.Map<InstitutionsDto>(institution);
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = "Institution retrieved successfully.",
-                    Data = institution
+                    Data = institutionDto
                 };
             }
             catch (Exception ex)
@@ -226,11 +246,12 @@ namespace EduReg.Services.Repositories
                     };
                 }
 
+                var institutionDto = _mapper.Map<InstitutionsDto>(institution);
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = "Institution retrieved successfully.",
-                    Data = institution
+                    Data = institutionDto
                 };
             }
             catch (Exception ex)
@@ -269,11 +290,13 @@ namespace EduReg.Services.Repositories
                 _context.Institutions.Update(institution);
                 await _context.SaveChangesAsync();
 
+                var institutionDto = _mapper.Map<InstitutionsDto>(institution);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = "Institution updated successfully.",
-                    Data = institution
+                    Data = institutionDto
                 };
             }
             catch (Exception ex)
@@ -313,11 +336,13 @@ namespace EduReg.Services.Repositories
                 _context.Institutions.Update(institution);
                 await _context.SaveChangesAsync();
 
+                var institutionDto = _mapper.Map<InstitutionsDto>(institution);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = "Institution updated successfully.",
-                    Data = institution
+                    Data = institutionDto
                 };
             }
             catch (Exception ex)

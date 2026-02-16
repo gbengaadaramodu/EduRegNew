@@ -5,6 +5,7 @@ using EduReg.Models.Dto.Request;
 using EduReg.Models.Entities;
 using EduReg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace EduReg.Services.Repositories
 {
@@ -12,18 +13,21 @@ namespace EduReg.Services.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly RequestContext _requestContext;
-        public ProgrammesRepository(ApplicationDbContext context, RequestContext requestContext)
+        private readonly IMapper _mapper;
+
+        public ProgrammesRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper)
         {
             _context = context;
             _requestContext = requestContext;
+            _mapper = mapper;
         }
 
         public async Task<GeneralResponse> CreateProgrammeAsync(ProgrammesDto model)
         {
             try
-            {
+            {  
 
-                if (await _context.Programmes.AnyAsync(p => p.ProgrammeCode == model.ProgrammeCode))
+                if (await _context.Programmes.AnyAsync(p => p.ProgrammeCode == model.ProgrammeCode && p.InstitutionShortName == _requestContext.InstitutionShortName))
                 {
                     return new GeneralResponse
                     {
@@ -40,17 +44,19 @@ namespace EduReg.Services.Repositories
                     Description = model.Description,
                     Duration = model.Duration,
                     NumberOfSemesters = model.NumberOfSemesters,
-                    MaximumNumberOfSemesters = model.MaximumNumberOfSemesters
+                    MaximumNumberOfSemesters = model.MaximumNumberOfSemesters,
+                    InstitutionShortName = _requestContext.InstitutionShortName
                 };
 
                 await _context.Programmes.AddAsync(programme);
                 await _context.SaveChangesAsync();
 
+                var programmeDto = _mapper.Map<ProgrammesDto>(programme);
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = "Programme created successfully",
-                    Data = programme
+                    Data = programmeDto
                 };
 
             }
@@ -66,11 +72,12 @@ namespace EduReg.Services.Repositories
 
         }
 
-        public async Task<GeneralResponse> DeleteProgrammeAsync(long Id)
+        public async Task<GeneralResponse> DeleteProgrammeAsync(long id)
         {
             try
             {
-                var programme = await _context.Programmes.FindAsync(Id);
+                var programme = await _context.Programmes
+            .FirstOrDefaultAsync(x => x.Id == id && x.InstitutionShortName == _requestContext.InstitutionShortName);
                 if (programme == null)
                 {
                     return new GeneralResponse
@@ -83,11 +90,13 @@ namespace EduReg.Services.Repositories
                 _context.Programmes.Remove(programme);
                 await _context.SaveChangesAsync();
 
+                var programmeDto = _mapper.Map<ProgrammesDto>(programme);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = "Programme deleted successfully",
-                    Data = programme
+                    Data = programmeDto
                 };
             }
             catch (Exception ex)
@@ -108,14 +117,10 @@ namespace EduReg.Services.Repositories
                     .AsNoTracking()
                     .AsQueryable();
 
-                // APPLY FILTERS
-
-                if (!string.IsNullOrWhiteSpace(filter?.InstitutionShortName))
-                {
                     query = query.Where(x =>
-                        x.InstitutionShortName == filter.InstitutionShortName);
-                }
+                        x.InstitutionShortName == _requestContext.InstitutionShortName);
 
+                // APPLY FILTERS
                 if (!string.IsNullOrWhiteSpace(filter?.DepartmentCode))
                 {
                     query = query.Where(x =>
@@ -199,11 +204,13 @@ namespace EduReg.Services.Repositories
         }
 
 
-        public async Task<GeneralResponse> GetProgrammeByIdAsync(long Id)
+        public async Task<GeneralResponse> GetProgrammeByIdAsync(long id)
         {
             try
             {
-                var programme = await _context.Programmes.FindAsync(Id);
+                var programme = await _context.Programmes
+             .AsNoTracking() 
+             .FirstOrDefaultAsync(x => x.Id == id && x.InstitutionShortName == _requestContext.InstitutionShortName);
 
                 if (programme == null)
                 {
@@ -222,7 +229,8 @@ namespace EduReg.Services.Repositories
                     Description = programme.Description,
                     Duration = programme.Duration,
                     NumberOfSemesters = programme.NumberOfSemesters,
-                    MaximumNumberOfSemesters = programme.MaximumNumberOfSemesters
+                    MaximumNumberOfSemesters = programme.MaximumNumberOfSemesters,
+                    InstitutionShortName = programme.InstitutionShortName
                 };
 
                 return new GeneralResponse 
@@ -246,7 +254,8 @@ namespace EduReg.Services.Repositories
         {
             try
             {
-                var programme = await _context.Programmes.FirstOrDefaultAsync(p => p.ProgrammeName.ToLower().Contains(ProgrammeName.ToLower()));
+                var programme = await _context.Programmes.FirstOrDefaultAsync(p => p.ProgrammeName.ToLower().Contains(ProgrammeName.ToLower())
+                && p.InstitutionShortName == _requestContext.InstitutionShortName);
 
                 if (programme == null)
                 {
@@ -285,11 +294,12 @@ namespace EduReg.Services.Repositories
             }
         }
 
-        public async Task<GeneralResponse> UpdateProgrammeAsync(long Id, ProgrammesDto model)
+        public async Task<GeneralResponse> UpdateProgrammeAsync(long id, ProgrammesDto model)
         {
             try
             {
-                var programme = await _context.Programmes.FindAsync(Id);
+                var programme = await _context.Programmes
+            .FirstOrDefaultAsync(x => x.Id == id && x.InstitutionShortName == _requestContext.InstitutionShortName);
 
                 if (programme == null)
                 {
@@ -311,11 +321,13 @@ namespace EduReg.Services.Repositories
                 _context.Programmes.Update(programme);
                 await _context.SaveChangesAsync();
 
+                var programmeDto = _mapper.Map<ProgrammesDto>(programme);
+
                 return new GeneralResponse
                 {
                     StatusCode = 200,
                     Message = "Programme updated successfully",
-                    Data = programme
+                    Data = programmeDto
                 };
             }
             catch (Exception ex)

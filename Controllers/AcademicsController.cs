@@ -152,7 +152,7 @@ namespace EduReg.Controllers
         }
         [HttpGet]
         [Route("GetAllSessionSemesters")]
-        public async Task<IActionResult> GetAllSessionSemesterAsync(string institutionShortName, [FromQuery]SessionSemesterFilter filter,[FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetAllSessionSemesterAsync(string? institutionShortName, [FromQuery]SessionSemesterFilter filter,[FromQuery] PagingParameters paging)
         {
             var response = await _manager.GetAllSessionSemesterAsync(institutionShortName, filter, paging);
             return StatusCode(response.StatusCode, response);

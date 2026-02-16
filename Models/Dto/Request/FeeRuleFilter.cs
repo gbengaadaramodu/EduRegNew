@@ -4,9 +4,9 @@ namespace EduReg.Models.Dto.Request
 {
     public class FeeRuleFilter
     {
-        public string? InstitutionShortName { get; set; }
+        //public string? InstitutionShortName { get; set; }
 
-        public long? FeeItemId { get; set; }
+        public long? Id { get; set; }
 
         public string? ProgrammeCode { get; set; }
         public string? DepartmentCode { get; set; }
