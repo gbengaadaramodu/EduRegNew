@@ -16,6 +16,7 @@ using Microsoft.OpenApi.Models;
 using EduReg.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using AutoMapper;
+using EduReg.Common.FileUploadService;
 
 
 namespace EduReg
@@ -101,6 +102,7 @@ namespace EduReg
             builder.Services.AddScoped<IAcademicSessions, AcademicSessionsRepository>();
             builder.Services.AddScoped<ISemesters, SemestersRepository>();
             builder.Services.AddScoped<ISessionSemester, SessionSemesterRepository>();
+            builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 
             // School Controller
             builder.Services.AddScoped<IFaculties, FacultiesRepository>();
