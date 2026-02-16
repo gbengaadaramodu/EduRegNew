@@ -4,6 +4,7 @@ using EduReg.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduReg.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260216131326_mustchangepassword")]
+    partial class mustchangepassword
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,9 +215,6 @@ namespace EduReg.Migrations
                     b.Property<int>("ActiveStatus")
                         .HasColumnType("int");
 
-                    b.Property<string>("ClassCode")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -230,11 +230,11 @@ namespace EduReg.Migrations
                     b.Property<string>("ProgrammeCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("SemesterId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("SemesterId")
+                        .HasColumnType("int");
 
-                    b.Property<long>("SessionId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("SessionId")
+                        .HasColumnType("int");
 
                     b.Property<string>("StudentsId")
                         .IsRequired()
@@ -688,7 +688,7 @@ namespace EduReg.Migrations
                     b.Property<DateTime?>("EffectiveTo")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("FeeItemId")
+                    b.Property<long>("FeeItemId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("InstitutionShortName")
@@ -1600,10 +1600,6 @@ namespace EduReg.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MatricNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("MessageBody")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1830,7 +1826,9 @@ namespace EduReg.Migrations
                 {
                     b.HasOne("EduReg.Models.Entities.FeeItem", "FeeItem")
                         .WithMany("FeeRules")
-                        .HasForeignKey("FeeItemId");
+                        .HasForeignKey("FeeItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("FeeItem");
                 });

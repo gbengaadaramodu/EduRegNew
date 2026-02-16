@@ -34,6 +34,7 @@ namespace EduReg.Models.Entities
         public string? ImageUrl { get; set; }
         public string? StartClassCode { get; set; }
         public string? CurrentClassCode { get; set; }
+        public bool? MustChangePassword { get; set; }
 
 
         //public bool? IsAdminUser { get; set; }
