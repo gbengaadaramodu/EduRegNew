@@ -1,42 +1,42 @@
 ﻿using EduReg.Common;
 using EduReg.Models.Dto;
+using EduReg.Models.Dto.Request;
 using EduReg.Services.Interfaces;
 
 namespace EduReg.Managers
 {
     public class LibraryManager : IELibrary
     {
-        private readonly IELibrary _library;
+        private readonly IELibrary _eLibraryRepository;
 
-        public LibraryManager(IELibrary library)
+        public LibraryManager(IELibrary eLibraryRepository)
         {
-            _library = library;
+            _eLibraryRepository = eLibraryRepository;
         }
 
-        public async Task<GeneralResponse> CreateELibraryAsync(ELibraryDto model)
+        public async Task<GeneralResponse> CreateELibraryAsync(CreateELibraryDto model)
         {
-            return await _library.CreateELibraryAsync(model);
+            return await _eLibraryRepository.CreateELibraryAsync( model);
         }
 
         public async Task<GeneralResponse> GetELibraryByIdAsync(long id)
         {
-            return await _library.GetELibraryByIdAsync(id);
+            return await _eLibraryRepository.GetELibraryByIdAsync(id);
         }
 
-        // Updated to accept the optional courseCode
-        public async Task<GeneralResponse> GetAllELibraryAsync(PagingParameters paging, string? institutionShortName = null, string? courseCode = null)
+        public async Task<GeneralResponse> GetAllELibraryAsync(PagingParameters paging, ELibraryFilter filter)
         {
-            return await _library.GetAllELibraryAsync(paging, institutionShortName, courseCode);
+            return await _eLibraryRepository.GetAllELibraryAsync(paging, filter);
         }
 
-        public async Task<GeneralResponse> UpdateELibraryAsync(long id, ELibraryDto model)
+        public async Task<GeneralResponse> UpdateELibraryAsync(long id, UpdateELibraryDto model)
         {
-            return await _library.UpdateELibraryAsync(id, model);
+            return await _eLibraryRepository.UpdateELibraryAsync(id, model);
         }
 
         public async Task<GeneralResponse> DeleteELibraryAsync(long id)
         {
-            return await _library.DeleteELibraryAsync(id);
+            return await _eLibraryRepository.DeleteELibraryAsync(id);
         }
     }
 }

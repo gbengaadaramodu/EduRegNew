@@ -571,12 +571,6 @@ namespace EduReg.Services.Repositories
                 }
             }
 
-            // Ensure roles exist
-            //if (!await _roleManager.RoleExistsAsync("Admin"))
-            //    await _roleManager.CreateAsync(new IdentityRole("Admin"));
-
-            //if (!await _roleManager.RoleExistsAsync("SuperAdmin"))
-            //    await _roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
 
             // Create the user
             model.InstitutionShortName = thisInstitutionShortName;
@@ -590,6 +584,7 @@ namespace EduReg.Services.Repositories
                 UserName = model.Email,
                 isAdmin = true,
                 InstitutionShortName = model.InstitutionShortName,
+                MustChangePassword = true
             };
 
             var result = await _usermanager.CreateAsync(adminUser, model.Password);
@@ -622,17 +617,19 @@ namespace EduReg.Services.Repositories
 
 
             //// ✅ Send welcome email with login credentials
-            //var subject = "CyberCloud Equote";
+            var subject = "Admin Account Created - Action Required";
 
 
-            //string message = @$"
-            //<p>Dear {adminUser.FirstName}</p>
-            //<p>Kindly find attached your userid: <b>{model.Email}</b> and password: <b>{model.Password}</b></p>
-            //<p>Please log in to <a href=https://localhost:5173/reset-password>Admin Login</a> and change your password immediately for security reasons.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</p>
-            //<p>Regards,</p>
-            //<p>CyberCloud Admin</p>";
+            string message = @$"
+            <p>Dear {adminUser.FirstName}</p>
+            <p>Kindly find attached your userid: <b>{model.Email}</b> and password: <b>{model.Password}</b></p>
+             <p style='color:red;'>
+             ⚠ For security reasons, you are required to change your password immediately after your first login.
+            </p>
+            <p>Regards,</p>
+            <p>School Admin</p>";
 
-            //await _emailService.SendEmailAsync(model.Email, subject, message);
+            await _emailService.SendEmailAsync(model.Email, subject, message);
 
             return new GeneralResponse
             {
@@ -898,6 +895,21 @@ namespace EduReg.Services.Repositories
             var roles = await _usermanager.GetRolesAsync(user);
             userToken.Roles = roles.ToList();
 
+
+            if (user.MustChangePassword == true)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 403,
+                    Message = "Password reset required",
+                    Data = new
+                    {
+                        MustChangePassword = true,
+                        UserId = user.Id
+                    }
+                };
+            }
+
             // Generate JWT token
             var token = await GenerateJwtToken(user);
 
@@ -907,6 +919,7 @@ namespace EduReg.Services.Repositories
             userToken.FirstName = user.FirstName;
             userToken.LastName = user.LastName;
             userToken.InstitutionShortName = user.InstitutionShortName;
+            userToken.MustChangePassword = user.MustChangePassword;
 
             _tokenCache.AddToken(token);
 
@@ -1020,6 +1033,12 @@ namespace EduReg.Services.Repositories
 
             var result = await _usermanager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
 
+            if (user.MustChangePassword == true)
+            {
+                user.MustChangePassword = false;
+                await _usermanager.UpdateAsync(user);
+            }
+
             if (result.Succeeded)
             {
                 return new GeneralResponse
@@ -1126,6 +1145,20 @@ namespace EduReg.Services.Repositories
                 };
             }
 
+
+            if (user.MustChangePassword == true)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 403,
+                    Message = "Password reset required",
+                    Data = new
+                    {
+                        MustChangePassword = true,
+                        UserId = user.Id
+                    }
+                };
+            }
             // Generate token
             var token = await GenerateJwtToken(user);
 
@@ -1136,6 +1169,7 @@ namespace EduReg.Services.Repositories
             userToken.email = user.Email;
             userToken.MatricNumber = user.MatricNumber;
             userToken.InstitutionShortName = user.InstitutionShortName;
+            userToken.MustChangePassword = user.MustChangePassword;
 
             _tokenCache.AddToken(token);
 
@@ -1222,6 +1256,104 @@ namespace EduReg.Services.Repositories
                     StatusCode = 200,
                     Message = "Student moved successfully to new database",
                     Data = model
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse
+                {
+                    StatusCode = 500,
+                    Message = $"An error occurred: {ex.Message}",
+                    Data = null
+                };
+            }
+        }
+
+
+        public async Task<GeneralResponse> CreateApplicant(List<MoveStudentDto> models)
+        {
+            try
+            {
+                if (models == null || !models.Any())
+                {
+                    return new GeneralResponse
+                    {
+                        StatusCode = 400,
+                        Message = "No students provided",
+                        Data = null
+                    };
+                }
+
+                var createdStudents = new List<string>();
+                var skippedStudents = new List<string>();
+
+                foreach (var model in models)
+                {
+                    model.InstitutionShortName = thisInstitutionShortName;
+
+                    var duplicate = await _context.Students.AnyAsync(a => a.Email == model.Email || a.ApplicantId == model.ApplicationNumber || a.UserName == model.MatricNumber || a.MatricNumber == model.MatricNumber);
+
+                    if (duplicate)
+                    {
+                        skippedStudents.Add(model.ApplicationNumber ?? model.Email);
+                        continue;
+                    }
+
+                    var newStudent = new Students
+                    {
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        MiddleName = model.MiddleName,
+                        Email = model.Email,
+                        PhoneNumber = model.PhoneNo,
+                        Address = model.Address,
+                        DateOfBirth = model.DateOfBirth,
+                        CountryId = model.CountryId,
+                        StateId = model.StateId,
+                        AdmittedSessionId = model.SessionId,
+                        ApplicationBatchId = model.ApplicationBatchId,
+                        ProgrammeCode = model.ProgrammeCode,
+                        UserName = model.MatricNumber,
+                        BatchShortName = model.BatchShortName,
+                        ImageUrl = model.ImageUrl,
+                        ApplicantId = model.ApplicationNumber,
+                        DepartmentCode = model.DepartmentCode,
+                        AdmissionDate = model.AdmissionDate,
+                        AcceptanceDate = model.AcceptanceDate,
+                        InstitutionShortName = model.InstitutionShortName,
+                        MatricNumber = model.MatricNumber,
+                        isAdmin = false,
+                        MustChangePassword = true
+                    };
+
+                    var password = model.MatricNumber;
+
+                    if (!string.IsNullOrEmpty(password))
+                    {
+                        password = char.ToLower(password[0]) + password.Substring(1);
+                    }
+
+                    var result = await _usermanager.CreateAsync(newStudent, password);
+
+                    if (result.Succeeded)
+                    {
+                        createdStudents.Add(model.ApplicationNumber ?? model.Email);
+                    }
+                    else
+                    {
+                        skippedStudents.Add(model.ApplicationNumber ?? model.Email);
+                    }
+                }
+
+                return new GeneralResponse
+                {
+                    StatusCode = 200,
+                    Message = "Student(s) moved completed",
+                    Data = new
+                    {
+                        Created = createdStudents,
+                        Skipped = skippedStudents
+                    }
                 };
             }
             catch (Exception ex)

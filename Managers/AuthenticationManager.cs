@@ -115,7 +115,7 @@ namespace EduReg.Managers
             return _auth.ChangePasswordAsync(model);
         }  
         
-        public Task<GeneralResponse> CreateApplicant(MoveStudentDto model)
+        public Task<GeneralResponse> CreateApplicant(List<MoveStudentDto> model)
         {
             return _auth.CreateApplicant(model);
         }

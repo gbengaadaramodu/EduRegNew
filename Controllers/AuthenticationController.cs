@@ -195,8 +195,8 @@ namespace EduReg.Controllers
         
         
         [HttpPost]
-        [Route("CreateApplicant")]
-        public async Task<IActionResult> CreateApplicant([FromBody] MoveStudentDto model)
+        [Route("CreateStudents")]
+        public async Task<IActionResult> CreateApplicant([FromBody] List<MoveStudentDto> model)
         {
             var response = await _manager.CreateApplicant(model);
             return StatusCode(response.StatusCode, response);

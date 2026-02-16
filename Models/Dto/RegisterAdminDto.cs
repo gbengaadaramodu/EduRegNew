@@ -37,6 +37,7 @@
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? InstitutionShortName { get; set; }
+        public bool? MustChangePassword { get; set; }
     } 
     
     public class LoginUserResponseDto
@@ -49,6 +50,7 @@
         public string? email { get; set; }
         public string? MatricNumber { get; set; }
         public string? InstitutionShortName { get; set; }
+        public bool? MustChangePassword { get;  set; }
     }
 
 

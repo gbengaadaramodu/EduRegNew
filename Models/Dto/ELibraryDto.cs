@@ -1,21 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace EduReg.Models.Dto
+﻿namespace EduReg.Models.Dto
 {
     public class ELibraryDto : CommonBaseDto
     {
-        [Required]
-        public string CourseCode { get; set; } = null!;
-
-        [Required]
-        public long ProgramId { get; set; }
-
-        [Required]
-        public string FilePath { get; set; } = null!;
-
-        public string Title { get; set; } = string.Empty;
-
-        [Required]
-        public string InstitutionShortName { get; set; } = null!;
+        public long Id { get; set; }
+        public string Title { get; set; }
+        public string? Description { get; set; }
+        public string? Author { get; set; }
+        public string Category { get; set; }  // e.g., "Textbook", "Journal", "Reference"
+        public string? CourseCode { get; set; }
+        public int? ProgramId { get; set; }
+        public string? FileUrl { get; set; }       // Full URL to download
+        public string? FileName { get; set; }
+        public string? FileType { get; set; }
+        public long FileSizeBytes { get; set; }
+        public string? InstitutionShortName { get; set; }
     }
 }
