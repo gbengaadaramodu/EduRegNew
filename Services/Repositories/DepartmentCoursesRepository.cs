@@ -205,9 +205,9 @@ namespace EduReg.Services.Repositories
                                     };
                                 }
                                 //if (errors.Count() > 0)
-                                if (response.StatusCode == 403)
+                                if (response.StatusCode == 207)
                                 {
-                                    List<string> errors = (List<string>)response.Data;
+                                    List<DepartmentCoursesErrorModel> errors = (List<DepartmentCoursesErrorModel>)response.Data;
                                     var filename = "DepartmentCoursesErrorMessages.xlsx";
 
                                     string folderPath2 = Path.Combine(_hostEnvironment.ContentRootPath, "Documents");
@@ -296,18 +296,58 @@ namespace EduReg.Services.Repositories
             try
             {
 
-                var existingDepartments = await _context.Departments.FirstOrDefaultAsync(x => x.InstitutionShortName == _requestContext.InstitutionShortName);
-                var existingCourses = await _context.DepartmentCourses.FirstOrDefaultAsync(x => x.InstitutionShortName == _requestContext.InstitutionShortName);
+                var existingDepartments = await _context.Departments.Where(x => x.InstitutionShortName == _requestContext.InstitutionShortName).ToListAsync();
+                var existingCourses = await _context.DepartmentCourses.Where(x => x.InstitutionShortName == _requestContext.InstitutionShortName).ToListAsync();
 
 
-                var departmentCourses = new List<DepartmentCourses>();
+                var departmentCoursesError = new List<DepartmentCoursesErrorModel>();
+                var departmentCourses = new List<DepartmentCoursesUploadModel>();
 
                 foreach (var item in models)
                 {
+                    var departmentExists = existingDepartments.Any(x => x.DepartmentCode == item.DepartmentCode);
+                    if (!departmentExists)
+                    {
+                        departmentCoursesError.Add(CreateErrorModel(item, $"Department with code: {item.DepartmentCode} does not exist"));
+                        continue;
+                    }
 
+                    var courseExists = existingCourses.Any(x => x.CourseCode == item.CourseCode);
+                    if (courseExists)
+                    {
+                        departmentCoursesError.Add(CreateErrorModel(item, $"Department with code: {item.DepartmentCode} does not exist"));
+                        continue;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(item.Title))
+                    {
+                        departmentCoursesError.Add(CreateErrorModel(item, $"Title cannot be empty"));
+                        continue;
+                    }
+
+                    if (Convert.ToInt32(item.Units) < 0)
+                    {
+                        departmentCoursesError.Add(CreateErrorModel(item, $"Units cannot be less than 0"));
+                        continue;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(item.CourseType))
+                    {
+                        departmentCoursesError.Add(CreateErrorModel(item, $"Course type is required"));
+                        continue;
+                    }
+
+                    item.CourseType = item.CourseType.ToUpper();
+                    if(item.CourseType != "C" || item.CourseType != "E")
+                    {
+                        departmentCoursesError.Add(CreateErrorModel(item, $"Course type has to be E or C ie Elective or Compulsory"));
+                        continue;
+                    }
+
+                    departmentCourses.Add(item);
                 }
 
-                var entities = models.Select(model => new DepartmentCourses
+                var entities = departmentCourses.Select(model => new DepartmentCourses
                 {
                     InstitutionShortName = _requestContext.InstitutionShortName,
                     DepartmentCode = model.DepartmentCode,
@@ -326,6 +366,16 @@ namespace EduReg.Services.Repositories
                 await _context.SaveChangesAsync();
 
                 var departmentCoursesDtos = _mapper.Map<List<DepartmentCoursesDto>>(entities);
+
+                if(departmentCoursesError.Count > 0)
+                {
+                    return new GeneralResponse
+                    {
+                        Data = departmentCoursesError,
+                        Message = "Processed with errors",
+                        StatusCode = 207
+                    };
+                }
 
                 return new GeneralResponse
                 {
