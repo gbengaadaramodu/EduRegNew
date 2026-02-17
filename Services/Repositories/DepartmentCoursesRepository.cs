@@ -18,13 +18,15 @@ namespace EduReg.Services.Repositories
         private readonly RequestContext _requestContext;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _hostEnvironment;
-        public DepartmentCoursesRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper, IWebHostEnvironment hostEnvironment)
+        private readonly IConfiguration _config;
+        public DepartmentCoursesRepository(ApplicationDbContext context, RequestContext requestContext, IMapper mapper, IWebHostEnvironment hostEnvironment, IConfiguration config)
         {
             _context = context;
             _requestContext = requestContext;
             _requestContext.InstitutionShortName = requestContext.InstitutionShortName.ToUpper();
             _mapper = mapper;
             _hostEnvironment = hostEnvironment;
+            _config = config;
         }
 
         public async Task<GeneralResponse> CreateDepartmentCourseAsync(DepartmentCoursesDto model)
@@ -293,6 +295,18 @@ namespace EduReg.Services.Repositories
         {
             try
             {
+
+                var existingDepartments = await _context.Departments.FirstOrDefaultAsync(x => x.InstitutionShortName == _requestContext.InstitutionShortName);
+                var existingCourses = await _context.DepartmentCourses.FirstOrDefaultAsync(x => x.InstitutionShortName == _requestContext.InstitutionShortName);
+
+
+                var departmentCourses = new List<DepartmentCourses>();
+
+                foreach (var item in models)
+                {
+
+                }
+
                 var entities = models.Select(model => new DepartmentCourses
                 {
                     InstitutionShortName = _requestContext.InstitutionShortName,
@@ -498,6 +512,17 @@ namespace EduReg.Services.Repositories
                         ? 0
                         : (int)Math.Ceiling(totalRecords / (double)paging.PageSize)
                 }
+            };
+        }
+
+        private DepartmentCoursesErrorModel CreateErrorModel(DepartmentCoursesUploadModel item, string errorMessage)
+        {
+            return new DepartmentCoursesErrorModel
+            {
+                CourseCode = item.CourseCode,
+                Title = item.Title,
+                DepartmentCode = item.DepartmentCode,
+                ErrorMessage = errorMessage
             };
         }
 
