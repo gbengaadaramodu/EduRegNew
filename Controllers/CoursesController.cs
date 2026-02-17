@@ -54,6 +54,21 @@ namespace EduReg.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [HttpPost]
+        [Route("UploadDepartmentalCourses")]
+        public async Task<IActionResult> UploadDepartmentCoursesFromFile(IFormFile fileUploaded)
+
+        {
+           // byte[] file = Convert.FromBase64String(base64filestring);
+            var response = await _coursesManager.UploadDepartmentCourseAsync(fileUploaded);
+            if(response.StatusCode == 201)
+            {
+                var data = (FileUploadErrorResponse)response.Data;
+                return File(data.Bytes, data.ContentType, Path.GetFileName(data.FilePath));
+            }
+            return StatusCode(response.StatusCode, response);
+        }
+
 
         [HttpPut]
         [Route("UpdateDepartmentCourse/{id}")]
