@@ -55,7 +55,7 @@ namespace EduReg.Controllers
         }
 
         [HttpPost]
-        [Route("UploadDepartmentalCourses")]
+        [Route("UploadDepartmentalCoursesFromFile")]
         public async Task<IActionResult> UploadDepartmentCoursesFromFile(IFormFile fileUploaded)
 
         {
